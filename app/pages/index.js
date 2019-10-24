@@ -1,10 +1,3 @@
-import App from '../components/App'
-import Header from '../components/Header'
-import AuthorList from '../components/AuthorList'
+import Index from '../components/Articles/IndexArticle'
 
-export default () => (
-  <App>
-    <Header />
-    <AuthorList />
-  </App>
-)
+export default () => <Index />

@@ -1,25 +1,20 @@
+import React from 'react'
 import Link from 'next/link'
-import { withRouter } from 'next/router'
+import Router from 'next/router'
+import NProgress from 'nprogress'
+import { FaBook } from 'react-icons/fa'
 
-const Header = ({ router: { pathname } }) => (
-  <header>
-    <Link href='/'>
-      <a className={pathname === '/' ? 'is-active' : ''}>Home</a>
-    </Link>
-    <style jsx>{`
-      header {
-        margin-bottom: 25px;
-      }
-      a {
-        font-size: 14px;
-        margin-right: 15px;
-        text-decoration: none;
-      }
-      .is-active {
-        text-decoration: underline;
-      }
-    `}</style>
-  </header>
-)
+Router.onRouteChangeStart = () => NProgress.start()
+Router.onRouteChangeComplete = () => NProgress.done()
+Router.onRouteChangeError = () => NProgress.done()
 
-export default withRouter(Header)
+export default function Header() {
+  return (
+    <div className="header">
+      <h1><Link href="/"><a><FaBook/>TextStyle</a></Link></h1>
+      <nav>
+        <Link href="/elastic"><a>Recherche d'article</a></Link>
+      </nav>
+    </div>
+  )
+}
