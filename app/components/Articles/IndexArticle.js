@@ -1,17 +1,15 @@
 import React, { Component } from 'react'
-import { Query } from 'react-apollo'
-import gql from 'graphql-tag'
+import { gql } from "apollo-boost";
 import Link from 'next/link'
-import { FaPlusSquare } from 'react-icons/fa'
+import { useQuery } from "@apollo/react-hooks";
 import { withRouter } from 'next/router'
-
 import { PER_PAGE as perPage  } from '../../config/config'
 import Pagination from './PaginationArticle'
 import ListItems from './ListItemsArticle'
 
-const GET_LIST_ITEMS_QUERY = gql`
-  query GET_LIST_ITEMS_QUERY($skip: Int, $first: Int) {
-    article(offset: $skip, limit: $first, order_by: {enabled: desc}) {
+const GET_LIST_ARTICLES_QUERY = gql`
+  query GET_LIST_ARTICLES_QUERY($skip: Int, $first: Int,$project: Int) {
+    article(offset: $skip, limit: $first, order_by: {enabled: desc}, where: {project: {_eq: $project}}) {
       id
       titre
       enabled
@@ -22,47 +20,28 @@ const GET_LIST_ITEMS_QUERY = gql`
   }
 `
 
-class Index extends Component {  
-  render() {
-    return (
-      <Query 
-        query={GET_LIST_ITEMS_QUERY} 
-        variables={{
-          skip: ((this.props.router.query.page || 1) - 1) * perPage,
-          first: perPage
-        }}
 
-        // adding this so we can get the correct loading status on refetch
-        notifyOnNetworkStatusChange
-      >
-        { // Pull refetch from our Query and pass it down to ListItems.js  
-        ({data, error, loading, refetch, networkStatus}) => {
-          if(error) return console.log(error) || <div/>
-          //const article = data.article;
 
-          return (
-            <div>
+function IndexArticle(props) {
+  const { loading: loadingArticles, error: errorArticles, data: dataArticles } = useQuery(
+    GET_LIST_ARTICLES_QUERY,{ variables: { skip: ((props.router.query.page || 1) - 1) * perPage, first: perPage, project : props.router.query.id } }
+  );
+
+  if (loadingArticles) return <p>Loading...</p>;
+  if (errorArticles) return <p>There's an error: {errorArticles.message}</p>;
+
+  return (
+    <div>
               <header>
+              <Link href={'/project/research/'+props.router.query.id} >
+                  <a className="btn btn-primary float-right">Ajouter des articles</a>
+              </Link>
                 <h2>Liste des articles</h2>
-
-                {/* <Link href='/createArticle' >
-                  <a className="add-link"><FaPlusSquare /></a>
-                </Link> */}
               </header>
-              
-              { // if networkStatus is 4 then we're refetching so 
-                // show loading state
-              (loading || networkStatus === 4)
-                ? <div className="loading-items"><p>Loading...</p></div> 
-                : <ListItems listItems={data.article} refetch={refetch} />}
-              
+              <ListItems listItems={dataArticles.article}/>
               <Pagination />
             </div>
-          )
-        }}
-      </Query>
-    )
-  }
+  );
 }
 
-export default withRouter(Index)
+export default withRouter(IndexArticle)

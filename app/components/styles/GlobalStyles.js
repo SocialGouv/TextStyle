@@ -243,4 +243,8 @@ export default createGlobalStyle`
       border-color: #eaedf2;
     }
   }
+
+  .btn{
+    font-size: 15px;
+  }
 `

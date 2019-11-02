@@ -13,7 +13,7 @@ export default function Header() {
     <div className="header">
       <h1><Link href="/"><a><FaBook/>TextStyle</a></Link></h1>
       <nav>
-        <Link href="/elastic"><a>Recherche d'article</a></Link>
+      <Link href="/addProject"><a>Ajouter un projet</a></Link>
       </nav>
     </div>
   )
