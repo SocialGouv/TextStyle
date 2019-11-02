@@ -32,7 +32,7 @@ export default function ElasticResearch(props) {
             });
       }
 
-    console.dir(moderatedArticles);
+    console.dir(props);
     return (
         <div>
         <ReactiveBase
@@ -140,8 +140,8 @@ export default function ElasticResearch(props) {
                                             <h3>{fullTitle}</h3>
                                             <h5>Article numéro : {item.article.num}</h5>
                                             <p>{item.article.content}</p>
-                                            <AddArticle titre={fullTitle} texte={item.article.content} number={item.article.num} article_id={item._id} enabled={true} />
-                                            <AddArticle titre={fullTitle} texte={item.article.content} number={item.article.num} article_id={item._id} enabled={false}/>
+                                            <AddArticle titre={fullTitle} texte={item.article.content} number={item.article.num} article_id={item._id} enabled={true} project={props.projet} />
+                                            <AddArticle titre={fullTitle} texte={item.article.content} number={item.article.num} article_id={item._id} enabled={false} project={props.projet}/>
                                           
                                         </div>)
       
@@ -163,8 +163,8 @@ export default function ElasticResearch(props) {
                                           <h3>{fullTitle}</h3>
                                           <h5>Article numéro : {item.num}</h5>
                                           <p>{item.texte}</p>
-                                          <AddArticle titre={fullTitle} texte={item.texte} number={item.num} article_id={item._id} enabled={true}/>
-                                          <AddArticle titre={fullTitle} texte={item.texte} number={item.num} article_id={item._id} enabled={false}/>
+                                          <AddArticle titre={fullTitle} texte={item.texte} number={item.num} article_id={item._id} enabled={true} project={props.projet}/>
+                                          <AddArticle titre={fullTitle} texte={item.texte} number={item.num} article_id={item._id} enabled={false} project={props.projet}/>
                                       </div>)
       
                                     }
