@@ -1,6 +1,3 @@
-node_modules
-.next
-isomorphic
-padgey-nation-frontend
-test
 demo-22-10-2019.zip
+.DS_Store
+app.old
