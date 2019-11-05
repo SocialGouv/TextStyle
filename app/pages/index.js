@@ -5,6 +5,6 @@ export default () => (
   <div>
     <Header />
     <h1>Bienvenue sur TextStyle</h1>
-    <ListProject/>
+    <ListProject />
   </div>
 )

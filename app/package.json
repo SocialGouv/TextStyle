@@ -28,5 +28,11 @@
     "react-icons": "^3.7.0",
     "serverless-http": "^2.3.0",
     "styled-components": "^4.4.0"
+  },
+  "devDependencies": {
+    "@socialgouv/eslint-config-recommended": "^0.10.2",
+    "eslint": "^6.6.0",
+    "eslint-plugin-react": "^7.16.0",
+    "prettier": "^1.18.2"
   }
 }

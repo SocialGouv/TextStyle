@@ -4,10 +4,10 @@ import withApollo from '../config/withApollo'
 
 import PageLayout from '../components/PageLayout'
 
-class MyApp extends App {  
+class MyApp extends App {
   static async getInitialProps({ Component, ctx }) {
     let pageProps = {}
-    if(Component.getInitialProps) {
+    if (Component.getInitialProps) {
       pageProps = await Component.getInitialProps(ctx)
     }
 
@@ -18,11 +18,11 @@ class MyApp extends App {
     const { Component, pageProps, apollo } = this.props
 
     return (
-        <ApolloProvider client={apollo}>
-          <PageLayout>
-            <Component {...pageProps}/>
-          </PageLayout>
-        </ApolloProvider>
+      <ApolloProvider client={apollo}>
+        <PageLayout>
+          <Component {...pageProps} />
+        </PageLayout>
+      </ApolloProvider>
     )
   }
 }

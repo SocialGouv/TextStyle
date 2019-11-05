@@ -11,9 +11,9 @@ Router.onRouteChangeError = () => NProgress.done()
 export default function Header() {
   return (
     <div className="header">
-      <h1><Link href="/"><a><FaBook/>TextStyle</a></Link></h1>
+      <h1><Link href="/"><a><FaBook />TextStyle</a></Link></h1>
       <nav>
-      <Link href="/addProject"><a>Ajouter un projet</a></Link>
+        <Link href="/addProject"><a>Ajouter un projet</a></Link>
       </nav>
     </div>
   )
