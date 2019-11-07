@@ -8,12 +8,14 @@ if (!process.browser) {
   global.fetch = fetch
 }
 
+const GRAPHQL_URL = "/graphql-engine/v1/graphql";
+
 function create (initialState) {
   return new ApolloClient({
     connectToDevTools: process.browser,
     ssrMode: !process.browser, // Disables forceFetch on the server (so queries are only run once)
     link: new HttpLink({
-      uri: 'http://localhost:8080/v1/graphql', // Server URL (must be absolute)
+      uri: GRAPHQL_URL, // Server URL (must be absolute)
       credentials: 'same-origin' // Additional fetch() options like `credentials` or `headers`
     }),
     cache: new InMemoryCache().restore(initialState || {})

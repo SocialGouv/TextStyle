@@ -8,6 +8,8 @@ import ListElastic from './ListElastic'
 import { GET_LIST_ARTICLES_QUERY } from './queries'
 import { useQuery } from '@apollo/react-hooks';
 
+const ELASTIC_URL = "/elastic"
+
 function queryElastic(value, moderatedArticles) {
     return {
         "query": {
@@ -72,7 +74,7 @@ export default function ElasticResearch(props) {
     return (
         <div>
             <ReactiveBase
-                url="http://localhost:9200/"
+                url={ELASTIC_URL}
                 app="iteration,index"
             >
                 <CategorySearch
