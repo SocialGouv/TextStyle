@@ -1,10 +1,9 @@
-import Index from '../../components/Articles/IndexArticle'
+import React from "react";
+import Index from "../../components/Articles/IndexArticle";
 
-const ArticlesIndex = props => (
-  <Index variable={props.id} />
-);
+const ArticlesIndex = props => <Index variable={props.id} />;
 
-ArticlesIndex.getInitialProps = async function (context) {
+ArticlesIndex.getInitialProps = async function(context) {
   const { id } = context.query;
 
   return { id };

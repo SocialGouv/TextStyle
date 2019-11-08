@@ -1,4 +1,4 @@
-import { createGlobalStyle } from 'styled-components'
+import { createGlobalStyle } from "styled-components";
 
 /* Adding all styling here globally so it's not distracting in the components 
    for the purpose of this demo. I know this CSS is horrible, 
@@ -134,6 +134,13 @@ export default createGlobalStyle`
       border-color:orangered;
     }
 
+    &.waiting{
+        border-color: orange;
+        button.listDeleteButton.deleteButton {
+        top:60px;
+      }
+    }
+
     h3{
       font-size: 16px;
     }
@@ -148,6 +155,7 @@ export default createGlobalStyle`
     }
 
     button {
+      outline: none !important;
       position: absolute;
       top: 29px; 
       right: 27px;
@@ -158,11 +166,30 @@ export default createGlobalStyle`
 
       &.deleteButton{
         color: red;
-        top: 60px;
+        top: 90px;
+        &.searchDelete{
+          top : 60px;
+        }
+        &.listDeleteButton{
+          top : 29px;
+        }
       }
       
       &.createButton{
         color: green;
+        &.listCreateButton{
+          top : 29px;
+        }
+      }
+
+      &.waitingButton{
+        color: orange;
+        &.searchWaiting{
+          top : 90px;
+        }
+        &.listWaitingButton{
+          top : 60px;
+        }
       }
 
     }
@@ -204,6 +231,7 @@ export default createGlobalStyle`
     font-size: 1.3rem;
     line-height: 1.3rem;
     padding-top: 20px;
+    padding-bottom: 20px;
 
     a{
       padding: 12px 15px;
@@ -247,4 +275,4 @@ export default createGlobalStyle`
   .btn{
     font-size: 15px;
   }
-`
+`;

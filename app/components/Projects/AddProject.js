@@ -1,6 +1,7 @@
-import { useMutation } from '@apollo/react-hooks';
-import Router from 'next/router';
-import { ADD_PROJECT } from './queries'
+import { useMutation } from "@apollo/react-hooks";
+import Router from "next/router";
+import React from "react";
+import { ADD_PROJECT, GET_LIST_PROJECT_QUERY } from "./queries";
 
 export default function AddProject() {
   let inputName;
@@ -12,13 +13,19 @@ export default function AddProject() {
       <form
         onSubmit={e => {
           e.preventDefault();
-          addProject({ variables: { name: inputName.value, description: inputDescription.value } });
-          inputName.value = '';
-          inputDescription.value = '';
-          Router.push({ pathname: '/' })
+          addProject({
+            variables: {
+              name: inputName.value,
+              description: inputDescription.value
+            },
+            refetchQueries: [GET_LIST_PROJECT_QUERY]
+          });
+          inputName.value = "";
+          inputDescription.value = "";
+          Router.push({ pathname: "/" });
         }}
       >
-        <div class="form-group">
+        <div className="form-group">
           <p>Nom du projet</p>
           <input
             ref={node => {
@@ -27,7 +34,7 @@ export default function AddProject() {
             className="form-control"
           />
         </div>
-        <div class="form-group">
+        <div className="form-group">
           <p>Description du projet</p>
 
           <textarea

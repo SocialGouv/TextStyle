@@ -1,11 +1,11 @@
-import ElasticResearch from '../../../components/Research/ElasticResearch'
-import Link from 'next/link'
-
+import React from "react";
+import ElasticResearch from "../../../components/Research/ElasticResearch";
+import Link from "next/link";
 
 const ArticlesIndex = props => (
   <div>
     <header className="text-right">
-      <Link href={'/project/' + props.id} >
+      <Link href={"/project/" + props.id}>
         <a className="btn btn-primary">Voir les articles modérés</a>
       </Link>
     </header>
@@ -13,7 +13,7 @@ const ArticlesIndex = props => (
   </div>
 );
 
-ArticlesIndex.getInitialProps = async function (context) {
+ArticlesIndex.getInitialProps = async function(context) {
   const { id } = context.query;
 
   return { id };

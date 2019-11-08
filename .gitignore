@@ -1,4 +1,5 @@
 demo-22-10-2019.zip
 .DS_Store
-app.old
+app 42
 docker-compose.override.yaml
+node_modules
