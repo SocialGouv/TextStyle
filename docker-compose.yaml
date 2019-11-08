@@ -1,4 +1,4 @@
-version: '3.6'
+version: '3.3'
 services:
   elastic:
     restart: always
@@ -7,11 +7,17 @@ services:
       - es_data:/usr/share/elasticsearch/data
     ports:
       - 9210:9200
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
   postgres:
     image: postgres
     restart: always
     volumes:
-    - db_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - 5434:5432
   graphql-engine:
     image: hasura/graphql-engine:v1.0.0-beta.6
     ports:
