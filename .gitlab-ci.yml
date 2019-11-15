@@ -1,0 +1,22 @@
+---
+stages:
+  - "Code Quality"
+
+.quality_stage: &quality_stage
+  stage: "Code Quality"
+  image: node:12-alpine
+  before_script:
+    - yarn --frozen-lockfile
+#
+
+Quality tests:
+  <<: *quality_stage
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+  script:
+    - cd app
+    - yarn --frozen-lockfile
+    - yarn lint
+    #- yarn test
