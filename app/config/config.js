@@ -1,8 +1,7 @@
-// export const GRAPHQL_URL = "/graphql-engine/v1/graphql" / can't use absolute path
-// export const GRAPHQL_URL = "http://localhost:8080/v1/graphql"; // for local use only
-
-export const GRAPHQL_URL = "/graphql-engine"
-///v1/graphql"; // with docker Networking
-//export const GRAPHQL_URL = "//40.89.168.163:8082/v1/graphql";
+// proxified by express server
+export const GRAPHQL_URL =
+  typeof window !== "undefined"
+    ? window.location.origin + "/graphql-engine/v1/graphql"
+    : process.env.GRAPHQL_URL;
 
 export const PER_PAGE = 5;

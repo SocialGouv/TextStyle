@@ -1,4 +1,4 @@
-version: '3.6'
+version: '3.3'
 services:
   app:
     build:
@@ -11,6 +11,6 @@ services:
         MATOMO_SITE_ID: 42
     environment:
       ELASTIC_URL: http://elastic:9200
-      GRAPHQL_URL: http://graphql-engine:8080/v1/graphql
+      GRAPHQL_URL: http://graphql-engine:8080
     ports:
       - 80:3000
