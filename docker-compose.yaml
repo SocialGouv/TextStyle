@@ -11,8 +11,6 @@ services:
       memlock:
         soft: -1
         hard: -1
-    networks:
-      - textStyleNetwork
   postgres:
     image: postgres
     restart: always
@@ -20,17 +18,12 @@ services:
       - db_data:/var/lib/postgresql/data
     ports:
       - 5434:5432
-    networks:
-      - textStyleNetwork
   graphql-engine:
     image: hasura/graphql-engine:v1.0.0-beta.6
     ports:
     - "8082:8080"
     depends_on:
     - "postgres"
-    restart: always
-    networks:
-      - textStyleNetwork
     environment:
       HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:@postgres:5432/postgres
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
@@ -40,5 +33,3 @@ services:
 volumes:
   db_data:
   es_data:
-networks:
-      textStyleNetwork:

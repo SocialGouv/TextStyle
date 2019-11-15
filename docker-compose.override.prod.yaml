@@ -13,6 +13,4 @@ services:
       ELASTIC_URL: http://elastic:9200
       GRAPHQL_URL: http://graphql-engine:8080/v1/graphql
     ports:
-      - 3030:3000
-    networks:
-      - textStyleNetwork
+      - 80:3000
