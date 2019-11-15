@@ -8,8 +8,10 @@ import ListElastic from "./ListElastic";
 import { GET_LIST_ARTICLES_QUERY } from "./queries";
 import { useQuery } from "@apollo/react-hooks";
 
-const ELASTIC_URL = "http://40.89.168.163:9210"; // Only work with URI can't use /elastic
-//const ELASTIC_URL = "http://localhost:9200/"; // Docker networking
+//const ELASTIC_URL = "http://40.89.168.163:9210"; // Only work with URI can't use /elastic
+const ELASTIC_URL = typeof window !== 'undefined' ? window.location.origin + "/elastic":""
+
+//http://localhost:9200/"; // Docker networking
 
 function queryElastic(value, moderatedArticles) {
   return {
