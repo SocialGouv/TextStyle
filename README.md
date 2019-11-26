@@ -16,5 +16,6 @@ Copy and customize `docker-compose.override.prod.yml` to `docker-compose.overrid
 
 ```sh
 docker-compose up -d
+
 ```
 
