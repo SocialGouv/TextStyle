@@ -25,6 +25,11 @@ function chooseStatus(status) {
   }
 }
 
+function updateModeratedArticles(props) {
+  var handleUpdateModeratedArticles = props.handleUpdateModeratedArticles;
+  handleUpdateModeratedArticles(props.article_id);
+}
+
 export default function AddArticle(props) {
   const [addArticle, { loading: addLoading, error: addError }] = useMutation(
     ADD_ARTICLE
@@ -35,11 +40,12 @@ export default function AddArticle(props) {
       <form
         onSubmit={e => {
           e.preventDefault();
+          updateModeratedArticles(props);
           addArticle({
             variables: {
               titre: props.titre,
               texte: props.texte,
-              number: props.number,
+              number: props.number ? props.number : "annexe",
               status: props.status,
               article_id: props.article_id,
               project: props.project,
@@ -48,11 +54,7 @@ export default function AddArticle(props) {
           });
         }}
       >
-        <button
-          onClick={() => confirm(statusArray[0])}
-          className={statusArray[1]}
-          type="submit"
-        >
+        <button className={statusArray[1]} type="submit">
           {" "}
           {statusArray[2]}
         </button>

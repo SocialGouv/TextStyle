@@ -164,6 +164,20 @@ export default createGlobalStyle`
       cursor: pointer;
       transition: 0.1s;
 
+      &.addRevision{
+        outline: none !important;
+        position: relative;
+        top: 0;
+        left: 0;
+        display: block;
+        float: right;
+        margin-top: 10px;
+        border: 1px solid black;
+        padding: 8px;
+        cursor: pointer;
+        transition: 0.1s;
+      }
+
       &.deleteButton{
         color: red;
         top: 90px;
@@ -262,7 +276,23 @@ export default createGlobalStyle`
 
   .searchBoxElastic{
     input{
-      font-size:16px;
+      font-size:0.9em !important;
+      background-color: hsl(0,0%,100%);
+      border-color: hsl(0,0%,80%);
+      border-radius: 4px;
+      border-style: solid;
+      border-width: 1px;
+      border-radius: 2px;
+      color: hsl(0,0%,20%);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      &:hover{
+        border-color: hsl(0,0%,70%);
+      }
+    }
+    .search-icon,.cancel-icon{
+      margin-top: -7px;
+      fill: hsl(0,0%,60%) !important;
     }
   }
 
@@ -275,4 +305,19 @@ export default createGlobalStyle`
   .btn{
     font-size: 15px;
   }
+
+  .cke_bottom{
+    display:none !important;
+  }
+
+  .basic-multi-select{
+    outline: none !important;
+    margin-bottom:20px;
+    margin-top:20px;
+    .select__multi-value__label,.select__placeholder{
+      font-size:0.9em !important;
+    }
+  }
+
+  .addRevision{}
 `;

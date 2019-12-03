@@ -1,7 +1,7 @@
 import React from "react";
 import { useMutation } from "@apollo/react-hooks";
-import { FaTrashAlt, FaCheck, FaBan, FaClock } from "react-icons/fa";
-import { DELETE_ARTICLE, EDIT_ARTICLE } from "./queries";
+import { FaCheck, FaBan, FaClock } from "react-icons/fa";
+import { EDIT_ARTICLE } from "./queries";
 
 function statusReturn(status) {
   if (status === 0) {
@@ -47,10 +47,10 @@ export default function EditArticle(props) {
   const [waitArticle, { loading: waitLoading, error: waitError }] = useMutation(
     EDIT_ARTICLE
   );
-  const [
-    deleteArticle,
-    { loading: deleteLoading, error: deleteError }
-  ] = useMutation(DELETE_ARTICLE);
+  // const [
+  //   deleteArticle,
+  //   { loading: deleteLoading, error: deleteError }
+  // ] = useMutation(DELETE_ARTICLE);
   const { id, status } = props;
   var editionStatus = statusReturn(status);
 
@@ -68,11 +68,7 @@ export default function EditArticle(props) {
           });
         }}
       >
-        <button
-          onClick={() => confirm(editionStatus[1])}
-          className={editionStatus[2]}
-          type="submit"
-        >
+        <button className={editionStatus[2]} type="submit">
           {" "}
           {editionStatus[3]}
         </button>
@@ -92,11 +88,7 @@ export default function EditArticle(props) {
           });
         }}
       >
-        <button
-          onClick={() => confirm(editionStatus[5])}
-          className={editionStatus[6]}
-          type="submit"
-        >
+        <button className={editionStatus[6]} type="submit">
           {" "}
           {editionStatus[7]}
         </button>
@@ -104,7 +96,7 @@ export default function EditArticle(props) {
       {waitLoading && <p>Loading...</p>}
       {waitError && waitError.message}
 
-      <form
+      {/* <form
         onSubmit={e => {
           e.preventDefault();
           deleteArticle({
@@ -116,19 +108,13 @@ export default function EditArticle(props) {
           });
         }}
       >
-        <button
-          onClick={() =>
-            confirm("Êtes vous sur de vouloir supprimer cette article ?")
-          }
-          className="deleteButton"
-          type="submit"
-        >
+        <button className="deleteButton" type="submit">
           {" "}
           <FaTrashAlt />{" "}
         </button>
         {deleteLoading && <p>Loading...</p>}
         {deleteError && <p>Error :(</p>}
-      </form>
+      </form> */}
     </div>
   );
 }

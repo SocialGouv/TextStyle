@@ -15,31 +15,36 @@ export default function ListElastic(props) {
     return (
       <div key={item._id} className="list-item">
         <h3>{fullTitle}</h3>
-        <h5>Article numéro : {item.article.num}</h5>
+        <h5>
+          Article numéro : {item.article.num ? item.article.num : "annexe"}
+        </h5>
         <p>{item.article.content}</p>
         <AddArticle
           titre={fullTitle}
           texte={item.article.content}
-          number={item.article.num}
+          number={item.article.num ? item.article.num : "annexe"}
           article_id={item._id}
           status={2}
           project={project}
+          handleUpdateModeratedArticles={props.handleUpdateModeratedArticles}
         />
         <AddArticle
           titre={fullTitle}
           texte={item.article.content}
-          number={item.article.num}
+          number={item.article.num ? item.article.num : "annexe"}
           article_id={item._id}
           status={0}
           project={project}
+          handleUpdateModeratedArticles={props.handleUpdateModeratedArticles}
         />
         <AddArticle
           titre={fullTitle}
           texte={item.article.content}
-          number={item.article.num}
+          number={item.article.num ? item.article.num : "annexe"}
           article_id={item._id}
           status={1}
           project={project}
+          handleUpdateModeratedArticles={props.handleUpdateModeratedArticles}
         />
       </div>
     );
@@ -55,31 +60,34 @@ export default function ListElastic(props) {
     return (
       <div key={item._id} className="list-item">
         <h3>{fullTitle}</h3>
-        <h5>Article numéro : {item.num}</h5>
+        <h5>Article numéro : {item.num ? item.num : "annexe"}</h5>
         <p>{item.texte}</p>
         <AddArticle
           titre={fullTitle}
           texte={item.texte}
-          number={item.num}
+          number={item.num ? item.num : "annexe"}
           article_id={item._id}
           status={2}
           project={project}
+          handleUpdateModeratedArticles={props.handleUpdateModeratedArticles}
         />
         <AddArticle
           titre={fullTitle}
           texte={item.texte}
-          number={item.num}
+          number={item.num ? item.num : "annexe"}
           article_id={item._id}
           status={0}
           project={project}
+          handleUpdateModeratedArticles={props.handleUpdateModeratedArticles}
         />
         <AddArticle
           titre={fullTitle}
           texte={item.texte}
-          number={item.num}
+          number={item.num ? item.num : "annexe"}
           article_id={item._id}
           status={1}
           project={project}
+          handleUpdateModeratedArticles={props.handleUpdateModeratedArticles}
         />
       </div>
     );

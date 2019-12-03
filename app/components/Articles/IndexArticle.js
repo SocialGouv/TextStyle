@@ -27,8 +27,13 @@ function IndexArticle(props) {
   return (
     <div>
       <header>
-        <Link href={"/project/research/" + props.router.query.id}>
+        <Link href={`/project/research/${props.router.query.id}`}>
           <a className="btn btn-primary float-right">Ajouter des articles</a>
+        </Link>
+        <Link href={`/project/revision/${props.router.query.id}`}>
+          <a className="btn btn-primary float-right mr-2">
+            Revision des articles
+          </a>
         </Link>
         <h2>Liste des articles</h2>
       </header>
