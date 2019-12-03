@@ -8,7 +8,7 @@ import ListElastic from "./ListElastic";
 import Select from "react-select";
 
 // proxified by express server. full absolute URL needed here
-const ELASTIC_URL = "http://127.0.0.1:9200";
+
 const selectOptions = [
   { value: "health", label: "Code de la santé publique" },
   { value: "work", label: "Code du travail" },
@@ -16,8 +16,12 @@ const selectOptions = [
   { value: "socialSecurity", label: "Code de la sécurité sociale" },
   { value: "loda", label: "Article non codifiés" }
 ];
+// const ELASTIC_URL = "http://127.0.0.1:9200";
 
-//http://localhost:9200/"; // Docker networking
+const ELASTIC_URL =
+  typeof window !== "undefined"
+    ? window.location.origin + "/elastic"
+    : process.env.ELASTIC_URL;
 
 export default class ElasticResearch extends React.Component {
   constructor(props) {
