@@ -1,0 +1,16 @@
+version: '3.3'
+services:
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+      args:
+        SENTRY_DSN: http://sentry.io
+        SENTRY_TOKEN: 1234
+        MATOMO_URL: https://matomo.tools.factory.social.gouv.fr
+        MATOMO_SITE_ID: 42
+    environment:
+      ELASTIC_URL: http://elastic:9200
+      GRAPHQL_URL: http://graphql-engine:8080
+    ports:
+      - 80:3000

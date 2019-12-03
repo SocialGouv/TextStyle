@@ -1,5 +1,5 @@
 import React from "react";
-import EditArticle from "./EditArticle";
+import CkEditor from "./CkEditor";
 
 function listItemEnabled(status) {
   if (status === 0) {
@@ -11,16 +11,22 @@ function listItemEnabled(status) {
   }
 }
 export default function ListItems(props) {
-  const { listItems } = props;
+  const { listRevision } = props;
   return (
     <div>
-      {listItems &&
-        listItems.map(listItem => (
+      {listRevision &&
+        listRevision.article.map(listItem => (
           <div key={listItem.id} className={listItemEnabled(listItem.status)}>
             <h3>{listItem.titre}</h3>
             <h5>Article numéro : {listItem.number}</h5>
-            <p>{listItem.texte}</p>
-            <EditArticle status={listItem.status} id={listItem.id} />
+            <div className="row mt-5">
+              <div className="col-sm-12 col-md-6">
+                <CkEditor readonly={true} article={listItem} />
+              </div>
+              <div className="col-sm-12 col-md-6">
+                <CkEditor readonly={false} article={listItem} />
+              </div>
+            </div>
           </div>
         ))}
     </div>

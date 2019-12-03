@@ -1,3 +1,4 @@
-demo-22-10-2019.zip
 .DS_Store
-app.old
+docker-compose.override.yaml
+node_modules
+app/public/ckeditor
