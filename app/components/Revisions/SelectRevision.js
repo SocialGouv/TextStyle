@@ -1,4 +1,6 @@
 import React from "react";
+import PropTypes from "prop-types";
+import { FormControl, Col } from "react-bootstrap";
 
 export default class SelectRevision extends React.Component {
   constructor(props) {
@@ -20,21 +22,32 @@ export default class SelectRevision extends React.Component {
   }
 
   render() {
+    var selectHidden = this.props.articleRevision.length > 0;
     return (
-      <div className="mt-4">
-        <select
-          onChange={this.changeSelect}
-          value={this.state.value}
-          disabled={this.state.value ? false : true}
-        >
-          {this.props.articleRevision &&
-            this.props.articleRevision.map(article => (
-              <option key={article.id} value={article.id}>
-                {article.name}
-              </option>
-            ))}
-        </select>
-      </div>
+      <Col xs={6} md={7} className="mt-4 px-0">
+        {selectHidden && (
+          <FormControl
+            size="lg"
+            className="select-revision"
+            as="select"
+            onChange={this.changeSelect}
+            value={this.state.value}
+            disabled={this.state.value ? false : true}
+          >
+            {this.props.articleRevision &&
+              this.props.articleRevision.map(article => (
+                <option key={article.id} value={article.id}>
+                  {article.name}
+                </option>
+              ))}
+          </FormControl>
+        )}
+      </Col>
     );
   }
 }
+
+SelectRevision.propTypes = {
+  articleRevision: PropTypes.array,
+  handleToUpdate: PropTypes.func
+};

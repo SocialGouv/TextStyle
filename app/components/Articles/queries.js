@@ -1,12 +1,17 @@
 import gql from "graphql-tag";
 
 export const GET_LIST_ARTICLES_QUERY = gql`
-  query GET_LIST_ARTICLES_QUERY($skip: Int, $first: Int, $project: Int) {
+  query GET_LIST_ARTICLES_QUERY(
+    $skip: Int
+    $first: Int
+    $project: Int
+    $status: Int
+  ) {
     article(
       offset: $skip
       limit: $first
-      order_by: { status: desc }
-      where: { project: { _eq: $project } }
+      order_by: { id: desc }
+      where: { project: { _eq: $project }, status: { _eq: $status } }
     ) {
       id
       titre
@@ -14,6 +19,13 @@ export const GET_LIST_ARTICLES_QUERY = gql`
       article_id
       texte
       number
+    }
+    article_aggregate(
+      where: { project: { _eq: $project }, status: { _eq: $status } }
+    ) {
+      aggregate {
+        count
+      }
     }
   }
 `;

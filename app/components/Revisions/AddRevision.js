@@ -1,6 +1,8 @@
 import { useMutation } from "@apollo/react-hooks";
 import React from "react";
 import { ADD_ARTICLE_REVISION } from "./queries";
+import PropTypes from "prop-types";
+import Button from "react-bootstrap/Button";
 
 export default function AddRevision(props) {
   const [addArticle, { loading: addLoading, error: addError }] = useMutation(
@@ -19,6 +21,7 @@ export default function AddRevision(props) {
   return (
     <div>
       <form
+        className="float-right mt-4"
         onSubmit={e => {
           e.preventDefault();
           addArticle({
@@ -30,16 +33,24 @@ export default function AddRevision(props) {
                 props.name +
                 " - " +
                 date.toLocaleDateString("fr-FR", optionsDate)
-            }
+            },
+            refetchQueries: ["GET_LIST_REVISION_ARTICLES_QUERY"]
           });
         }}
       >
-        <button className="addRevision" type="submit">
+        <Button variant="secondary addRevision" type="submit">
           Valider la révision
-        </button>
+        </Button>
       </form>
       {addLoading && <p>Loading...</p>}
       {addError && addError.message}
     </div>
   );
 }
+
+AddRevision.propTypes = {
+  text: PropTypes.string,
+  article: PropTypes.number,
+  project: PropTypes.string,
+  name: PropTypes.string
+};

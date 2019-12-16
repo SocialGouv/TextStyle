@@ -6,6 +6,7 @@ import {
 } from "@appbaseio/reactivesearch";
 import ListElastic from "./ListElastic";
 import Select from "react-select";
+import PropTypes from "prop-types";
 
 // proxified by express server. full absolute URL needed here
 
@@ -14,7 +15,9 @@ const selectOptions = [
   { value: "work", label: "Code du travail" },
   { value: "familly", label: "Code de l'action sociale et des familles" },
   { value: "socialSecurity", label: "Code de la sécurité sociale" },
-  { value: "loda", label: "Article non codifiés" }
+  { value: "loda", label: "Article non codifiés" },
+  { value: "lois", label: "Lois" },
+  { value: "decrets", label: "Decrets" }
 ];
 // const ELASTIC_URL = "http://127.0.0.1:9200";
 
@@ -22,6 +25,60 @@ const ELASTIC_URL =
   typeof window !== "undefined"
     ? window.location.origin + "/elastic"
     : process.env.ELASTIC_URL;
+
+function createShouldFilter(selectedOption) {
+  var shouldArray = [];
+  if (selectedOption) {
+    selectedOption.forEach(element => {
+      if (element.value === "health") {
+        shouldArray.push({
+          match_phrase: {
+            "context.titreTxt.titre": "Code de la santé publique"
+          }
+        });
+      } else if (element.value === "work") {
+        shouldArray.push({
+          match_phrase: {
+            "context.titreTxt.titre": "Code du travail"
+          }
+        });
+      } else if (element.value === "familly") {
+        shouldArray.push({
+          match_phrase: {
+            "context.titreTxt.titre": "Code de l'action sociale et des familles"
+          }
+        });
+      } else if (element.value === "socialSecurity") {
+        shouldArray.push({
+          match_phrase: {
+            "context.titreTxt.titre": "Code de la sécurité sociale"
+          }
+        });
+      } else if (element.value === "loda") {
+        shouldArray.push({
+          match_phrase: {
+            _index: "iteration"
+          }
+        });
+      }
+      // else if (element.value === "lois") {
+      //   shouldArray.push({
+      //     match_phrase: {
+      //       lawTitle: "Loi"
+      //     }
+      //   });
+      // } else if (element.value === "decrets") {
+      //   shouldArray.push({
+      //     match_phrase: {
+      //       lawTitle: "Décret"
+      //     }
+      //   });
+      // }
+    });
+  }
+
+  return shouldArray;
+}
 
 export default class ElasticResearch extends React.Component {
   constructor(props) {
@@ -33,56 +90,23 @@ export default class ElasticResearch extends React.Component {
     this.state = {
       projet: props.projet,
       moderatedArticles: props.moderatedArticles,
-      searchString: searchString ? searchString : "",
+      searchString: searchString ? searchString : " ",
       selectedOption: searchFilter ? searchFilter : null
     };
-  }
 
-  createShouldFilter() {
-    var shouldArray = [];
-    if (this.state.selectedOption) {
-      this.state.selectedOption.forEach(element => {
-        if (element.value == "health") {
-          shouldArray.push({
-            match_phrase: {
-              "context.titreTxt.titre": "Code de la santé publique"
-            }
-          });
-        } else if (element.value == "work") {
-          shouldArray.push({
-            match_phrase: {
-              "context.titreTxt.titre": "Code du travail"
-            }
-          });
-        } else if (element.value == "familly") {
-          shouldArray.push({
-            match_phrase: {
-              "context.titreTxt.titre":
-                "Code de l'action sociale et des familles"
-            }
-          });
-        } else if (element.value == "socialSecurity") {
-          shouldArray.push({
-            match_phrase: {
-              "context.titreTxt.titre": "Code de la sécurité sociale"
-            }
-          });
-        } else if (element.value == "loda") {
-          shouldArray.push({
-            match_phrase: {
-              _index: "iteration"
-            }
-          });
-        }
-      });
-    }
-
-    return shouldArray;
+    // @TODO: Clean this in proper way
+    setTimeout(() => {
+      if (this.state.searchString === " ") {
+        this.setState({
+          searchString: ""
+        });
+      }
+    }, 1);
   }
 
   queryElastic(value) {
-    var shouldArray = this.createShouldFilter();
-    var shouldMinimum = 0;
+    const shouldArray = createShouldFilter(this.state.selectedOption);
+    let shouldMinimum = 0;
     if (shouldArray && shouldArray.length > 0) {
       shouldMinimum = 1;
     }
@@ -119,9 +143,9 @@ export default class ElasticResearch extends React.Component {
 
   emulateChangeOnSearch() {
     // trick to refresh the search
-    var tempString;
+    let tempString;
     if (
-      this.state.searchString.charAt(this.state.searchString.length - 1) == " "
+      this.state.searchString.charAt(this.state.searchString.length - 1) === " "
     ) {
       tempString = this.state.searchString.slice(0, -1);
     } else {
@@ -235,3 +259,8 @@ export default class ElasticResearch extends React.Component {
     );
   }
 }
+
+ElasticResearch.propTypes = {
+  projet: PropTypes.string,
+  moderatedArticles: PropTypes.array
+};

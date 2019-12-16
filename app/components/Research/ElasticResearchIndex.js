@@ -1,16 +1,19 @@
 import { useQuery } from "@apollo/react-hooks";
-import React from "react";
+import React, { Fragment } from "react";
 import ElasticResearch from "./ElasticResearch";
+import Header from "../Projects/Header";
 
 import { GET_LIST_ARTICLES_QUERY } from "./queries";
+import PropTypes from "prop-types";
 
 export default function ElasticResearchIndex(props) {
+  const { project } = props;
   const {
     loading: loadingArticles,
     error: errorArticles,
     data: dataArticles
   } = useQuery(GET_LIST_ARTICLES_QUERY, {
-    variables: { project: props.projet },
+    variables: { project: project },
     fetchPolicy: "cache-and-network"
   });
 
@@ -28,9 +31,13 @@ export default function ElasticResearchIndex(props) {
   }
 
   return (
-    <ElasticResearch
-      projet={props.projet}
-      moderatedArticles={moderatedArticles}
-    />
+    <Fragment>
+      <Header project={project} revision={true} research={false} />
+      <ElasticResearch projet={project} moderatedArticles={moderatedArticles} />
+    </Fragment>
   );
 }
+
+ElasticResearchIndex.propTypes = {
+  project: PropTypes.string
+};

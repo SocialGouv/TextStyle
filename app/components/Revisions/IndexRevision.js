@@ -1,43 +1,58 @@
 import React from "react";
-import Link from "next/link";
 import { useQuery } from "@apollo/react-hooks";
 import { withRouter } from "next/router";
+//import { PER_PAGE as perPage } from "../../config/config";
 import ListItems from "./ListItemsRevision";
 import { GET_LIST_REVISION_ARTICLES_QUERY } from "./queries";
+import PropTypes from "prop-types";
+import Header from "../Projects/Header";
 
-function IndexArticle(props) {
+function IndexRevision(props) {
+  const { project } = props;
+
   const {
     loading: loadingArticles,
     error: errorArticles,
-    data: data
+    data: data,
+    fetchMore: fetchMore,
+    networkStatus: networkStatus
   } = useQuery(GET_LIST_REVISION_ARTICLES_QUERY, {
     variables: {
-      project: props.router.query.id
+      skip: 0,
+      first: 2,
+      project: project
     },
-    fetchPolicy: "cache-and-network"
+    fetchPolicy: "network-only"
   });
 
-  if (loadingArticles) return <p>Loading...</p>;
+  if (loadingArticles && networkStatus !== 3) return <p>Loading...</p>;
   if (errorArticles) return <p>Error: {errorArticles.message}</p>;
 
   return (
     <div>
-      <header>
-        <Link href={`/project/${props.router.query.id}`}>
-          <a className="btn btn-primary float-right">
-            Voir les articles modérés
-          </a>
-        </Link>
-        <Link href={`/project/research/${props.router.query.id}`}>
-          <a className="btn btn-primary float-right mr-2">
-            Ajouter des articles
-          </a>
-        </Link>
-        <h2>Liste des révisions</h2>
-      </header>
-      <ListItems listRevision={data} />
+      <Header project={project} revision={false} research={true} />
+      <ListItems
+        listRevision={data || []}
+        onLoadMore={() =>
+          fetchMore({
+            variables: {
+              skip: data.article.length
+            },
+            updateQuery: (prev, { fetchMoreResult }) => {
+              if (!fetchMoreResult) return prev;
+              return Object.assign({}, prev, {
+                article: [...prev.article, ...fetchMoreResult.article]
+              });
+            }
+          })
+        }
+      />
     </div>
   );
 }
 
-export default withRouter(IndexArticle);
+IndexRevision.propTypes = {
+  project: PropTypes.string
+};
+
+export default withRouter(IndexRevision);

@@ -1,0 +1,1 @@
+"{\"iteration\":{\"settings\":{\"index\":{\"number_of_shards\":\"5\",\"blocks\":{\"read_only_allow_delete\":\"true\"},\"number_of_replicas\":\"1\"}}}}"

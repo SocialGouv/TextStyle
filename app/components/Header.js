@@ -19,11 +19,6 @@ export default function Header() {
           </a>
         </Link>
       </h1>
-      <nav>
-        <Link href="/addProject">
-          <a>Ajouter un projet</a>
-        </Link>
-      </nav>
     </div>
   );
 }

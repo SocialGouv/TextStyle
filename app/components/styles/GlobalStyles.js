@@ -1,12 +1,11 @@
 import { createGlobalStyle } from "styled-components";
 
-/* Adding all styling here globally so it's not distracting in the components 
-   for the purpose of this demo. I know this CSS is horrible, 
+/* Adding all styling here globally so it's not distracting in the components
+   for the purpose of this demo. I know this CSS is horrible,
    I'm just getting something working quick */
 
 export default createGlobalStyle`
   /*! normalize.css v8.0.0 | MIT License | github.com/necolas/normalize.css */button,hr,input{overflow:visible}progress,sub,sup{vertical-align:baseline}[type=checkbox],[type=radio],legend{box-sizing:border-box;padding:0}html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}h1{font-size:2em;margin:.67em 0}hr{box-sizing:content-box;height:0}code,kbd,pre,samp{font-family:monospace,monospace;font-size:1em}a{background-color:transparent}abbr[title]{border-bottom:none;text-decoration:underline;text-decoration:underline dotted}b,strong{font-weight:bolder}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}img{border-style:none}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0}button,select{text-transform:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner,button::-moz-focus-inner{border-style:none;padding:0}[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring,button:-moz-focusring{outline:ButtonText dotted 1px}fieldset{padding:.35em .75em .625em}legend{color:inherit;display:table;max-width:100%;white-space:normal}textarea{overflow:auto}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details{display:block}summary{display:list-item}[hidden],template{display:none}
-
   a[aria-disabled='true'] {
     color: grey !important;
     pointer-events: none;
@@ -30,7 +29,7 @@ export default createGlobalStyle`
   }
 
   .header {
-    background: #fff;
+    background: #ECEEE9;
     border-bottom: 1px solid #eaedf2;
     text-align: left;
     padding: 0 25px;
@@ -42,7 +41,7 @@ export default createGlobalStyle`
     z-index: 1010;
     
     h1 {
-      font-size: 1.9rem;
+      font-size: 20px;
       color: #3e3f42;
 
       a {
@@ -53,28 +52,13 @@ export default createGlobalStyle`
 
     svg {
       position: relative;
-      top: 3px;
       left: -5px;
+      vertical-align: text-top;
     }
+  }
 
-    nav {
-      display: block;
-      position: absolute;
-      top: 0;
-      right: 10px;
-
-      a {
-        color: #272e5c;
-        font-size: 1.6rem;
-        text-decoration: none;
-        display: inline-block;
-        padding: 15px 10px;
-
-        &:hover {
-          text-decoration: underline;
-        }
-      }
-    }
+  .fz-14px{
+    font-size:14px;
   }
 
   .main {
@@ -86,12 +70,27 @@ export default createGlobalStyle`
     header {
       margin-bottom: 30px;
       position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
       
       h2 {
         font-size: 3.8rem;
         font-weight: lighter;
-        color: #3e3f42;
+        color: #cccccc;
         margin-bottom: 0;
+        text-align:left;
+        strong{
+        color:#777777;
+        font-weight: 600;
+        }
+      }
+     
+      a {
+        font-size: 14px;
+        font-weight: bold;
+        font-style: normal;
+        color: #7b7b7b;
       }
 
       p {
@@ -115,150 +114,6 @@ export default createGlobalStyle`
       }
     }
     
-  }
-
-  .list-item {
-    border: 1px solid #eaedf2;
-    border-radius: 4px;
-    background: #fff;
-    padding: 30px 60px 30px 30px;
-    text-align: left;
-    box-shadow: 0 4px 8px 0 rgba(191,192,193,0.1);
-    transition: 0.3s;
-    font-size: 1.6rem;
-    margin-bottom: 20px;
-    position: relative;
-    border-color:greenyellow;
-
-    &.denied{
-      border-color:orangered;
-    }
-
-    &.waiting{
-        border-color: orange;
-        button.listDeleteButton.deleteButton {
-        top:60px;
-      }
-    }
-
-    h3{
-      font-size: 16px;
-    }
-
-    p{
-      font-size: 14px;
-      color: grey;
-    }
-
-    &:hover {
-      box-shadow: 0 4px 8px 0 rgba(191,192,193,0.25);
-    }
-
-    button {
-      outline: none !important;
-      position: absolute;
-      top: 29px; 
-      right: 27px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      transition: 0.1s;
-
-      &.addRevision{
-        outline: none !important;
-        position: relative;
-        top: 0;
-        left: 0;
-        display: block;
-        float: right;
-        margin-top: 10px;
-        border: 1px solid black;
-        padding: 8px;
-        cursor: pointer;
-        transition: 0.1s;
-      }
-
-      &.deleteButton{
-        color: red;
-        top: 90px;
-        &.searchDelete{
-          top : 60px;
-        }
-        &.listDeleteButton{
-          top : 29px;
-        }
-      }
-      
-      &.createButton{
-        color: green;
-        &.listCreateButton{
-          top : 29px;
-        }
-      }
-
-      &.waitingButton{
-        color: orange;
-        &.searchWaiting{
-          top : 90px;
-        }
-        &.listWaitingButton{
-          top : 60px;
-        }
-      }
-
-    }
-
-    .delete:hover {
-      font-size: 1.9rem;
-      top: 28px;
-      right: 26px;
-    }
-
-    &--form {
-      input {
-        margin-left: 10px;
-        padding: 5px;
-        border: 1px solid #f7f7f7;
-        background: #f7f7f7;
-        border-radius: 3px;
-        width: 300px;
-      }
-
-      button {
-        padding: 8px;
-        background: #f7f7f7;
-        border-radius: 3px;
-        font-size: 1.4rem;
-        color: #272e5c;
-
-        &:hover {
-          background: #272e5c;
-          color: #fff;
-        }
-      }
-    }
-  }
-
-  .pagination {
-    display: flex;
-    justify-content: space-between;
-    font-size: 1.3rem;
-    line-height: 1.3rem;
-    padding-top: 20px;
-    padding-bottom: 20px;
-
-    a{
-      padding: 12px 15px;
-      background: #fff;
-      border-radius: 3px;
-      color: #272e5c;
-      text-decoration: none;
-      border: 1px solid #eaedf2;
-
-      &:hover {
-        background: #fcfcfc;
-      }
-    }
   }
 
   .loading-items {
@@ -319,5 +174,152 @@ export default createGlobalStyle`
     }
   }
 
-  .addRevision{}
+  
+   .card-list{
+     margin: 10px 0;
+     border-radius: 10px;
+     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
+     border: solid 1px #d6d6d6;
+     background-color: #ffffff;
+    
+    & :first-letter {
+        text-transform: uppercase;
+        } 
+        .card-header {
+            border-radius: 10px;
+            box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
+            background-color: #7b7b7b;
+            color: #fff;
+            font-size: 28px;
+            padding: 20px 15px;
+            &.custom-header{
+            font-size:18px
+            }
+        }
+        
+        .card-body {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            text-align: justify;
+            .card-text  {
+                font-size: 18px;
+                color: #7b7b7b;
+            }
+            .card-title {
+                font-size: 16px;
+                color: #7b7b7b;
+              
+            }
+            p {
+                color:#d6d6d6;
+                font-size: 14px;
+            }
+            .card-actions{
+            button {
+            width:100%;
+            margin:5px 0;
+            padding:5px 10px;
+            border-radius: 5px;
+            border:  none;
+            outline-color: transparent;
+            outline: none !important;
+                &.createButton{
+                background:#e2eed8;
+                }
+                &.deleteButton{
+                background:#efdfdf;
+                }
+                &.waitingButton{
+                background:#fcf7e4;
+                }
+             }
+            }
+            .card-editors{
+            width: 100%;}
+        }
+   }
+   .form-group {
+    margin-bottom: 5rem;
+    font-size: 18px;
+    }
+    @media only screen and (max-width: 768px) {
+    .card-body{
+    flex-direction: column;
+    }
+    }
+
+    .loading-title {
+     -webkit-animation: fadeInOut 8s linear forwards;
+        animation: fadeInOut 8s linear forwards;
+        background: #fbfbfd;
+        text-align: center;
+        margin-top: 200px;
+        font-size:50px;
+        font-weight: lighter;
+        color: #cccccc;
+    }
+    .loading-strong {
+      text-align: center;
+      color: #777777;
+     }
+
+    @keyframes fadeInOut {
+      0%{
+       transform: translate3d(0, -20%, 0);
+       }
+       25%{
+       transform: translate3d(0, 0, 0);
+       opacity: 1;
+       }
+       75% { 
+       opacity: 1;
+       }
+       100%{
+        opacity: 0;
+       }
+    }
+    .visuallyMainHidden {
+      visibility: hidden
+    }
+    .visuallyMain {
+      visibility: visible
+    }
+    .visuallyHidden {
+      display: none;
+    }
+    .numberArticle{
+      font-size: 15px;
+    }
+    button.headerButton {
+      margin:5px 0;
+      padding:7px 15px;
+      font-size: 15px;
+      border-radius: 5px;
+      border:  none;
+      outline: none !important
+      outline-color: transparent;
+      &.createButton{
+        background:#e2eed8;
+        &:hover, &.onThisStatus{
+          background: #5cb85c
+        }
+      }
+      &.deleteButton{
+        background:#efdfdf;
+        &:hover, &.onThisStatus{
+          background: #d9534f;
+        }
+      }
+      &.waitingButton{
+        background:#fcf7e4;
+        &:hover, &.onThisStatus{
+          background: #f0ad4e
+        }
+      }
+      svg{
+        margin-right: 3px;
+        vertical-align: sub;
+      } 
+    }
 `;

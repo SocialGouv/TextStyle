@@ -2,6 +2,8 @@ import { useMutation } from "@apollo/react-hooks";
 import Router from "next/router";
 import React from "react";
 import { ADD_PROJECT, GET_LIST_PROJECT_QUERY } from "./queries";
+import Button from "react-bootstrap/Button";
+import FormControl from "react-bootstrap/FormControl";
 
 export default function AddProject() {
   let inputName;
@@ -26,26 +28,37 @@ export default function AddProject() {
         }}
       >
         <div className="form-group">
-          <p>Nom du projet</p>
-          <input
+          <h2>Nom du projet</h2>
+
+          <FormControl
+            required
+            size="lg"
+            className="mt-3 col-md-4 col-sm-12"
             ref={node => {
               inputName = node;
             }}
-            className="form-control"
+            placeholder="Nom du projet ..."
+            aria-label="Username"
           />
         </div>
         <div className="form-group">
-          <p>Description du projet</p>
+          <h2>Description du projet</h2>
 
-          <textarea
+          <FormControl
+            required
+            className="mt-3 col-md-4 col-sm-12"
+            size="lg"
             ref={node => {
               inputDescription = node;
             }}
-            className="form-control"
+            placeholder="Ex : Ce projet a pour objectif de …"
+            as="textarea"
+            aria-label="With textarea"
           />
         </div>
-
-        <button type="submit">Ajouter le projet</button>
+        <Button variant="secondary" type="submit">
+          Créer
+        </Button>
       </form>
     </div>
   );

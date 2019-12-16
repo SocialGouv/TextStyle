@@ -2,6 +2,7 @@ import React from "react";
 import CKEditor from "ckeditor4-react";
 import AddRevision from "./AddRevision";
 import SelectRevision from "./SelectRevision";
+import PropTypes from "prop-types";
 
 export default class CkEditor extends React.Component {
   constructor(props) {
@@ -88,3 +89,8 @@ export default class CkEditor extends React.Component {
     );
   }
 }
+
+CkEditor.propTypes = {
+  readonly: PropTypes.bool,
+  article: PropTypes.object
+};

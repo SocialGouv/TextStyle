@@ -1,41 +1,45 @@
 import React from "react";
 import { useMutation } from "@apollo/react-hooks";
-import { FaCheck, FaBan, FaClock } from "react-icons/fa";
+import { FaRegClock } from "react-icons/fa";
+import { MdCheck } from "react-icons/md";
+import { IoMdClose } from "react-icons/io";
+import PropTypes from "prop-types";
+
 import { EDIT_ARTICLE } from "./queries";
 
 function statusReturn(status) {
   if (status === 0) {
     return [
-      1,
-      "Êtes vous sur de vouloir mettre en attente l'article ?",
-      "waitingButton listWaitingButton",
-      <FaClock key="0" />,
       2,
       "Êtes vous sur de vouloir accepter l'article ?",
       "createButton listCreateButton",
-      <FaCheck key="0" />
+      <MdCheck key="0" size={22} />,
+      1,
+      "Êtes vous sur de vouloir mettre en attente l'article ?",
+      "waitingButton listWaitingButton",
+      <FaRegClock key="0" size={22} />
     ];
   } else if (status === 1) {
     return [
-      0,
-      "Êtes vous sur de vouloir refuser l'article ?",
-      "deleteButton listDeleteButton",
-      <FaBan key="0" />,
       2,
       "Êtes vous sur de vouloir accepter l'article ?",
       "createButton listCreateButton",
-      <FaCheck key="0" />
-    ];
-  } else if (status === 2) {
-    return [
+      <MdCheck key="0" size={22} />,
       0,
       "Êtes vous sur de vouloir refuser l'article ?",
       "deleteButton listDeleteButton",
-      <FaBan key="0" />,
+      <IoMdClose key="0" size={22} />
+    ];
+  } else if (status === 2) {
+    return [
       1,
       "Êtes vous sur de vouloir mettre en attente l'article ?",
       "waitingButton listWaitingButton",
-      <FaClock key="0" />
+      <FaRegClock key="0" size={22} />,
+      0,
+      "Êtes vous sur de vouloir refuser l'article ?",
+      "deleteButton listDeleteButton",
+      <IoMdClose key="0" size={22} />
     ];
   }
 }
@@ -95,26 +99,11 @@ export default function EditArticle(props) {
       </form>
       {waitLoading && <p>Loading...</p>}
       {waitError && waitError.message}
-
-      {/* <form
-        onSubmit={e => {
-          e.preventDefault();
-          deleteArticle({
-            variables: { id: id },
-            refetchQueries: [
-              "GET_LIST_ARTICLES_QUERY",
-              "LIST_ITEMS_CONNECTION_QUERY"
-            ]
-          });
-        }}
-      >
-        <button className="deleteButton" type="submit">
-          {" "}
-          <FaTrashAlt />{" "}
-        </button>
-        {deleteLoading && <p>Loading...</p>}
-        {deleteError && <p>Error :(</p>}
-      </form> */}
     </div>
   );
 }
+
+EditArticle.propTypes = {
+  id: PropTypes.number,
+  status: PropTypes.number
+};

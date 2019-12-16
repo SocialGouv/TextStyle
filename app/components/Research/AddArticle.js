@@ -1,26 +1,29 @@
 import { useMutation } from "@apollo/react-hooks";
 import React from "react";
-import { FaCheck, FaBan, FaClock } from "react-icons/fa";
+import { FaRegClock } from "react-icons/fa";
 import { ADD_ARTICLE } from "./queries";
+import { MdCheck } from "react-icons/md";
+import { IoMdClose } from "react-icons/io";
+import PropTypes from "prop-types";
 
 function chooseStatus(status) {
   if (status === 0) {
     return [
       "Êtes vous sur de vouloir refuser l'article ?",
       "deleteButton searchDelete",
-      <FaBan key="0" />
+      <IoMdClose key="0" size={22} />
     ];
   } else if (status === 1) {
     return [
       "Êtes vous sur de vouloir mettre en attente l'article ?",
       "waitingButton searchWaiting",
-      <FaClock key="0" />
+      <FaRegClock key="0" size={22} />
     ];
   } else if (status === 2) {
     return [
       "Êtes vous sur de vouloir accepter l'article ?",
       "createButton",
-      <FaCheck key="0" />
+      <MdCheck key="0" size={22} />
     ];
   }
 }
@@ -64,3 +67,12 @@ export default function AddArticle(props) {
     </div>
   );
 }
+
+AddArticle.propTypes = {
+  titre: PropTypes.string,
+  texte: PropTypes.string,
+  number: PropTypes.string,
+  status: PropTypes.number,
+  article_id: PropTypes.string,
+  project: PropTypes.string
+};

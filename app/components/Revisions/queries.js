@@ -1,8 +1,13 @@
 import gql from "graphql-tag";
 
 export const GET_LIST_REVISION_ARTICLES_QUERY = gql`
-  query GET_LIST_ARTICLES_QUERY($project: Int) {
-    article(where: { project: { _eq: $project }, status: { _eq: 2 } }) {
+  query GET_LIST_ARTICLES_QUERY($skip: Int, $first: Int, $project: Int) {
+    article(
+      offset: $skip
+      limit: $first
+      order_by: { id: desc }
+      where: { project: { _eq: $project }, status: { _eq: 2 } }
+    ) {
       id
       titre
       status
