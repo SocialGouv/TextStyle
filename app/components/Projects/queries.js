@@ -6,6 +6,7 @@ export const GET_LIST_PROJECT_QUERY = gql`
       id
       name
       description
+      create_at
     }
   }
 `;

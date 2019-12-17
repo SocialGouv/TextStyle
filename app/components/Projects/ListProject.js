@@ -32,7 +32,14 @@ export default function App() {
             </Row>
           </Col>
           <Col xs={12} md={2}>
-            <p className="text-right">Crée le 21/10/19</p>
+            <p className="text-right">
+              Crée le{" "}
+              {project.create_at.split("-")[2] +
+                "/" +
+                project.create_at.split("-")[1] +
+                "/" +
+                project.create_at.split("-")[0]}
+            </p>
           </Col>
         </Card.Body>
       </Card>

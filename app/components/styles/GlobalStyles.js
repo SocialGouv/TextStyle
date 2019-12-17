@@ -75,7 +75,7 @@ export default createGlobalStyle`
       align-items: baseline;
       
       h2 {
-        font-size: 3.8rem;
+        font-size: 26px;
         font-weight: lighter;
         color: #cccccc;
         margin-bottom: 0;
@@ -292,7 +292,6 @@ export default createGlobalStyle`
       font-size: 15px;
     }
     button.headerButton {
-      margin:5px 0;
       padding:7px 15px;
       font-size: 15px;
       border-radius: 5px;
