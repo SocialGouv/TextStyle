@@ -20,6 +20,6 @@ services:
       context: ./api
       dockerfile: Dockerfile
     environment:
-      POSTGRES_URL: `postgres://postgres:@postgres:5434/postgres`
+      POSTGRES_URL: postgres://postgres:@postgres:5432/postgres
     ports:
       - 8080:8080
