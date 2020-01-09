@@ -5,7 +5,7 @@
 const connection_url =
   typeof window !== "undefined"
     ? `postgres://postgres:@localhost:5434/postgres`
-    : process.env.ELASTIC_URL;
+    : process.env.POSTGRES_URL;
 
 module.exports = {
   client: "pg",
