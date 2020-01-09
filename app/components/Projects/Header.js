@@ -69,7 +69,9 @@ export default function Header(props) {
       <header>
         <Row className="w-100">
           <Col xs={12} md={3} className="mb-2">
-            <h2>{dataProjects.project[0].name}</h2>
+            <h2>
+              {dataProjects.project[0] ? dataProjects.project[0].name : ""}
+            </h2>
           </Col>
           <Col xs={12} md={5} className="mb-2">
             {withResearch()}

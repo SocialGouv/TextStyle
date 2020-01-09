@@ -8,7 +8,7 @@ function getStatus(status, numberArticle) {
   if (status === "validated") {
     statusString = numberArticle > 1 ? "validés" : "validé";
   } else if (status === "waiting") {
-    statusString = numberArticle > 1 ? "en attentes" : "en attente";
+    statusString = numberArticle > 1 ? "en attente" : "en attente";
   } else if (status === "declined") {
     statusString = numberArticle > 1 ? "refusés" : "refusé";
   }

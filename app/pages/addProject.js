@@ -1,8 +1,9 @@
 import React from "react";
 import AddProject from "../components/Projects/AddProject";
 import Container from "react-bootstrap/Container";
+import { withAuthSync } from "../utils/auth";
 
-export default function PageAddProject() {
+function PageAddProject() {
   return (
     <div>
       <header>
@@ -14,3 +15,5 @@ export default function PageAddProject() {
     </div>
   );
 }
+
+export default withAuthSync(PageAddProject);

@@ -6,17 +6,19 @@ import Container from "react-bootstrap/Container";
 import { Col, Row, Card } from "react-bootstrap";
 import Loading from "../Loading/Loading";
 import Button from "react-bootstrap/Button";
+import { withRouter } from "next/router";
+import PropTypes from "prop-types";
 
-export default function App() {
+function App(props) {
   const {
     loading: loadingProjects,
     error: errorProjects,
     data: dataProjects
   } = useQuery(GET_LIST_PROJECT_QUERY, { fetchPolicy: "cache-and-network" });
 
+  const { history } = props;
   if (loadingProjects) return <p>Loading...</p>;
   if (errorProjects) return <p>Error: {errorProjects.message}</p>;
-
   const projects = dataProjects.project.map(project => (
     <Link
       key={project.id}
@@ -48,7 +50,13 @@ export default function App() {
 
   return (
     <Fragment>
-      <Loading />
+      {history &&
+      (history[history.length - 2] === "/login" ||
+        history[history.length - 2] === "/signup") ? (
+        <Loading />
+      ) : (
+        ""
+      )}
       <header>
         <h2>Liste des projets</h2>
         <nav>
@@ -69,3 +77,9 @@ export default function App() {
     </Fragment>
   );
 }
+
+App.propTypes = {
+  history: PropTypes.array
+};
+
+export default withRouter(App);

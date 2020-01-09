@@ -1,4 +1,6 @@
 import React, { Fragment, useEffect } from "react";
+import { getJwt } from "../../utils/auth";
+
 export default function Loading() {
   useEffect(() => {
     var header = document.querySelector(".main header");
@@ -12,12 +14,14 @@ export default function Loading() {
       header.classList.add("visuallyMain");
     }, 3000);
   });
+  const userInfo = getJwt();
+
   return (
     <Fragment>
       <h2 className="loading-title">
         {" "}
         Bienvenue dans TextStyle <br></br>
-        <strong className="loading-strong">Florence</strong>
+        <strong className="loading-strong">{userInfo.name}</strong>
       </h2>
     </Fragment>
   );

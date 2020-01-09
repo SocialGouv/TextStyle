@@ -50,6 +50,10 @@ export default createGlobalStyle`
       }
     }
 
+    button{
+      margin: .67em 0;
+    }
+
     svg {
       position: relative;
       left: -5px;

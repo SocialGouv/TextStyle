@@ -4,11 +4,13 @@ import React from "react";
 import { ADD_PROJECT, GET_LIST_PROJECT_QUERY } from "./queries";
 import Button from "react-bootstrap/Button";
 import FormControl from "react-bootstrap/FormControl";
+import { getJwt } from "../../utils/auth";
 
 export default function AddProject() {
   let inputName;
   let inputDescription;
   const [addProject] = useMutation(ADD_PROJECT);
+  const userInfo = getJwt();
 
   return (
     <div>
@@ -18,7 +20,8 @@ export default function AddProject() {
           addProject({
             variables: {
               name: inputName.value,
-              description: inputDescription.value
+              description: inputDescription.value,
+              create_by: userInfo.id
             },
             refetchQueries: [GET_LIST_PROJECT_QUERY]
           });

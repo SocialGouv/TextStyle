@@ -5,6 +5,7 @@ const proxyMiddleware = require("http-proxy-middleware");
 
 const ELASTIC_URL = process.env.ELASTIC_URL || "http://127.0.0.1:9210";
 const GRAPHQL_URL = process.env.GRAPHQL_URL || "http://127.0.0.1:8082";
+const API_URL = process.env.API_URL || "http://127.0.0.1:8080";
 const PORT = parseInt(process.env.PORT, 10) || 3000;
 const NODE_ENV = process.env.NODE_ENV;
 
@@ -17,6 +18,11 @@ const proxies = {
   "/graphql-engine": {
     target: GRAPHQL_URL,
     pathRewrite: { "^/graphql-engine": "/" },
+    changeOrigin: true
+  },
+  "/api": {
+    target: API_URL,
+    pathRewrite: { "^/api": "/" },
     changeOrigin: true
   }
 };

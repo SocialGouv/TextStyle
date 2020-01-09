@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import ElasticResearchIndex from "../../../../components/Research/ElasticResearchIndex";
+import { withAuthSync } from "../../../../utils/auth";
 
 const ResearchIndex = props => <ElasticResearchIndex project={props.id} />;
 
@@ -14,4 +15,4 @@ ResearchIndex.propTypes = {
   id: PropTypes.string
 };
 
-export default ResearchIndex;
+export default withAuthSync(ResearchIndex);

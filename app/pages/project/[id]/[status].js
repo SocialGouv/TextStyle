@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Index from "../../../components/Articles/IndexArticle";
+import { withAuthSync } from "../../../utils/auth";
 
 const ArticlesIndex = props => (
   <Index project={props.id} status={props.status} />
@@ -17,4 +18,4 @@ ArticlesIndex.propTypes = {
   status: PropTypes.string
 };
 
-export default ArticlesIndex;
+export default withAuthSync(ArticlesIndex);

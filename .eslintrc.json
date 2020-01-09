@@ -10,6 +10,7 @@
       "aspects": [ "invalidHref", "preferButton" ]
     }],
     // "jsx-a11y/anchor-is-valid": "warn",
-    "react/prop-types": "warn"
+    "react/prop-types": "warn",
+    "jsx-a11y/no-onchange": "warn"
   }
 }

@@ -15,13 +15,35 @@ class MyApp extends App {
     return { pageProps };
   }
 
+  state = {
+    history: [] // keep history items in state
+  };
+
+  componentDidMount() {
+    const { asPath } = this.props.router;
+
+    // lets add initial route to `history`
+    this.setState(prevState => ({ history: [...prevState.history, asPath] }));
+  }
+
+  componentDidUpdate() {
+    const { history } = this.state;
+    const { asPath } = this.props.router;
+    // if current route (`asPath`) does not equal
+    // the latest item in the history,
+    // it is changed so lets save it
+    if (history[history.length - 1] !== asPath) {
+      this.setState(prevState => ({ history: [...prevState.history, asPath] }));
+    }
+  }
+
   render() {
-    const { Component, pageProps, apollo } = this.props;
+    const { Component, pageProps, apolloClient } = this.props;
 
     return (
-      <ApolloProvider client={apollo}>
+      <ApolloProvider client={apolloClient}>
         <PageLayout>
-          <Component {...pageProps} />
+          <Component history={this.state.history} {...pageProps} />
         </PageLayout>
       </ApolloProvider>
     );
