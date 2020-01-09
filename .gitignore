@@ -3,3 +3,4 @@ docker-compose.override.yaml
 node_modules
 app/public/ckeditor
 hasura/Dockerfile
+package-lock.json
