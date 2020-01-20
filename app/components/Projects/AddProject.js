@@ -21,7 +21,7 @@ export default function AddProject() {
             variables: {
               name: inputName.value,
               description: inputDescription.value,
-              create_by: userInfo.id
+              create_by: userInfo.user.id
             },
             refetchQueries: [GET_LIST_PROJECT_QUERY]
           });

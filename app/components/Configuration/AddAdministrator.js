@@ -53,7 +53,7 @@ export default function AddAdministrator(props) {
             {administratorList &&
               administratorList.map(admin => (
                 <option key={admin.id} value={admin.id}>
-                  {admin.username} - {admin.email}
+                  {admin.lastName} {admin.firstName} - {admin.email}
                 </option>
               ))}
           </FormControl>

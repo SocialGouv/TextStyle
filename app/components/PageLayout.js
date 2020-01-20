@@ -3,8 +3,12 @@ import Head from "next/head";
 import GlobalStyles from "./styles/GlobalStyles";
 import Header from "./Header";
 import PropTypes from "prop-types";
+import { Col } from "react-bootstrap";
+import Row from "react-bootstrap/Row";
 
 export default function PageLayout(props) {
+  const url = props.children.props.apiUrl;
+  const hasHeader = url === "/api/login" || url === "/api/signup";
   return (
     <div>
       <GlobalStyles />
@@ -21,13 +25,23 @@ export default function PageLayout(props) {
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js" />
         <script
           type="text/javascript"
-          src="ckeditor/plugins/lite/lite-interface.js"
+          src="/ckeditor/plugins/lite/lite-interface.js"
         />
       </Head>
-
-      <Header />
-
-      <div className="main">{props.children}</div>
+      <Row>
+        <Col xs={3} md={2}>
+          {!hasHeader && (
+            <Header
+              id={props.children.props.id ? props.children.props.id : null}
+            />
+          )}
+        </Col>
+        <Col xs={!hasHeader ? 8 : 12} md={!hasHeader ? 9 : 12}>
+          <div className={!hasHeader ? "main" : " hasHeader main"}>
+            {props.children}
+          </div>
+        </Col>
+      </Row>
     </div>
   );
 }

@@ -6,12 +6,12 @@ const { User } = require("../db/schema");
 passport.use(
   new LocalStrategy(
     {
-      usernameField: "username",
+      usernameField: "email",
       passwordField: "password"
     },
-    function(username, password, done) {
+    function(email, password, done) {
       User.query()
-        .where("username", username)
+        .where("email", email)
         .first()
         .then(function(user) {
           if (!user) {

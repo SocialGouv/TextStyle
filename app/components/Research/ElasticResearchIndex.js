@@ -18,8 +18,9 @@ export default function ElasticResearchIndex(props) {
   });
 
   if (loadingArticles) return <p>Loading...</p>;
-  if (errorArticles) return <p>Error: {errorArticles.message}</p>;
-
+  if (errorArticles) {
+    return <p>Error: {errorArticles.message}</p>;
+  }
   var moderatedArticles = [];
   if (dataArticles) {
     dataArticles.article.forEach(function(item) {
@@ -32,7 +33,7 @@ export default function ElasticResearchIndex(props) {
 
   return (
     <Fragment>
-      <Header project={project} revision={true} research={false} />
+      <Header project={project} />
       <ElasticResearch projet={project} moderatedArticles={moderatedArticles} />
     </Fragment>
   );

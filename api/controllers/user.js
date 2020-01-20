@@ -26,7 +26,7 @@ exports.getJwks = async (req, res) => {
  * Sign in using username and password and returns JWT
  */
 exports.postLogin = async (req, res, next) => {
-  req.assert("username", "Username is not valid").notEmpty();
+  req.assert("email", "email is not valid").notEmpty();
   req.assert("password", "Password cannot be blank").notEmpty();
 
   const errors = req.validationErrors();
@@ -50,7 +50,7 @@ exports.postLogin = async (req, res, next) => {
  * Create a new local account
  */
 exports.postSignup = async (req, res, next) => {
-  req.assert("username", "Username is not valid").notEmpty();
+  req.assert("username", "username is not valid").notEmpty();
   req.assert("password", "Password must be at least 4 characters long").len(4);
   req
     .assert("confirmPassword", "Passwords do not match")
@@ -64,8 +64,14 @@ exports.postSignup = async (req, res, next) => {
 
   try {
     const user = await User.query()
-      .allowInsert("[username, password, email]")
+      .allowInsert(
+        "[username, password, email,firstName, lastName, ministry,management ]"
+      )
       .insert({
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        ministry: req.body.ministry,
+        management: req.body.management,
         username: req.body.username,
         password: req.body.password,
         email: req.body.email

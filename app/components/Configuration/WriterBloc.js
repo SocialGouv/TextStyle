@@ -17,6 +17,8 @@ export default function WriterBloc(props) {
     writerList = user.filter(elem =>
       writer.find(({ writer_id }) => elem.id === writer_id)
     );
+
+    console.log(writerList);
   }
 
   return (
@@ -34,7 +36,7 @@ export default function WriterBloc(props) {
                 ? writerList &&
                   writerList.map(user => (
                     <Card.Title key={user.id}>
-                      - {user.username} / {user.email}{" "}
+                      - {user.lastName} {user.firstName} / {user.email}{" "}
                       <DeleteWriter project={project} writer={user.id} />
                     </Card.Title>
                   ))

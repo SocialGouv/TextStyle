@@ -36,6 +36,10 @@ class User extends Model {
   getUser() {
     return {
       id: this.id,
+      firstName: this.firstName,
+      lastName: this.lastName,
+      ministry: this.ministry,
+      management: this.management,
       username: this.username,
       email: this.email,
       token: this.getJwt()
@@ -59,9 +63,16 @@ class User extends Model {
       algorithm: "RS256"
     };
     const claim = {
-      name: this.username,
-      id: this.id,
-      // iat: Math.floor(Date.now() / 1000),
+      user: {
+        name: this.username,
+        email: this.email,
+        firstName: this.firstName,
+        lastName: this.lastName,
+        ministry: this.ministry,
+        management: this.management,
+        id: this.id
+      },
+      iat: Math.floor(Date.now() / 1000),
       "https://hasura.io/jwt/claims": this.getHasuraClaims()
     };
     return jwt.sign(claim, jwtConfig.key, signOptions);
@@ -83,10 +94,22 @@ class User extends Model {
   static get jsonSchema() {
     return {
       type: "object",
-      required: ["username"],
+      required: [
+        "username",
+        "email",
+        "firstName",
+        "lastName",
+        "ministry",
+        "management"
+      ],
       properties: {
         id: { type: "integer" },
-        username: { type: "string", minLength: 1, maxLength: 255 }
+        username: { type: "string", minLength: 1, maxLength: 255 },
+        email: { type: "string", minLength: 1, maxLength: 255 },
+        firstName: { type: "string", minLength: 1, maxLength: 255 },
+        lastName: { type: "string", minLength: 1, maxLength: 255 },
+        ministry: { type: "string", minLength: 1, maxLength: 255 },
+        management: { type: "string", minLength: 1, maxLength: 255 }
       }
     };
   }

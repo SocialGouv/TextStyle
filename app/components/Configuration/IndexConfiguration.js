@@ -26,12 +26,12 @@ function IndexConfiguration(props) {
   if (
     data.project.length === 0 ||
     data.project[0].project_administrators.filter(
-      e => e.administrator_id === userInfo.id
+      e => e.administrator_id === userInfo.user.id
     ).length !== 1
   ) {
     return (
       <div>
-        <Header project={project} revision={true} research={true} />
+        <Header project={project} />
         <p>Vous n&apos;avez pas accès à cette page.</p>
       </div>
     ); // reroute if you are not admin of this project
@@ -39,7 +39,7 @@ function IndexConfiguration(props) {
 
   return (
     <div>
-      <Header project={project} revision={true} research={true} />
+      <Header project={project} />
       <AdministratorBloc
         user={data.user}
         administrator={data.project[0].project_administrators}

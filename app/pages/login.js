@@ -1,47 +1,27 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import fetch from "isomorphic-unfetch";
 import { login } from "../utils/auth";
+import { Card } from "react-bootstrap";
+import Link from "next/link";
+import Button from "react-bootstrap/Button";
+import PropTypes from "prop-types";
 
-class Login extends Component {
-  static getInitialProps() {
-    const apiUrl = "/api/login";
+const Login = props => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-    return { apiUrl };
-  }
-
-  constructor(props) {
-    super(props);
-
-    this.state = { username: "", password: "", error: "" };
-    this.handleChangeUsername = this.handleChangeUsername.bind(this);
-    this.handleChangePassword = this.handleChangePassword.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
-  handleChangeUsername(event) {
-    this.setState({ username: event.target.value });
-  }
-
-  handleChangePassword(event) {
-    this.setState({ password: event.target.value });
-  }
-
-  async handleSubmit(event) {
+  const handleSubmit = async event => {
     event.preventDefault();
-    this.setState({ error: "" });
-    const username = this.state.username;
-    const password = this.state.password;
-    const url = this.props.apiUrl;
-
+    const url = props.apiUrl;
     try {
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ email, password })
       });
       if (response.ok) {
         const { token } = await response.json();
-        console.log(token);
         login({ token });
       } else {
         // https://github.com/developit/unfetch#caveats
@@ -54,77 +34,99 @@ class Login extends Component {
         "You have an error in your code or there are Network issues.",
         error
       );
-      this.setState({ error: error.message });
+      setError(error.message);
     }
-  }
+  };
 
-  render() {
-    return (
-      <div>
-        <div className="login">
-          <form onSubmit={this.handleSubmit}>
-            <label htmlFor="username">Enter username</label>
+  return (
+    <div className="login">
+      <h2> Bienvenue dans TextStyle</h2>
+      <Card className="card-login">
+        <Card.Header>Login</Card.Header>
+        <Card.Body>
+          <div>
+            <form onSubmit={handleSubmit}>
+              <label htmlFor="email">Adresse mail</label>
 
-            <input
-              type="text"
-              id="username"
-              name="username"
-              value={this.state.username}
-              onChange={this.handleChangeUsername}
-            />
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={this.state.password}
-              onChange={this.handleChangePassword}
-            />
+              <input
+                type="text"
+                id="email"
+                name="email"
+                value={email}
+                onChange={event => setEmail(event.target.value)}
+              />
+              <label htmlFor="username">Mot de passe</label>
 
-            <button type="submit">Login</button>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={password}
+                onChange={event => setPassword(event.target.value)}
+              />
+              <Link
+                key={"addProject"}
+                href="/passwordForget"
+                as={`/passwordForget`}
+              >
+                Mot de passe oublié
+              </Link>
 
-            <p className={`error ${this.state.error && "show"}`}>
-              {this.state.error && `Error: ${this.state.error}`}
-            </p>
-          </form>
-        </div>
-        <style jsx>{`
-          .login {
-            max-width: 340px;
-            margin: 0 auto;
-            padding: 1rem;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-          }
+              <Button
+                className="mt-5 btn-login"
+                variant="secondary"
+                type="submit"
+              >
+                Connexion
+              </Button>
 
-          form {
-            display: flex;
-            flex-flow: column;
-          }
+              <p className={`error ${error && "show"}`}>
+                {error && `Error: ${error}`}
+              </p>
+            </form>
+          </div>
+        </Card.Body>
+      </Card>
 
-          label {
-            font-weight: 600;
-          }
+      <style jsx>{`
+        form {
+          display: flex;
+          flex-flow: column;
+        }
 
-          input {
-            padding: 8px;
-            margin: 0.3rem 0 1rem;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-          }
+        label {
+          color: #373a3c;
+          font-size: 16px;
+        }
 
-          .error {
-            margin: 0.5rem 0 0;
-            display: none;
-            color: brown;
-          }
+        input {
+          padding: 8px;
+          margin: 0.3rem 0 1rem;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          font-size: 14px;
+        }
 
-          .error.show {
-            display: block;
-          }
-        `}</style>
-      </div>
-    );
-  }
-}
+        .error {
+          margin: 0.5rem 0 0;
+          display: none;
+          color: brown;
+        }
 
+        .error.show {
+          display: block;
+        }
+      `}</style>
+    </div>
+  );
+};
+
+Login.getInitialProps = async function() {
+  const apiUrl = "/api/login";
+
+  return { apiUrl };
+};
+Login.propTypes = {
+  apiUrl: PropTypes.string
+};
 export default Login;

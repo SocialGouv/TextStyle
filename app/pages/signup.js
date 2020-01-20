@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import fetch from "isomorphic-unfetch";
 import { signup } from "../utils/auth";
+import PropTypes from "prop-types";
 
 class Signup extends Component {
   static getInitialProps() {
@@ -13,6 +14,10 @@ class Signup extends Component {
     super(props);
 
     this.state = {
+      firstName: "",
+      lastName: "",
+      ministry: "",
+      management: "",
       username: "",
       email: "",
       password: "",
@@ -20,6 +25,10 @@ class Signup extends Component {
       error: ""
     };
     this.handleChangeUsername = this.handleChangeUsername.bind(this);
+    this.handleChangeFirstName = this.handleChangeFirstName.bind(this);
+    this.handleChangeLastName = this.handleChangeLastName.bind(this);
+    this.handleChangeMinistry = this.handleChangeMinistry.bind(this);
+    this.handleChangeManagement = this.handleChangeManagement.bind(this);
     this.handleChangeEmail = this.handleChangeEmail.bind(this);
     this.handleChangePassword = this.handleChangePassword.bind(this);
     this.handleChangeConfirmPassword = this.handleChangeConfirmPassword.bind(
@@ -30,6 +39,22 @@ class Signup extends Component {
 
   handleChangeUsername(event) {
     this.setState({ username: event.target.value });
+  }
+
+  handleChangeFirstName(event) {
+    this.setState({ firstName: event.target.value });
+  }
+
+  handleChangeLastName(event) {
+    this.setState({ lastName: event.target.value });
+  }
+
+  handleChangeMinistry(event) {
+    this.setState({ ministry: event.target.value });
+  }
+
+  handleChangeManagement(event) {
+    this.setState({ management: event.target.value });
   }
 
   handleChangeEmail(event) {
@@ -48,6 +73,10 @@ class Signup extends Component {
     event.preventDefault();
     this.setState({ error: "" });
     const username = this.state.username;
+    const firstName = this.state.firstName;
+    const lastName = this.state.lastName;
+    const ministry = this.state.ministry;
+    const management = this.state.management;
     const email = this.state.email;
     const password = this.state.password;
     const confirmPassword = this.state.confirmPassword;
@@ -57,7 +86,16 @@ class Signup extends Component {
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password, email, confirmPassword })
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          ministry,
+          management,
+          username,
+          password,
+          email,
+          confirmPassword
+        })
       });
       if (response.ok) {
         const { token } = await response.json();
@@ -90,6 +128,44 @@ class Signup extends Component {
               name="username"
               value={this.state.username}
               onChange={this.handleChangeUsername}
+            />
+
+            <label htmlFor="firstName">Enter first name</label>
+
+            <input
+              type="text"
+              id="firstName"
+              name="firstName"
+              value={this.state.firstName}
+              onChange={this.handleChangeFirstName}
+            />
+
+            <label htmlFor="lastName">Enter last Name</label>
+
+            <input
+              type="text"
+              id="lastName"
+              name="lastName"
+              value={this.state.lastName}
+              onChange={this.handleChangeLastName}
+            />
+            <label htmlFor="ministry">Enter ministry</label>
+
+            <input
+              type="text"
+              id="ministry"
+              name="ministry"
+              value={this.state.ministry}
+              onChange={this.handleChangeMinistry}
+            />
+            <label htmlFor="management">Enter management</label>
+
+            <input
+              type="text"
+              id="management"
+              name="management"
+              value={this.state.management}
+              onChange={this.handleChangeManagement}
             />
             <label htmlFor="email">Enter email</label>
 
@@ -163,5 +239,7 @@ class Signup extends Component {
     );
   }
 }
-
+Signup.propTypes = {
+  apiUrl: PropTypes.string
+};
 export default Signup;

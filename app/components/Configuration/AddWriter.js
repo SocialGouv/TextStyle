@@ -47,7 +47,7 @@ export default function AddWriter(props) {
             {writerList &&
               writerList.map(user => (
                 <option key={user.id} value={user.id}>
-                  {user.username} - {user.email}
+                  {user.lastName} {user.firstName} - {user.email}
                 </option>
               ))}
           </FormControl>

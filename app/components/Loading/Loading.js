@@ -3,15 +3,15 @@ import { getJwt } from "../../utils/auth";
 
 export default function Loading() {
   useEffect(() => {
-    var header = document.querySelector(".main header");
-    header.classList.add("visuallyMainHidden");
+    var homePage = document.querySelector(".home");
     var main = document.querySelector(".main .p-0");
     main.classList.add("visuallyMainHidden");
+    homePage.classList.add("visuallyMainHidden");
     setTimeout(function() {
       var loading = document.querySelector(".loading-title");
       loading.classList.add("visuallyHidden");
       main.classList.add("visuallyMain");
-      header.classList.add("visuallyMain");
+      homePage.classList.add("visuallyMain");
     }, 3000);
   });
   const userInfo = getJwt();
@@ -19,9 +19,8 @@ export default function Loading() {
   return (
     <Fragment>
       <h2 className="loading-title">
-        {" "}
         Bienvenue dans TextStyle <br></br>
-        <strong className="loading-strong">{userInfo.name}</strong>
+        <strong className="loading-strong">{userInfo.user.firstName}</strong>
       </h2>
     </Fragment>
   );

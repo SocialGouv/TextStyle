@@ -1,5 +1,5 @@
 {
-  "name": "platyplus-authentication-server",
+  "name": "textstyle-authentication-server",
   "version": "1.0.0",
   "engines": {
     "node": "11.4.0"
@@ -10,16 +10,6 @@
     "start": "node app.js",
     "lint": "eslint \"**/*.js\""
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/platyplus/authentication-server"
-  },
-  "author": "Pierre-Louis Mercereau",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/platyplus/authentication-server/issues"
-  },
-  "homepage": "https://github.com/platyplus/authentication-server",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",

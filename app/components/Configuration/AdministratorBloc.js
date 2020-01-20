@@ -39,7 +39,7 @@ export default function AdministratorBloc(props) {
                 ? administratorList &&
                   administratorList.map(admin => (
                     <Card.Title key={admin.id}>
-                      - {admin.username} / {admin.email}{" "}
+                      - {admin.lastName} {admin.firstName} / {admin.email}{" "}
                       <DeleteAdministrator
                         project={project}
                         administrator={admin.id}

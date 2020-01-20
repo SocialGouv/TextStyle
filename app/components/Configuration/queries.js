@@ -24,6 +24,10 @@ export const GET_LIST_USER_PROJECT_QUERY = gql`
       id
       username
       email
+      firstName
+      lastName
+      ministry
+      management
     }
   }
 `;

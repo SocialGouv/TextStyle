@@ -30,7 +30,7 @@ function IndexRevision(props) {
 
   return (
     <div>
-      <Header project={project} revision={false} research={true} />
+      <Header project={project} />
       <ListItems
         listRevision={data || []}
         onLoadMore={() =>

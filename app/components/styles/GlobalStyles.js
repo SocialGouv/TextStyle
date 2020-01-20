@@ -20,26 +20,56 @@ export default createGlobalStyle`
   html {
     font-size: 10px;
   }
-
+  
   body {
     background: #fbfbfd;
     font-family: 'Helvetica, sans-serif';
     text-align: center;
     margin-top: 50px;
+    overflow-x: hidden;
   }
+  .menu-img.activeRoute {
+    border-bottom: 2px solid white;
+    padding-bottom: 5px;
+    height: 30px;
+}
+.menu-img {
+    margin: auto;
+    cursor:pointer;
+}
+.menu-img:hover {
+  transform: translateY(-2px);
+}
+
+hr {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 2px solid rgba(255, 255, 255, 0.87);
+    width: 100%;
+    position: absolute;
+    left: 0;
+}
 
   .header {
-    background: #ECEEE9;
     border-bottom: 1px solid #eaedf2;
     text-align: left;
-    padding: 0 25px;
     position: fixed;
-    width: 100%;
+    width: 122px;
     top:0;
     left: 0;
-    height: 50px;
+    height:100%
+    align-items: center;
+    display: flex;
+    flex-direction: column;
     z-index: 1010;
-    
+    .header-menu{
+     background: #777777;
+     height:inherit;
+     width:100%
+     
+     
+    }
     h1 {
       font-size: 20px;
       color: #3e3f42;
@@ -64,19 +94,21 @@ export default createGlobalStyle`
   .fz-14px{
     font-size:14px;
   }
+  .hasHeader{
+  margin:auto;
+  }
 
   .main {
     padding: 60px 30px;
     text-align: left; 
-    max-width: 1180px;
-    margin: 0 auto;
-
+    // max-width: 1180px;
+   
     header {
       margin-bottom: 30px;
       position: relative;
       display: flex;
-      justify-content: space-between;
-      align-items: baseline;
+      align-items: center;
+      justify-content: end;
       
       h2 {
         font-size: 26px;
@@ -101,6 +133,13 @@ export default createGlobalStyle`
         color: #9ea0a5;
         font-size: 1.4rem
       }
+      .add-project {
+          border-radius: 4px;
+          border: solid 1px #dddddd;
+          background-color: #dddddd;
+          text-align: center;
+          color: #373a3c;
+        }
 
       .add-link {
         position: absolute;
@@ -177,8 +216,43 @@ export default createGlobalStyle`
       font-size:0.9em !important;
     }
   }
-
-  
+         
+ .login {
+     h2 {
+      text-align: center;
+       font-size: 50px;
+        color: #dddddd;
+        margin-bottom: 100px;
+      }
+   }
+  .card-login {
+      max-width: 500px;
+      margin: 0 auto;
+      border:3px solid #dddddd;
+      border-radius: 10px;
+      .card-header {
+            box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
+            background-color: #dddddd;
+            color: #777777;
+            font-size: 28px;
+            padding: 20px 15px;
+            text-align: center;
+            }
+            .btn-login {
+            background-color: #dddddd;
+            border-color:#dddddd;
+            color: #373a3c;
+            width: 110px;
+            margin: 0 auto;
+            }
+            .card-body {
+            a{
+            color:#777777;
+            text-decoration: underline;
+            font-size:14px;
+            }
+            }
+          }
    .card-list{
      margin: 10px 0;
      border-radius: 10px;
@@ -325,4 +399,11 @@ export default createGlobalStyle`
         vertical-align: sub;
       } 
     }
+     .add-input {
+          border-radius: 4px;
+          border: solid 1px #dddddd;
+          background-color: #dddddd;
+          color:#373a3c;
+          width: 150px;
+        }
 `;
