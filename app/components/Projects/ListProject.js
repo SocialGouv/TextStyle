@@ -49,7 +49,6 @@ function App(props) {
       </Card>
     </Link>
   ));
-
   return (
     <Fragment>
       {history &&
@@ -65,15 +64,20 @@ function App(props) {
             <h1>Profil</h1>
             <div className="mt-5">
               <Row>
-                <Col xs={12} md={3}>
+                <Col xs={12} sm={12} md={6} lg={5}>
                   <Image
+                    className="img-person"
                     src={"/images/person.png"}
-                    width="150"
-                    height="150"
                     alt="person image"
                   />
                 </Col>
-                <Col xs={12} md={9} className="d-flex flex-column">
+                <Col
+                  xs={12}
+                  sm={12}
+                  md={6}
+                  lg={7}
+                  className="d-flex flex-column"
+                >
                   <h3>
                     {userInfo.user.firstName} {userInfo.user.lastName}
                   </h3>
@@ -92,7 +96,11 @@ function App(props) {
             <header>
               <h1>Projets</h1>
               <nav>
-                <Link key={"addProject"} href="/addProject" as={`/addProject`}>
+                <Link
+                  key={"addProject"}
+                  href={"/addProject"}
+                  as={`/addProject`}
+                >
                   <Button
                     variant="secondary"
                     type="submit"

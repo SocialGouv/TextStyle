@@ -32,6 +32,30 @@ export const GET_LIST_USER_PROJECT_QUERY = gql`
   }
 `;
 
+export const GET_PROJECT_QUERY = gql`
+  query GET_PROJECT_QUERY($project: Int) {
+    project(where: { id: { _eq: $project } }) {
+      name
+      description
+    }
+  }
+`;
+
+export const EDIT_PROJECT = gql`
+  mutation EDIT_PROJECT($project: Int!, $name: String!, $description: String) {
+    update_project(
+      where: { id: { _eq: $project } }
+      _set: { name: $name, description: $description }
+    ) {
+      affected_rows
+      returning {
+        name
+        description
+      }
+    }
+  }
+`;
+
 export const ADD_PROJECT_ADMINISTRATOR = gql`
   mutation ADD_PROJECT_ADMINISTRATOR(
     $project: Int

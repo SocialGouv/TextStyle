@@ -14,7 +14,6 @@ const getToken = () => {
   let token = null;
   if (typeof document !== "undefined") {
     token = "Bearer " + cookie.get("token");
-    console.log(token);
   }
   return token;
 };

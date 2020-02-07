@@ -105,6 +105,7 @@ const Login = props => {
           border: 1px solid #ccc;
           border-radius: 4px;
           font-size: 14px;
+          width: 100%;
         }
 
         .error {

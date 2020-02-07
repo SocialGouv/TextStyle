@@ -50,7 +50,7 @@ export default function Header(props) {
                 alt="React Bootstrap logo"
               />
             </Link>
-            <Link key={`profile`} href="/profile" as={`/profile`}>
+            <Link key={`profile`} href={"/profile"} as={`/profile`}>
               <img
                 src={"/icon/User.svg"}
                 width="20"
@@ -69,7 +69,7 @@ export default function Header(props) {
               <hr />
               <Link
                 key={`research-${id}`}
-                href="/project/[id]/research"
+                href={"/project/[id]/research"}
                 as={`/project/${id}/research`}
               >
                 <img
@@ -86,7 +86,7 @@ export default function Header(props) {
               </Link>
               <Link
                 key={`revision-${id}`}
-                href="/project/[id]/revision"
+                href={"/project/[id]/revision"}
                 as={`/project/${id}/revision`}
               >
                 <img
@@ -103,7 +103,7 @@ export default function Header(props) {
               </Link>
               <Link
                 key={`configuration-${id}`}
-                href="/project/[id]/configuration"
+                href={"/project/[id]/configuration"}
                 as={`/project/${id}/configuration`}
               >
                 <img

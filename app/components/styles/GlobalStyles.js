@@ -125,7 +125,6 @@ hr {
       a {
         font-size: 14px;
         font-weight: bold;
-        font-style: normal;
         color: #7b7b7b;
       }
 
@@ -133,13 +132,7 @@ hr {
         color: #9ea0a5;
         font-size: 1.4rem
       }
-      .add-project {
-          border-radius: 4px;
-          border: solid 1px #dddddd;
-          background-color: #dddddd;
-          text-align: center;
-          color: #373a3c;
-        }
+     
 
       .add-link {
         position: absolute;
@@ -405,5 +398,260 @@ hr {
           background-color: #dddddd;
           color:#373a3c;
           width: 150px;
+        }
+        h1 {
+          font-family: HelveticaNeue;
+          font-weight: bold;
+          color: #373a3c;
+          font-size: 26px;
+        }
+        .btn-add-member{
+          background: transparent;
+          border-color: transparent;
+          img {
+            padding: 1em;
+            border: 1px dashed #ddd;
+          }
+        }
+         .add-project {
+          border-radius: 4px;
+          border: solid 1px #dddddd;
+          background-color: #dddddd;
+          text-align: center;
+          width: auto;
+          color: #373a3c;
+             &.custom {
+             width: 100px;
+            }
+            &.disabled {
+              cursor: not-allowed;
+              opacity: 0.3;
+              filter: alpha(opacity=65);
+              -webkit-box-shadow: none;
+              box-shadow: none;
+             
+            }
+        }
+        .add-member-modal {
+            
+            max-width: 1140px;
+            margin: 0 auto;
+            .home {
+              text-align: left;
+              padding: 0;
+            }
+            .modal-content {
+            border: 1px solid #dddddd;
+            border-radius: 10px;
+            }
+       }
+            button.close{
+                background: initial;
+                border-radius: 0;
+                padding: 3px 7px;
+                margin: 0;
+            }
+             .modal-header {
+                background-color: #dddddd;
+                border-radius: 0;
+                border-top-left-radius: 10px;
+                border-top-right-radius: 10px;
+        
+             .modal-title{
+                font-weight: 700;
+                font-size: 2.5em;
+               }
+              button.close {
+                background: transparent;
+                border-radius: 50%;
+                line-height: 10px;
+                padding: 1rem 1rem;
+                margin: 0;
+                }
+        
+              }
+  
+            .modal-footer {    
+                 border-top: none;
+                justify-content: center; 
+                border-radius: 0;
+                border-bottom-left-radius: 10px;
+                border-bottom-right-radius: 10px;
+                display:block;
+                }
+    
+            .rbt-input{
+                text-align:left;
+                width: 100%;
+                font-size: 1.2rem;
+               
+                }
+        }
+     
+       .home {
+         h5 {
+            color: #777777;
+          
+          &:first-child:after {
+            content: "  -  ";
+            white-space: pre;
+            position: relative;
+            line-height: 1;
+            width: 100%;
+          }
+          }
+       }
+     .fa-search{
+         position: absolute;
+        right: 15px;
+        top: 11px;
+        line-height: 1.2;
+        border-left: 1px solid #ced4da;
+        color: #2880b9;
+        width: 1em;
+        padding: 0.15em 0;
+        padding-left: 0.1em;
+    }
+        .btn-toolbar {
+        width: 50px;
+        height: 50px;
+           }
+     .img-person {
+          width: 100%;
+      }
+      @media only screen and (max-width: 768px) {
+    .img-person{
+    width: auto;
+    margin-bottom: 1em;
+    }
+     .add-member-modal {
+ 
+              h3, h5{
+              width: 130px;
+              white-space: nowrap;
+              overflow: hidden;
+              display: inline-block;
+              text-overflow: ellipsis;
+              margin: 0;
+}
+       }}
+    }
+     th{
+      font-family: HelveticaNeue;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    td{
+      font-family: HelveticaNeue;
+      font-size: 16px;
+      border-top: 1px solid #dddddd;
+      text-align:left;
+      width:20%
+    }
+    .responsiveTable tr td:last-child {
+    text-align:end;
+    }
+    .buttonRight{
+      float: right;
+      font-family: HelveticaNeue;
+      font-size: 16px;
+      border-radius: 4px;
+      border: solid 1px #dddddd;
+      background-color: #dddddd;
+      color: #373a3c;
+      position:absolute;
+      right:0;
+    }
+    .buttonLeft{
+      float: left;
+      font-family: HelveticaNeue;
+      font-size: 16px;
+      border-radius: 4px;
+      border: solid 1px #dddddd;
+      background-color: #dddddd;
+      color: #373a3c;
+      padding: 5px;
+    }
+    .hoverLinkRed{
+      color: #d9534f;
+    }
+    .modal-header {
+      background-color: #dddddd;
+    }
+    .titreHeader{
+      font-family: HelveticaNeue;
+      font-size: 32px;
+      font-weight: bold;
+      line-height: 1.22;
+      text-align: left;
+      color: #000000;
+    }
+    .titreHeaderName{
+      color: #777777;
+    }
+    button.close:focus {
+    outline: none !important;
+    }
+  .modal-footer {
+    justify-content: center!important;
+    border-top: 0!important;
+  }
+  .contentModalDroit{
+      width: 220px;
+      height: 258px;
+      border: dashed 2px #dddddd;
+  }
+  .activeSelect{
+    border: dashed 2px #5cb85c!important;
+  }
+  .RectangleModalDroit {
+    width: 108px;
+    height: 108px;
+    background-color: #dddddd;
+    margin : 1em auto;
+  }
+  .close {
+    font-size: 2.5rem!important;
+  }
+  .selectBlocTitle {
+    font-family: HelveticaNeue;
+    font-size: 16px;
+    text-align: center;
+    color: #373a3c;
+  }
+  div .modal-body a:hover {
+    color: black!important;
+    text-decoration: unset!important;
+  }
+  .descBloc{
+    color: #777777;
+    font-family: HelveticaNeue;
+    font-size: 16px;
+  }
+  .modal-body {
+    margin-right: 20px;
+    margin-left: 20px;
+  }
+  .modal-content{
+  border-radius: 1em;
+  }
+  .btn-link:hover , .btn-link:focus {
+    text-decoration: none !important;
+}
+    h1 {
+        font-family: HelveticaNeue;
+        font-weight: bold;
+        color: #777777;
+        font-size: 26px;
+    }
+    .btn-light.disabled {
+        cursor: not-allowed;
+        opacity: 0.3;
+        filter: alpha(opacity=65);
+        -webkit-box-shadow: none;
+        box-shadow: none;
+    }
+     .rbt-token-remove-button{
+        padding: 0 4px !important;
         }
 `;

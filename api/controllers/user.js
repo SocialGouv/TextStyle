@@ -63,6 +63,7 @@ exports.postSignup = async (req, res, next) => {
   }
 
   try {
+    // eslint-disable-next-line no-unused-vars
     const user = await User.query()
       .allowInsert(
         "[username, password, email,firstName, lastName, ministry,management ]"
