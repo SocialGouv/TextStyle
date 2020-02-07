@@ -97,6 +97,7 @@ export default function MembresList(props) {
         onRegister={register}
         defaults={[]}
         users={users.user}
+        name="rédacteur"
       />
     </ButtonToolbar>
   );
