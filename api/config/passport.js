@@ -38,8 +38,8 @@ passport.use(
         host: "smtp.tipimail.com",
         port: 587,
         auth: {
-          user: "236d99641e44f4d85e5c47bbd8a1b7b2",
-          pass: "92c8de9ca887c82834cbedae9c07f912"
+          user: process.env.TIPI_USER,
+          pass: process.env.TIPI_PASSWORD
         }
       });
 
