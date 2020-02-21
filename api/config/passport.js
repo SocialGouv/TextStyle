@@ -28,10 +28,7 @@ passport.use(
       //const username = email.split("@")[0];
       var safeEmail = encodeURIComponent(email);
       var url =
-        "https://textstyle.fabrique.social.gouv.fr/verif?email=" +
-        safeEmail +
-        "&token=" +
-        token;
+        process.env.APP_URL + "/verif?email=" + safeEmail + "&token=" + token;
       // Send the link to user via email.  Call done() when finished.
 
       var transport = nodemailer.createTransport({

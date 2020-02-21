@@ -21,6 +21,7 @@ services:
       dockerfile: Dockerfile
     environment:
       POSTGRES_URL: postgres://postgres:@postgres:5432/postgres
+      APP_URL: https://localhost
       TIPI_USER: azejazbeazebazhjbejhazbehazjbe
       TIPI_PASSWORD: azehaziuehiazuheiauzeh
     ports:
