@@ -39,6 +39,7 @@
     "react-router-dom": "^5.1.2",
     "react-select": "^3.0.8",
     "react-super-responsive-table": "^5.1.1",
+    "serialize-javascript": "2.1.1",
     "serverless-http": "^2.3.1",
     "styled-components": "^4.4.0"
   },
