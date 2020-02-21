@@ -20,7 +20,7 @@ export default class MyDocument extends Document {
           <link
             rel="shortcut icon"
             type="image/x-icon"
-            href="/icon/favicon.ico"
+            href={"/icon/favicon.ico"}
           />
         </Head>
         <body>

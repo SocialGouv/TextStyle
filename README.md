@@ -62,3 +62,14 @@ elasticdump \
   # Prod
 
 Copy and customize `docker-compose.override.prod.yml` to `docker-compose.override.yml`.
+
+# Reset database
+
+Run the postgre container after deleting all project then : 
+```
+psql -U postgres
+
+SELECT c.relname FROM pg_class c WHERE c.relkind = 'S'; // to get all sequence name
+
+SELECT setval('sequence_name', 1); // to reset the sequence number
+```

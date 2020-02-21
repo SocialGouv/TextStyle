@@ -141,7 +141,7 @@ export default function ModalUpdateDroit(props) {
       </Modal.Body>
       <Modal.Footer className="py-5">
         <Button
-          disabled={roleChanged ? false : true}
+          disabled={!roleChanged}
           className={roleChanged ? "" : "disabled"}
           onClick={function() {
             updateDroit(props.user.id);

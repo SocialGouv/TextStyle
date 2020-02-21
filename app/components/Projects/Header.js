@@ -40,7 +40,7 @@ export default function Header(props) {
             <div className="float-right">
               <Link
                 key={"validated"}
-                href="/project/[id]/[status]"
+                href={"/project/[id]/[status]"}
                 as={`/project/${project}/validated`}
               >
                 <button
@@ -52,7 +52,7 @@ export default function Header(props) {
               </Link>
               <Link
                 key={"waiting"}
-                href="/project/[id]/[status]"
+                href={"/project/[id]/[status]"}
                 as={`/project/${project}/waiting`}
               >
                 <button
@@ -65,7 +65,7 @@ export default function Header(props) {
 
               <Link
                 key={"declined"}
-                href="/project/[id]/[status]"
+                href={"/project/[id]/[status]"}
                 as={`/project/${project}/declined`}
               >
                 <button

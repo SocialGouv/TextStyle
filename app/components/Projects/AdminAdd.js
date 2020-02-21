@@ -39,7 +39,7 @@ export default function AdminAdd(props) {
       <ModalAddMembers
         show={modalAdmin}
         onHide={() => setModalAdmin(false)}
-        users={props.filterdata}
+        users={props.filterData}
         onRegister={props.registerAdmin}
         defaults={props.selectedAdminProject}
         name={props.name}
@@ -62,8 +62,8 @@ export default function AdminAdd(props) {
 
 AdminAdd.propTypes = {
   selectedAdminProject: PropTypes.array,
-  registerAdmin: PropTypes.func,
+  filterData: PropTypes.array,
+  name: PropTypes.string,
   admins: PropTypes.bool,
-  filterdata: PropTypes.array,
-  name: PropTypes.string
+  registerAdmin: PropTypes.func
 };

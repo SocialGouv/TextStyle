@@ -141,11 +141,11 @@ export default function ModalAddMembers(props) {
   );
 }
 ModalAddMembers.propTypes = {
-  name: PropTypes.string,
   onHide: PropTypes.func,
   handleChanged: PropTypes.func,
   onRegister: PropTypes.func,
   show: PropTypes.bool,
   defaults: PropTypes.array,
-  users: PropTypes.array
+  users: PropTypes.array,
+  name: PropTypes.string
 };

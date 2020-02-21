@@ -19,7 +19,7 @@ export default function Loading() {
   return (
     <Fragment>
       <h2 className="loading-title">
-        Bienvenue dans TextStyle <br></br>
+        Bienvenue dans TextStyle <br />
         <strong className="loading-strong">{userInfo.user.firstName}</strong>
       </h2>
     </Fragment>

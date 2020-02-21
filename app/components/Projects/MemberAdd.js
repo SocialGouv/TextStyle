@@ -39,7 +39,7 @@ export default function MemberAdd(props) {
       <ModalAddMembers
         show={modalShow}
         onHide={() => setModalMembre(false)}
-        users={props.filterdata}
+        users={props.filterData}
         onRegister={props.registerMembre}
         defaults={props.selectedMemberProject}
         name={props.name}
@@ -62,8 +62,8 @@ export default function MemberAdd(props) {
 
 MemberAdd.propTypes = {
   selectedMemberProject: PropTypes.array,
+  filterData: PropTypes.array,
+  name: PropTypes.string,
   registerMembre: PropTypes.func,
-  members: PropTypes.bool,
-  filterdata: PropTypes.array,
-  name: PropTypes.string
+  members: PropTypes.bool
 };

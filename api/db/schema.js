@@ -1,7 +1,6 @@
 const Knex = require("knex");
 const connection = require("../knexfile");
 const { Model } = require("objection");
-const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const jwtConfig = require("../config/jwt");
 
@@ -76,19 +75,6 @@ class User extends Model {
       "https://hasura.io/jwt/claims": this.getHasuraClaims()
     };
     return jwt.sign(claim, jwtConfig.key, signOptions);
-  }
-
-  async $beforeInsert() {
-    const salt = bcrypt.genSaltSync();
-    this.password = await bcrypt.hash(this.password, salt);
-  }
-
-  async $beforeUpdate() {
-    await this.$beforeInsert();
-  }
-
-  verifyPassword(password, callback) {
-    bcrypt.compare(password, this.password, callback);
   }
 
   static get jsonSchema() {

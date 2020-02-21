@@ -8,8 +8,7 @@ export const getJwt = () => {
   if (!token) {
     return;
   }
-
-  var base64Url = token.split(".")[1];
+  const base64Url = token.split(".")[1];
   var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
   var jsonPayload = decodeURIComponent(
     atob(base64)
@@ -24,13 +23,13 @@ export const getJwt = () => {
 };
 
 export const login = async ({ token }) => {
-  cookie.set("token", token, { expires: 1 });
+  cookie.set("token", token, { expires: 30 });
   // localStorage.setItem('token', token)
-  Router.push("/");
+  // Router.push("/");
 };
 
 export const signup = async ({ token }) => {
-  cookie.set("token", token, { expires: 1 });
+  cookie.set("token", token, { expires: 30 });
   // localStorage.setItem('token', token)
   Router.push("/");
 };

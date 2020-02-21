@@ -32,7 +32,7 @@ export default class SelectRevision extends React.Component {
             as="select"
             onChange={this.changeSelect}
             value={this.state.value}
-            disabled={this.state.value ? false : true}
+            disabled={!this.state.value}
           >
             {this.props.articleRevision &&
               this.props.articleRevision.map(article => (

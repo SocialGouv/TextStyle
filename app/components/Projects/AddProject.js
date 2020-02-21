@@ -47,7 +47,7 @@ export default function AddProject(props) {
 
   //init list
   const userInfo = getJwt();
-  if (userInfo == undefined) return <p>Loading...</p>;
+  if (userInfo === undefined) return <p>Loading...</p>;
   // TODO: FIX THIS RUNNING CONDITIONS
   const {
     loading: loadingUsers,
@@ -63,34 +63,34 @@ export default function AddProject(props) {
   if (errorUsers) return <p>Error: {errorUsers.message}</p>;
 
   //filter list
-  let filterdata = [];
-  if (selectedMemberProject.length > 0 && selectedAdminProject.length == 0) {
+  let filterData = [];
+  if (selectedMemberProject.length > 0 && selectedAdminProject.length === 0) {
     for (
-      var indexMembre = 0;
+      let indexMembre = 0;
       indexMembre < selectedMemberProject.length;
       indexMembre++
     ) {
-      if (indexMembre == 0) {
-        filterdata = dataUsers.user.filter(
+      if (indexMembre === 0) {
+        filterData = dataUsers.user.filter(
           user => user !== selectedMemberProject[indexMembre]
         );
       } else {
-        filterdata = filterdata.filter(
+        filterData = filterData.filter(
           user => user !== selectedMemberProject[indexMembre]
         );
       }
     }
   } else if (
     selectedAdminProject.length > 0 &&
-    selectedMemberProject.length == 0
+    selectedMemberProject.length === 0
   ) {
     for (var index = 0; index < selectedAdminProject.length; index++) {
-      if (index == 0) {
-        filterdata = dataUsers.user.filter(
+      if (index === 0) {
+        filterData = dataUsers.user.filter(
           user => user !== selectedAdminProject[0]
         );
       } else {
-        filterdata = filterdata.filter(
+        filterData = filterData.filter(
           user => user !== selectedAdminProject[index]
         );
       }
@@ -101,30 +101,30 @@ export default function AddProject(props) {
   ) {
     for (var i = 0; i < selectedMemberProject.length; i++) {
       for (var j = 0; j < selectedAdminProject.length; j++) {
-        if (i == 0 && j == 0) {
-          filterdata = dataUsers.user.filter(
+        if (i === 0 && j === 0) {
+          filterData = dataUsers.user.filter(
             user =>
               user !== selectedMemberProject[0] &&
-              user != selectedAdminProject[0]
+              user !== selectedAdminProject[0]
           );
         } else {
-          filterdata = filterdata.filter(
+          filterData = filterData.filter(
             user =>
               user !== selectedMemberProject[i] &&
-              user != selectedAdminProject[j]
+              user !== selectedAdminProject[j]
           );
         }
       }
     }
   } else {
-    filterdata = dataUsers.user;
+    filterData = dataUsers.user;
   }
 
   return (
     <Fragment>
       {history &&
       (history[history.length - 2] === "/login" ||
-        history[history.length - 2] === "/signup") ? (
+        history[history.length - 2] === "/verif") ? (
         <Loading />
       ) : (
         ""
@@ -201,7 +201,7 @@ export default function AddProject(props) {
             <div className="home ml-0">
               <MemberAdd
                 selectedMemberProject={selectedMemberProject}
-                filterdata={filterdata}
+                filterData={filterData}
                 registerMembre={registerMembre}
                 members={members}
                 name={"rédacteur"}
@@ -213,7 +213,7 @@ export default function AddProject(props) {
             <div className="home ml-0">
               <AdminAdd
                 selectedAdminProject={selectedAdminProject}
-                filterdata={filterdata}
+                filterData={filterData}
                 registerAdmin={registerAdmin}
                 admins={admins}
                 name={"administrateur"}

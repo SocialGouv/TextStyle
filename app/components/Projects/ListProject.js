@@ -24,7 +24,7 @@ function App(props) {
   const projects = dataProjects.project.map(project => (
     <Link
       key={project.id}
-      href="/project/[id]/research"
+      href={"/project/[id]/research"}
       as={`/project/${project.id}/research`}
     >
       <Card className="card-list">
@@ -53,7 +53,7 @@ function App(props) {
     <Fragment>
       {history &&
       (history[history.length - 2] === "/login" ||
-        history[history.length - 2] === "/signup") ? (
+        history[history.length - 2] === "/verif") ? (
         <Loading />
       ) : (
         ""

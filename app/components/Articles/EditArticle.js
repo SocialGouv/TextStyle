@@ -73,7 +73,6 @@ export default function EditArticle(props) {
         }}
       >
         <button className={editionStatus[2]} type="submit">
-          {" "}
           {editionStatus[3]}
         </button>
       </form>
@@ -93,7 +92,6 @@ export default function EditArticle(props) {
         }}
       >
         <button className={editionStatus[6]} type="submit">
-          {" "}
           {editionStatus[7]}
         </button>
       </form>

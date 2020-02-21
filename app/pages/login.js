@@ -2,25 +2,49 @@ import React, { useState } from "react";
 import fetch from "isomorphic-unfetch";
 import { login } from "../utils/auth";
 import { Card } from "react-bootstrap";
-import Link from "next/link";
 import Button from "react-bootstrap/Button";
 import PropTypes from "prop-types";
+import Alert from "react-bootstrap/Alert";
+import Spinner from "react-bootstrap/Spinner";
 
 const Login = props => {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showError, setShowError] = useState(true);
+  const [loading, setLoading] = useState(false);
 
+  const { history } = props;
+  const existVerif = !!(
+    history.length === 2 && history[0].startsWith("/verif")
+  );
+  const msgError = "Le lien de connexion a expiré ou n'est pas valide.";
+  const msgSuccess =
+    "Un mail vient d'être envoyer pour vous connecter sur la plateforme";
+  const alert = (
+    <Alert
+      className="mb-3"
+      variant="danger"
+      onClose={() => setShowError(false)}
+      dismissible
+    >
+      <Alert.Heading>{msgError}</Alert.Heading>
+    </Alert>
+  );
   const handleSubmit = async event => {
     event.preventDefault();
+    setLoading(true);
     const url = props.apiUrl;
     try {
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email })
       });
-      if (response.ok) {
+      if (response) {
+        setLoading(false);
+        setShowError(false);
+        setShowSuccess(true);
         const { token } = await response.json();
         login({ token });
       } else {
@@ -41,49 +65,59 @@ const Login = props => {
   return (
     <div className="login">
       <h2> Bienvenue dans TextStyle</h2>
+      {existVerif && showError && alert}
       <Card className="card-login">
         <Card.Header>Login</Card.Header>
         <Card.Body>
           <div>
-            <form onSubmit={handleSubmit}>
-              <label htmlFor="email">Adresse mail</label>
+            {!showSuccess && (
+              <form onSubmit={handleSubmit}>
+                <label htmlFor="email">Adresse mail</label>
 
-              <input
-                type="text"
-                id="email"
-                name="email"
-                value={email}
-                onChange={event => setEmail(event.target.value)}
-              />
-              <label htmlFor="username">Mot de passe</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={email}
+                  required
+                  onChange={event => setEmail(event.target.value)}
+                />
+                {!loading && (
+                  <Button
+                    className="mt-5 btn-login"
+                    variant="secondary"
+                    type="submit"
+                  >
+                    Connexion
+                  </Button>
+                )}
+                {loading && (
+                  <Button
+                    className="mt-5 btn-login"
+                    variant="secondary"
+                    disabled
+                  >
+                    <Spinner
+                      as="span"
+                      animation="border"
+                      size="sm"
+                      role="status"
+                      aria-hidden="true"
+                    />
+                    <span className="sr-only">Loading...</span>
+                  </Button>
+                )}
 
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={password}
-                onChange={event => setPassword(event.target.value)}
-              />
-              <Link
-                key={"addProject"}
-                href="/passwordForget"
-                as={`/passwordForget`}
-              >
-                Mot de passe oublié
-              </Link>
-
-              <Button
-                className="mt-5 btn-login"
-                variant="secondary"
-                type="submit"
-              >
-                Connexion
-              </Button>
-
-              <p className={`error ${error && "show"}`}>
-                {error && `Error: ${error}`}
-              </p>
-            </form>
+                <p className={`error ${error && "show"}`}>
+                  {error && `Error: ${error}`}
+                </p>
+              </form>
+            )}
+            {showSuccess && (
+              <div className="text-center">
+                <h3 className="my-5">{msgSuccess}</h3>
+              </div>
+            )}
           </div>
         </Card.Body>
       </Card>
@@ -97,6 +131,10 @@ const Login = props => {
         label {
           color: #373a3c;
           font-size: 16px;
+        }
+        h3 {
+          color: #5d5a5a;
+          font-size: 15px;
         }
 
         input {
@@ -123,11 +161,11 @@ const Login = props => {
 };
 
 Login.getInitialProps = async function() {
-  const apiUrl = "/api/login";
-
+  const apiUrl = "/api/verif";
   return { apiUrl };
 };
 Login.propTypes = {
-  apiUrl: PropTypes.string
+  apiUrl: PropTypes.string,
+  history: PropTypes.array
 };
 export default Login;

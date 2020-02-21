@@ -3,7 +3,6 @@
  */
 
 const express = require("express");
-const bodyParser = require("body-parser");
 const chalk = require("chalk");
 // const dotenv = require('dotenv');
 const passport = require("passport");
@@ -29,15 +28,34 @@ app.set("host", "0.0.0.0");
 app.set("port", process.env.PORT || 8080);
 app.set("json spaces", 2); // number of spaces for indentation
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
+//app.use(bodyParser.json());
 app.use(expressValidator());
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.post("/login", userController.postLogin);
-app.post("/signup", userController.postSignup);
 app.get("/webhook", userController.getWebhook);
 app.get("/jwks", userController.getJwks);
+
+app
+  .use(express.urlencoded({ extended: true }))
+  .post("/verif", passport.authenticate("easy"), function() {
+    // The user has been emailed.
+    // Possible flow: redirect the user to a page with a form where they can
+    // enter the token if they can't click the link from their email.
+  })
+  .get("/verif", passport.authenticate("easy", {}), function(req, res, err) {
+    const user = req.user;
+    if (user) {
+      handleResponse(res, 200, user);
+    } else if (err) {
+      console.log("erreur", err);
+      return handleResponse(res, 400, { error: err });
+    }
+  });
+function handleResponse(res, code, statusMsg) {
+  res.status(code).json(statusMsg);
+}
 /**
  * Start Express server.
  */

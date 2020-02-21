@@ -25,7 +25,7 @@ export default class CkEditor extends React.Component {
 
   handleToUpdate = someArg => {
     var myArticle = this.state.article.article_revisions.find(
-      x => x.id == someArg
+      x => x.id === someArg
     );
     if (myArticle) {
       this.setState({

@@ -217,6 +217,10 @@ hr {
         color: #dddddd;
         margin-bottom: 100px;
       }
+      .alert-danger {
+          max-width: 500px;
+          margin: 0 auto;
+        }
    }
   .card-login {
       max-width: 500px;
@@ -276,6 +280,9 @@ hr {
             .card-text  {
                 font-size: 18px;
                 color: #7b7b7b;
+                display: inline-block;
+                padding: 10px;
+                word-break: break-all;
             }
             .card-title {
                 font-size: 16px;

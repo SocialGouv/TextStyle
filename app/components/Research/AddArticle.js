@@ -58,7 +58,6 @@ export default function AddArticle(props) {
         }}
       >
         <button className={statusArray[1]} type="submit">
-          {" "}
           {statusArray[2]}
         </button>
       </form>
