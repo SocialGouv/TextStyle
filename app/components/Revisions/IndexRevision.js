@@ -3,7 +3,10 @@ import { useQuery } from "@apollo/react-hooks";
 import { withRouter } from "next/router";
 //import { PER_PAGE as perPage } from "../../config/config";
 import ListItems from "./ListItemsRevision";
-import { GET_LIST_REVISION_ARTICLES_QUERY } from "./queries";
+import {
+  GET_LIST_REVISION_ARTICLES_QUERY,
+  GET_USER_PROJECT_QUERY
+} from "./queries";
 import PropTypes from "prop-types";
 import Header from "../Projects/Header";
 
@@ -25,6 +28,20 @@ function IndexRevision(props) {
     fetchPolicy: "network-only"
   });
 
+  const {
+    loading: loadingUserConfig,
+    error: errorUserConfig,
+    data: userdata
+  } = useQuery(GET_USER_PROJECT_QUERY, {
+    variables: {
+      project: project
+    },
+    fetchPolicy: "network-only"
+  });
+
+  if (loadingUserConfig) return <p>Loading...</p>;
+  if (errorUserConfig) return <p>Error: {errorUserConfig.message}</p>;
+
   if (loadingArticles && networkStatus !== 3) return <p>Loading...</p>;
   if (errorArticles) return <p>Error: {errorArticles.message}</p>;
 
@@ -33,6 +50,7 @@ function IndexRevision(props) {
       <Header project={project} />
       <ListItems
         listRevision={data || []}
+        userList={userdata || []}
         onLoadMore={() =>
           fetchMore({
             variables: {

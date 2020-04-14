@@ -18,6 +18,10 @@ export default class MyDocument extends Document {
         <Head>
           {this.props.styleTags}
           <link
+            href="https://fonts.googleapis.com/css?family=Roboto&display=swap"
+            rel="stylesheet"
+          ></link>
+          <link
             rel="shortcut icon"
             type="image/x-icon"
             href={"/icon/favicon.ico"}

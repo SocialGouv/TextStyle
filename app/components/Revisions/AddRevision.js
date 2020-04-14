@@ -13,7 +13,7 @@ export default function AddRevision(props) {
     weekday: "long",
     year: "numeric",
     month: "long",
-    day: "numeric",
+    day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit"
@@ -51,6 +51,6 @@ export default function AddRevision(props) {
 AddRevision.propTypes = {
   text: PropTypes.string,
   article: PropTypes.number,
-  project: PropTypes.string,
+  project: PropTypes.number,
   name: PropTypes.string
 };

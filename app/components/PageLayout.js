@@ -46,15 +46,20 @@ export default function PageLayout(props) {
           src={"/ckeditor/plugins/lite/lite-interface.js"}
         />
       </Head>
-      <Row>
-        <Col xs={3} md={2}>
-          {!hasHeader && (
+      <Row style={{ width: "100%", position: "absolute", height: "100%" }}>
+        {!hasHeader && (
+          <Col xs={3} md={2} lg={1} className="p-0">
             <Header
               id={props.children.props.id ? props.children.props.id : null}
             />
-          )}
-        </Col>
-        <Col xs={!hasHeader ? 8 : 12} md={!hasHeader ? 9 : 12}>
+          </Col>
+        )}
+
+        <Col
+          xs={!hasHeader ? 9 : 12}
+          md={!hasHeader ? 10 : 12}
+          lg={!hasHeader ? 11 : 12}
+        >
           <div className={!hasHeader ? "main" : " hasHeader main"}>
             {props.children}
           </div>

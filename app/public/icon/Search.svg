@@ -1,6 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="22.416" height="22.416" viewBox="0 0 22.416 22.416">
-  <g id="Icon_feather-search" data-name="Icon feather-search" transform="translate(1 1)">
-    <path id="Tracé_47" data-name="Tracé 47" d="M22.28,13.39A8.89,8.89,0,1,1,13.39,4.5a8.89,8.89,0,0,1,8.89,8.89Z" transform="translate(-4.5 -4.5)" fill="none" stroke="#ddd" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-    <path id="Tracé_48" data-name="Tracé 48" d="M29.809,29.809l-4.834-4.834" transform="translate(-9.807 -9.807)" fill="none" stroke="#ddd" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+    <g transform="translate(-3373 -3898)">
+        <g transform="translate(3373.003 3898.002)">
+            <g>
+                <g>
+                    <path d="M19.05 20a.96.96 0 01-.667-.277l-6.032-6.029a.947.947 0 011.333-1.333l6.036 6.019a.95.95 0 01-.666 1.62z"/>
+                    <path d="M7.775 1.666a6.112 6.112 0 11-6.109 6.11 6.112 6.112 0 016.109-6.11m0-1.666a7.779 7.779 0 107.779 7.775A7.779 7.779 0 007.775 0z"/>
+                </g>
+            </g>
+        </g>
+    </g>
 </svg>

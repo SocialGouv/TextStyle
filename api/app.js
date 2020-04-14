@@ -18,6 +18,7 @@ const expressValidator = require("express-validator");
  * Controllers (route handlers).
  */
 const userController = require("./controllers/user");
+const dilaController = require("./controllers/dila");
 
 const app = express();
 
@@ -37,6 +38,10 @@ app.use(passport.session());
 app.get("/webhook", userController.getWebhook);
 app.get("/jwks", userController.getJwks);
 
+app.get("/dila/ping", dilaController.pingSearch);
+app.post("/dila/search", dilaController.dilaSearch);
+app.post("/dila/article", dilaController.dilaGetArticle);
+
 app
   .use(express.urlencoded({ extended: true }))
   .post("/verif", passport.authenticate("easy"), function() {
@@ -53,6 +58,7 @@ app
       return handleResponse(res, 400, { error: err });
     }
   });
+
 function handleResponse(res, code, statusMsg) {
   res.status(code).json(statusMsg);
 }

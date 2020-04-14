@@ -24,5 +24,7 @@ services:
       APP_URL: https://localhost
       TIPI_USER: azejazbeazebazhjbejhazbehazjbe
       TIPI_PASSWORD: azehaziuehiazuheiauzeh
+      OAUTH_CLIENT_ID: "";
+      OAUTH_CLIENT_SECRET: "";
     ports:
       - 8080:8080

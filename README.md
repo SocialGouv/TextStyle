@@ -62,7 +62,10 @@ elasticdump \
   # Prod
 
 Copy and customize `docker-compose.override.prod.yml` to `docker-compose.override.yml`.
-
+# Copy database
+```
+docker exec -t [container_postgre_name] pg_dumpall -c -U postgres > dump_`date +%d-%m-%Y"_"%H_%M_%S`.sql
+```
 # Reset database
 
 Run the postgre container after deleting all project then : 

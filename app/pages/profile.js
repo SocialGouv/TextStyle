@@ -6,6 +6,9 @@ import PropTypes from "prop-types";
 function profilePage(props) {
   const { history } = props;
   const userInfo = getJwt();
+  if (userInfo === undefined) {
+    return <p>Loading...</p>;
+  }
   return (
     <div>
       <Profile history={history} userInfo={userInfo} />

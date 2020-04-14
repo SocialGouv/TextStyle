@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="12.828" height="12.828" viewBox="0 0 12.828 12.828">
-  <g id="Croix" transform="translate(-1690.586 -534.921)">
-    <path id="Tracé_58" data-name="Tracé 58" d="M16165,6543.335l10,10" transform="translate(-14473 -6007)" fill="none" stroke="#ddd" stroke-linecap="round" stroke-width="2"/>
-    <path id="Tracé_59" data-name="Tracé 59" d="M16165,6553.335l10-10" transform="translate(-14473 -6007)" fill="none" stroke="#ddd" stroke-linecap="round" stroke-width="2"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 12.828 12.828">
+  <g transform="translate(-1690.586 -534.921)">
+    <path d="M16165,6543.335l10,10" transform="translate(-14473 -6007)" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="2"/>
+    <path d="M16165,6553.335l10-10" transform="translate(-14473 -6007)" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="2"/>
   </g>
 </svg>

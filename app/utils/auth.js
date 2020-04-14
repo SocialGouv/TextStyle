@@ -18,7 +18,6 @@ export const getJwt = () => {
       })
       .join("")
   );
-
   return JSON.parse(jsonPayload);
 };
 
@@ -26,12 +25,6 @@ export const login = async ({ token }) => {
   cookie.set("token", token, { expires: 30 });
   // localStorage.setItem('token', token)
   // Router.push("/");
-};
-
-export const signup = async ({ token }) => {
-  cookie.set("token", token, { expires: 30 });
-  // localStorage.setItem('token', token)
-  Router.push("/");
 };
 
 export const logout = () => {

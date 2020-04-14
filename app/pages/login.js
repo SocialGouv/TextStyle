@@ -92,11 +92,7 @@ const Login = props => {
                   </Button>
                 )}
                 {loading && (
-                  <Button
-                    className="mt-5 btn-login"
-                    variant="secondary"
-                    disabled
-                  >
+                  <Button className="mt-5 btn-login" disabled>
                     <Spinner
                       as="span"
                       animation="border"
@@ -140,7 +136,7 @@ const Login = props => {
         input {
           padding: 8px;
           margin: 0.3rem 0 1rem;
-          border: 1px solid #ccc;
+          border: 1px solid #245a96;
           border-radius: 4px;
           font-size: 14px;
           width: 100%;

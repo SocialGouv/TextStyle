@@ -59,33 +59,37 @@ function ListItems(props) {
       </p>
       {listItems &&
         listItems.map(listItem => (
-          <Card
-            key={listItem.id}
-            className={classList({
-              "card-list": true
-            })}
-          >
-            <Card.Header className="custom-header">
-              {listItem.titre}
-            </Card.Header>
-            <Card.Body>
-              <Col xs={12} md={10}>
-                <Row>
-                  <Card.Text className="mb-3">
-                    Article numéro : {listItem.number}
-                  </Card.Text>
-                </Row>
-                <Row>
-                  <Card.Title>{listItem.texte}</Card.Title>
-                </Row>
-              </Col>
-              <Col xs={12} md={2}>
-                <div className="card-actions">
-                  <EditArticle status={listItem.status} id={listItem.id} />
-                </div>
-              </Col>
-            </Card.Body>
-          </Card>
+          <Row key={listItem.id}>
+            <Col xs={12} md={11}>
+              <Card
+                key={listItem.id}
+                className={classList({
+                  "card-list": true
+                })}
+              >
+                <Card.Header className="custom-header">
+                  {listItem.titre}
+                </Card.Header>
+                <Card.Body>
+                  <Col>
+                    <Row>
+                      <Card.Text className="mb-3">
+                        Article numéro : {listItem.number}
+                      </Card.Text>
+                    </Row>
+                    <Row>
+                      <Card.Title>{listItem.texte}</Card.Title>
+                    </Row>
+                  </Col>
+                </Card.Body>
+              </Card>
+            </Col>
+            <Col xs={12} md={1} className="m-auto text-center">
+              <div className="card-actions">
+                <EditArticle status={listItem.status} id={listItem.id} />
+              </div>
+            </Col>
+          </Row>
         ))}
     </div>
   );

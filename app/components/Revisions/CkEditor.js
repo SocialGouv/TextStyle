@@ -3,6 +3,7 @@ import CKEditor from "ckeditor4-react";
 import AddRevision from "./AddRevision";
 import SelectRevision from "./SelectRevision";
 import PropTypes from "prop-types";
+import { getJwt } from "../../utils/auth";
 
 export default class CkEditor extends React.Component {
   constructor(props) {
@@ -17,7 +18,8 @@ export default class CkEditor extends React.Component {
             props.article.article_revisions.length - 1
           ].text
         : props.article.texte,
-      newText: ""
+      newText: "",
+      userInfo: getJwt()
     };
     CKEditor.editorUrl = "/ckeditor/ckeditor.js";
     CKEditor.displayName = "Test";
@@ -25,7 +27,7 @@ export default class CkEditor extends React.Component {
 
   handleToUpdate = someArg => {
     var myArticle = this.state.article.article_revisions.find(
-      x => x.id === someArg
+      x => x.id == someArg
     );
     if (myArticle) {
       this.setState({
@@ -37,24 +39,47 @@ export default class CkEditor extends React.Component {
   };
 
   render() {
+    const toolbar = !this.state.readOnly
+      ? [["Undo", "Redo"], ["lite-rejectone"]]
+      : [];
     return (
       <div>
         <CKEditor
+          onConfigLoaded={e => {
+            const configLoad = e;
+            if (configLoad) {
+              console.log(configLoad);
+              const conf = configLoad.editor.config;
+              const lt = (conf.lite = conf.lite || {});
+              lt.userStyles = {
+                1: 2,
+                2: 2,
+                3: 2,
+                4: 2,
+                5: 2
+              };
+            }
+          }}
           onBeforeLoad={CKEDITOR => {
             CKEDITOR.disableAutoInline = true;
           }}
           readOnly={this.state.readOnly}
           config={{
-            extraPlugins: "autogrow",
+            toolbar: toolbar,
+            extraPlugins: "autogrow,lite",
             removePlugins:
               "liststyle,tableselection,tabletools,tableresize,contextmenu"
           }}
           onDataReady={CKEDITOR => {
             var lite = CKEDITOR.editor.plugins.lite;
             lite &&
-              lite
-                .findPlugin(CKEDITOR.editor)
-                .setUserInfo({ id: 1, name: "Hugo" });
+              lite.findPlugin(CKEDITOR.editor).setUserInfo({
+                id: this.state.userInfo.user.id,
+                name:
+                  this.state.userInfo.user.lastName +
+                  " " +
+                  this.state.userInfo.user.firstName
+              });
           }}
           onChange={evt => {
             this.setState({
@@ -69,10 +94,14 @@ export default class CkEditor extends React.Component {
         />
         {!this.state.readOnly ? (
           <AddRevision
-            projet={this.state.article.project}
+            project={this.state.article.project}
             article={this.state.article.id}
             text={this.state.newText}
-            name="Hugo"
+            name={
+              this.state.userInfo.user.lastName +
+              " " +
+              this.state.userInfo.user.firstName
+            }
           />
         ) : (
           ""
