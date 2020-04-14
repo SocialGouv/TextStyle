@@ -30,7 +30,7 @@ const selectOptionsLegi = [
   { value: "lois", label: "LOI" },
   { value: "decrets", label: "DECRET" }
 ];
-const SEARCH_API_URL = "http://127.0.0.1:3000/api/dila/search";
+const SEARCH_API_URL = "/api/dila/search";
 
 const initialState = {
   loading: true,

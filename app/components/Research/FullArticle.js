@@ -13,7 +13,7 @@ function FullArticle(props) {
 
   useEffect(() => {
     if (reduceArticle.id) {
-      fetch("http://127.0.0.1:3000/api/dila/article", {
+      fetch("/api/dila/article", {
         method: "POST",
         headers: {
           Accept: "application/json",
