@@ -38,9 +38,9 @@ app.use(passport.session());
 app.get("/webhook", userController.getWebhook);
 app.get("/jwks", userController.getJwks);
 
-app.get("/dila/ping", dilaController.pingSearch);
-app.post("/dila/search", dilaController.dilaSearch);
-app.post("/dila/article", dilaController.dilaGetArticle);
+app.get("/ping", dilaController.pingSearch);
+app.post("/search", dilaController.dilaSearch);
+app.post("/article", dilaController.dilaGetArticle);
 
 app
   .use(express.urlencoded({ extended: true }))

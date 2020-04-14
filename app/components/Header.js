@@ -58,7 +58,7 @@ export default function Header(props) {
                 )}
                 {currentRoute !== "/" && (
                   <Image
-                    src={"/icon/white/Dashboard.svg"}
+                    src={"/icon/white/dashboard.svg"}
                     width="20"
                     height="20"
                   />

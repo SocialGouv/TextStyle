@@ -13,7 +13,7 @@ function FullArticle(props) {
 
   useEffect(() => {
     if (reduceArticle.id) {
-      fetch("/api/dila/article", {
+      fetch("/api/article", {
         method: "POST",
         headers: {
           Accept: "application/json",
