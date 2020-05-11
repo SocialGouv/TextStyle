@@ -29,22 +29,6 @@ export const GET_LIST_ARTICLES_QUERY = gql`
     }
   }
 `;
-
-export const DELETE_ARTICLE = gql`
-  mutation DELETE_ARTICLE($id: Int) {
-    delete_article(where: { id: { _eq: $id } }) {
-      returning {
-        id
-        titre
-        status
-        article_id
-        texte
-        number
-      }
-    }
-  }
-`;
-
 export const LIST_ITEMS_CONNECTION_QUERY = gql`
   query LIST_ITEMS_CONNECTION_QUERY($project: Int) {
     article_aggregate(where: { project: { _eq: $project } }) {

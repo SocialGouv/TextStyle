@@ -22,17 +22,17 @@ import { getJwt } from "../../utils/auth";
 export default function AddProject(props) {
   const { history } = props;
 
-  const [addProjectmut] = useMutation(ADD_PROJECT);
+  const [addProjectMutation] = useMutation(ADD_PROJECT);
 
   let inputName;
   let inputDescription;
 
-  ///membre params
+  ///member params
   const [selectedMemberProject, setSelectedMemberProject] = useState([]);
   const members =
     Object.keys(selectedMemberProject).length !== 0 &&
     Object.keys(selectedMemberProject).length !== undefined;
-  const registerMembre = name => {
+  const registerMember = name => {
     setSelectedMemberProject(name);
   };
 
@@ -66,17 +66,17 @@ export default function AddProject(props) {
   let filterData = [];
   if (selectedMemberProject.length > 0 && selectedAdminProject.length === 0) {
     for (
-      let indexMembre = 0;
-      indexMembre < selectedMemberProject.length;
-      indexMembre++
+      let indexMember = 0;
+      indexMember < selectedMemberProject.length;
+      indexMember++
     ) {
-      if (indexMembre === 0) {
+      if (indexMember === 0) {
         filterData = dataUsers.user.filter(
-          user => user !== selectedMemberProject[indexMembre]
+          user => user !== selectedMemberProject[indexMember]
         );
       } else {
         filterData = filterData.filter(
-          user => user !== selectedMemberProject[indexMembre]
+          user => user !== selectedMemberProject[indexMember]
         );
       }
     }
@@ -84,7 +84,7 @@ export default function AddProject(props) {
     selectedAdminProject.length > 0 &&
     selectedMemberProject.length === 0
   ) {
-    for (var index = 0; index < selectedAdminProject.length; index++) {
+    for (let index = 0; index < selectedAdminProject.length; index++) {
       if (index === 0) {
         filterData = dataUsers.user.filter(
           user => user !== selectedAdminProject[0]
@@ -99,8 +99,8 @@ export default function AddProject(props) {
     selectedMemberProject.length > 0 &&
     selectedAdminProject.length > 0
   ) {
-    for (var i = 0; i < selectedMemberProject.length; i++) {
-      for (var j = 0; j < selectedAdminProject.length; j++) {
+    for (let i = 0; i < selectedMemberProject.length; i++) {
+      for (let j = 0; j < selectedAdminProject.length; j++) {
         if (i === 0 && j === 0) {
           filterData = dataUsers.user.filter(
             user =>
@@ -142,23 +142,23 @@ export default function AddProject(props) {
             }));
 
             //admin owner
-            const ownersadminsInit = selectedAdminProject.map(obj => ({
+            const ownersAdminsInit = selectedAdminProject.map(obj => ({
               administrator_id: obj.id,
               unique_administrator: inputName.value + "_" + obj.id
             }));
-            const ownersadmins = ownersadminsInit.concat({
+            const ownersAdmins = ownersAdminsInit.concat({
               administrator_id: userInfo.user.id,
               unique_administrator: inputName.value + "_" + userInfo.user.id
             });
 
             //add project
-            const returningProject = await addProjectmut({
+            const returningProject = await addProjectMutation({
               variables: {
                 name: inputName.value,
                 description: inputDescription.value,
                 create_by: userInfo.user.id,
-                membres: owners,
-                adminstrateurs: ownersadmins
+                members: owners,
+                administrators: ownersAdmins
               },
               refetchQueries: [{ query: GET_LIST_PROJECT_QUERY }]
             });
@@ -202,7 +202,7 @@ export default function AddProject(props) {
               <MemberAdd
                 selectedMemberProject={selectedMemberProject}
                 filterData={filterData}
-                registerMembre={registerMembre}
+                registerMember={registerMember}
                 members={members}
                 name={"rédacteur"}
               />
@@ -222,7 +222,7 @@ export default function AddProject(props) {
           </Row>
           <Row className="ml-0">
             <Button
-              className="mt-5 ml-0 add-project custom"
+              className="mt-5 ml-0 custom"
               variant="secondary"
               type="submit"
             >

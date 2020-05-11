@@ -9,7 +9,9 @@ import Spinner from "react-bootstrap/Spinner";
 
 const Login = props => {
   const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
+  const [msgError, setMsgError] = useState(
+    "Le lien de connexion a expiré ou n'est pas valide."
+  );
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -18,7 +20,6 @@ const Login = props => {
   const existVerif = !!(
     history.length === 2 && history[0].startsWith("/verif")
   );
-  const msgError = "Le lien de connexion a expiré ou n'est pas valide.";
   const msgSuccess =
     "Un mail vient d'être envoyer pour vous connecter sur la plateforme";
   const alert = (
@@ -58,7 +59,8 @@ const Login = props => {
         "You have an error in your code or there are Network issues.",
         error
       );
-      setError(error.message);
+      setMsgError(error.message);
+      setShowError(true);
     }
   };
 
@@ -103,10 +105,6 @@ const Login = props => {
                     <span className="sr-only">Loading...</span>
                   </Button>
                 )}
-
-                <p className={`error ${error && "show"}`}>
-                  {error && `Error: ${error}`}
-                </p>
               </form>
             )}
             {showSuccess && (

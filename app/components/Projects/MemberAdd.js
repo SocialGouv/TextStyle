@@ -6,8 +6,8 @@ import { Col, Image, Row } from "react-bootstrap";
 import PropTypes from "prop-types";
 
 export default function MemberAdd(props) {
-  const [modalShow, setModalMembre] = useState(false);
-  const listMembres = props.selectedMemberProject.map((member, index) => (
+  const [modalShow, setModalMember] = useState(false);
+  const listMembers = props.selectedMemberProject.map((member, index) => (
     <Col xs={12} sm={12} md={6} lg={4} key={index} className="mt-5 px-0">
       <Row>
         <Col xs={5} sm={4} md={5} lg={5}>
@@ -30,17 +30,17 @@ export default function MemberAdd(props) {
   const toolbar = (
     <ButtonToolbar className="ml-3 mt-3">
       <Button
-        variant="secondary"
+        variant="link"
         className="btn-add-member"
-        onClick={() => setModalMembre(true)}
+        onClick={() => setModalMember(true)}
       >
         <img src={"/icon/Plus.svg"} width="50" height="50" alt="plus icon" />
       </Button>
       <ModalAddMembers
         show={modalShow}
-        onHide={() => setModalMembre(false)}
+        onHide={() => setModalMember(false)}
         users={props.filterData}
-        onRegister={props.registerMembre}
+        onRegister={props.registerMember}
         defaults={props.selectedMemberProject}
         name={props.name}
       />
@@ -52,7 +52,7 @@ export default function MemberAdd(props) {
       {!props.members && toolbar}
       {props.members && (
         <Row className="px-0 align-items-center  ml-0">
-          {listMembres}
+          {listMembers}
           {toolbar}
         </Row>
       )}
@@ -64,6 +64,6 @@ MemberAdd.propTypes = {
   selectedMemberProject: PropTypes.array,
   filterData: PropTypes.array,
   name: PropTypes.string,
-  registerMembre: PropTypes.func,
+  registerMember: PropTypes.func,
   members: PropTypes.bool
 };

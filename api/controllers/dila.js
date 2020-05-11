@@ -6,7 +6,7 @@ module.exports.dilaSearch = function(req, res) {
   const selectedText = req.body.selectedText;
   const selectedOptions = req.body.selectedOption;
   const searchString = req.body.searchValue;
-  const page = req.body.page ? req.body.page.value : 1;
+  const page = req.body.page ? req.body.page : 1;
   const currentTime = new Date().getTime();
   let typePagination = "ARTICLE";
   let fond = "ALL";
@@ -21,11 +21,18 @@ module.exports.dilaSearch = function(req, res) {
     ];
   } else if (selectedText.value === "code") {
     fond = "CODE_DATE";
-    const codes = [];
+    let codes = [];
     if (selectedOptions && selectedOptions.length > 0) {
       selectedOptions.forEach(element => {
         codes.push(element.label);
       });
+    } else {
+      codes = [
+        "Code de la santé publique",
+        "Code de l'action sociale et des familles",
+        "Code du travail",
+        "Code de la sécurité sociale"
+      ];
     }
     filtres = [
       {
@@ -71,7 +78,7 @@ module.exports.dilaSearch = function(req, res) {
       }
     ];
   }
-  //console.log(fond, searchString, filtres);
+  //console.log(fond, searchString, filtres, page);
 
   // "Code des postes et des communications électroniques",
   // "Code civil",

@@ -8,7 +8,7 @@ import Row from "react-bootstrap/Row";
 
 export default function PageLayout(props) {
   const url = props.children.props.apiUrl;
-  const hasHeader = url === "/api/signup" || url === "/api/verif";
+  const hasHeader = url === "/api/verif";
   return (
     <div>
       <GlobalStyles />

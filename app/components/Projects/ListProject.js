@@ -73,7 +73,7 @@ function App(props) {
 
               <Row>
                 <Col>
-                  <div className="profil-image">
+                  <div className="profile-image">
                     <Card.Img
                       variant="top"
                       src={"/icon/Profil-femme-1.svg"}
@@ -92,9 +92,9 @@ function App(props) {
             </Card.Body>
           </Card>
 
-          <Card className="card-container notif">
+          <Card className="card-container notify">
             <Card.Body className="p-0">
-              <Card.Text>
+              <div className="card-text">
                 <Row>
                   <Col className="d-flex flex-column justify-content-center my-3 ml-5">
                     <h4>Bonjour {userInfo.user.firstName},</h4>
@@ -106,7 +106,7 @@ function App(props) {
                     <Card.Img variant="top" src={"/images/notif.png"} />
                   </Col>
                 </Row>
-              </Card.Text>
+              </div>
             </Card.Body>
           </Card>
         </Row>
@@ -125,7 +125,7 @@ function App(props) {
                       <Button
                         variant="secondary"
                         type="submit"
-                        className="add-project ml-5"
+                        className="ml-5"
                       >
                         Ajouter un nouveau projet
                       </Button>

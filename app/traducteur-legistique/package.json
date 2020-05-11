@@ -1,0 +1,51 @@
+{
+  "author": "Feldstein Hugo",
+  "dependencies": {
+    "@babel/node": "^7.0.0",
+    "difflib": "^0.2.4"
+  },
+  "description": "traducteur legistique",
+  "devDependencies": {
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.1.2",
+    "jest": "^23.4.1",
+    "@babel/node": "^7.0.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/register": "^7.0.0",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-jest": "^23.6.0",
+    "babel-loader": "^8.0.4",
+    "@socialgouv/eslint-config-react": "0.11.1",
+    "@socialgouv/eslint-config-recommended": "0.11.1",
+    "add": "^2.0.6",
+    "eslint": "6.7.2",
+    "eslint-plugin-prettier": "3.1.2",
+    "eslint-plugin-react": "7.17.0",
+    "parcel-bundler": "^1.7.0",
+    "prettier": "1.19.1",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "yarn": "^1.22.4"
+  },
+  "jest": {
+    "verbose": true,
+    "testURL": "http://localhost:3000/"
+  },
+  "keywords": [
+    "test",
+    "first"
+  ],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "traducteur-legistique",
+  "peerDependencies": {
+    "react": "^16.6.1",
+    "react-dom": "^16.6.3"
+  },
+  "scripts": {
+    "test": "jest --watchAll",
+    "build": "babel src --out-file index.js"
+  },
+  "version": "1.1.0"
+}

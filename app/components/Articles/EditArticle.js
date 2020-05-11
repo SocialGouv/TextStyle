@@ -51,12 +51,9 @@ export default function EditArticle(props) {
   const [waitArticle, { loading: waitLoading, error: waitError }] = useMutation(
     EDIT_ARTICLE
   );
-  // const [
-  //   deleteArticle,
-  //   { loading: deleteLoading, error: deleteError }
-  // ] = useMutation(DELETE_ARTICLE);
+
   const { id, status } = props;
-  var editionStatus = statusReturn(status);
+  const editionStatus = statusReturn(status);
 
   return (
     <div>

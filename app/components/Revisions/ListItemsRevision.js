@@ -24,8 +24,8 @@ export default function ListItems(props) {
   useEffect(() => {
     function handleScroll() {
       if (
-        window.innerHeight + document.documentElement.scrollTop !==
-          document.documentElement.offsetHeight ||
+        window.innerHeight + document.documentElement.scrollTop <
+          document.children[0].clientHeight ||
         isFetching
       ) {
         return;
@@ -54,9 +54,7 @@ export default function ListItems(props) {
   }
 
   function openModal(id, user) {
-    console.log(id);
     setSidebarOpen(true);
-
     setCurrentArticleInfo({ article: id, user: user });
   }
 
@@ -82,10 +80,20 @@ export default function ListItems(props) {
                   </Card.Text>
                   <Row className=" mt-5">
                     <Col sm={12} md={5}>
-                      <CkEditor readonly={true} article={listItem} />
+                      <CkEditor
+                        readonly={true}
+                        isDifference={false}
+                        isRevision={false}
+                        article={listItem}
+                      />
                     </Col>
                     <Col sm={12} md={5}>
-                      <CkEditor readonly={false} article={listItem} />
+                      <CkEditor
+                        readonly={false}
+                        isDifference={false}
+                        isRevision={true}
+                        article={listItem}
+                      />
                     </Col>
                     <Col sm={12} md={2}>
                       {userList &&

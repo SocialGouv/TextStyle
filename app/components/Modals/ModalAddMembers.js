@@ -106,11 +106,7 @@ export default function ModalAddMembers(props) {
       </Modal.Body>
       <Modal.Footer>
         <Button
-          className={
-            hasMembers
-              ? "my-5 add-project custom"
-              : "my-5 add-project custom disabled"
-          }
+          className={hasMembers ? "my-5 custom" : "my-5 custom disabled"}
           variant="secondary"
           type="submit"
           onClick={reg}

@@ -1,7 +1,6 @@
 import React from "react";
 import CKEditor from "ckeditor4-react";
 import AddRevision from "./AddRevision";
-import SelectRevision from "./SelectRevision";
 import PropTypes from "prop-types";
 import { getJwt } from "../../utils/auth";
 
@@ -10,6 +9,8 @@ export default class CkEditor extends React.Component {
     super(props);
     this.state = {
       readOnly: props.readonly,
+      isDifference: props.isDifference,
+      isRevision: props.isRevision,
       article: props.article,
       articleRevision: props.article.article_revisions[
         props.article.article_revisions.length - 1
@@ -25,16 +26,13 @@ export default class CkEditor extends React.Component {
     CKEditor.displayName = "Test";
   }
 
-  handleToUpdate = someArg => {
-    var myArticle = this.state.article.article_revisions.find(
-      x => x.id == someArg
-    );
-    if (myArticle) {
+  handleToUpdate = (someArg, id) => {
+    if (someArg !== "") {
       this.setState({
-        articleRevision: myArticle.text
+        articleRevision: someArg
       });
     } else {
-      alert("Aucun article ne correspond à l'ID " + someArg);
+      alert("Aucun article ne correspond à l'ID " + id);
     }
   };
 
@@ -48,7 +46,6 @@ export default class CkEditor extends React.Component {
           onConfigLoaded={e => {
             const configLoad = e;
             if (configLoad) {
-              console.log(configLoad);
               const conf = configLoad.editor.config;
               const lt = (conf.lite = conf.lite || {});
               lt.userStyles = {
@@ -71,7 +68,7 @@ export default class CkEditor extends React.Component {
               "liststyle,tableselection,tabletools,tableresize,contextmenu"
           }}
           onDataReady={CKEDITOR => {
-            var lite = CKEDITOR.editor.plugins.lite;
+            const lite = CKEDITOR.editor.plugins.lite;
             lite &&
               lite.findPlugin(CKEDITOR.editor).setUserInfo({
                 id: this.state.userInfo.user.id,
@@ -87,12 +84,12 @@ export default class CkEditor extends React.Component {
             });
           }}
           data={
-            !this.state.readOnly
+            !this.state.readOnly || this.state.isDifference
               ? this.state.articleRevision
               : this.state.article.texte
           }
         />
-        {!this.state.readOnly ? (
+        {this.state.isRevision ? (
           <AddRevision
             project={this.state.article.project}
             article={this.state.article.id}
@@ -102,13 +99,7 @@ export default class CkEditor extends React.Component {
               " " +
               this.state.userInfo.user.firstName
             }
-          />
-        ) : (
-          ""
-        )}
-        {!this.state.readOnly ? (
-          <SelectRevision
-            articleRevision={this.state.article.article_revisions}
+            articleRevisions={this.props.article.article_revisions}
             handleToUpdate={this.handleToUpdate}
           />
         ) : (
@@ -121,5 +112,7 @@ export default class CkEditor extends React.Component {
 
 CkEditor.propTypes = {
   readonly: PropTypes.bool,
+  isDifference: PropTypes.bool,
+  isRevision: PropTypes.bool,
   article: PropTypes.object
 };

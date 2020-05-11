@@ -3,9 +3,7 @@ import Link from "next/link";
 import Router from "next/router";
 import NProgress from "nprogress";
 import { logout, getJwt } from "../utils/auth";
-import Button from "react-bootstrap/Button";
-import { Row } from "react-bootstrap";
-import Col from "react-bootstrap/Col";
+import { Row, Col, Button } from "react-bootstrap";
 import PropTypes from "prop-types";
 import Image from "react-bootstrap/Image";
 
@@ -39,7 +37,7 @@ export default function Header(props) {
     <div className="header p-0">
       <Row xs={10} md={10} className="header-menu">
         <Col>
-          <div className=" menu-container text-center mt-5 d-flex flex-column">
+          <div className="menu-container text-center mt-5 d-flex flex-column">
             <Link href="/">
               <span className="logo-container mb-5">
                 <Image src={"/icon/Logo.svg"} width="40" height="40" />
@@ -134,6 +132,36 @@ export default function Header(props) {
                       />
                     )}
                   {currentRoute !== "/project/[id]/revision" && (
+                    <Image
+                      src={"/icon/white/revision.svg"}
+                      width="20"
+                      height="20"
+                    />
+                  )}
+                </Button>
+              </Link>
+              <Link
+                key={`difference-${id}`}
+                href={"/project/[id]/difference"}
+                as={`/project/${id}/difference`}
+              >
+                <Button
+                  className={
+                    currentRoute === "/project/[id]/difference" &&
+                    !searchRoutes()
+                      ? `menu-img activeRoute text-left`
+                      : `menu-img text-left`
+                  }
+                >
+                  {currentRoute === "/project/[id]/difference" &&
+                    !searchRoutes() && (
+                      <Image
+                        src={"/icon/revision.svg"}
+                        width="20"
+                        height="20"
+                      />
+                    )}
+                  {currentRoute !== "/project/[id]/difference" && (
                     <Image
                       src={"/icon/white/revision.svg"}
                       width="20"

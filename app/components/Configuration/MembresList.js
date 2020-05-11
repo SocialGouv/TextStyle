@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { Col, Row, Button } from "react-bootstrap";
 import { Table, Thead, Tbody, Tr, Th, Td } from "react-super-responsive-table";
 
-import ModalUpdateDroit from "./ModalUpdateDroit";
+import ModalUpdateRight from "./ModalUpdateRight";
 import { useMutation, useQuery } from "@apollo/react-hooks";
 import {
   ADD_PROJECT_WRITER,
@@ -19,7 +19,7 @@ export default function MembresList(props) {
   const [modalShowEdit, setModalShowEdit] = useState(false);
   const [modalShowAdd, setModalShowAdd] = useState(false);
   const [currentRole, setCurrentRole] = useState("");
-  const { user, administrator, writer, project } = props;
+  const { user, administrator, writer, project, creator } = props;
   const [currentUser, setCurrentUser] = useState(administrator[0]);
 
   const membersAll = user.map(obj => ({
@@ -39,6 +39,9 @@ export default function MembresList(props) {
     if (user.isAdmin) {
       return "Admin";
     } else return "Rédacteur";
+  };
+  const isCreator = id => {
+    return creator === id;
   };
   const openModal = member => {
     setCurrentRole("");
@@ -148,30 +151,37 @@ export default function MembresList(props) {
                   <Td>{membre.lastName}</Td>
                   <Td>{getRole(membre)}</Td>
                   <Td>
-                    <Button
-                      variant="link"
-                      onClick={() => {
-                        openModal(membre);
-                      }}
-                    >
-                      Modifier droits
-                    </Button>
+                    {!isCreator(membre.id) && (
+                      <Button
+                        variant="link"
+                        onClick={() => {
+                          openModal(membre);
+                        }}
+                      >
+                        Modifier droits
+                      </Button>
+                    )}
                   </Td>
+
                   <Td>
-                    <Button
-                      variant="link"
-                      onClick={() => deleteProject(membre.id, getRole(membre))}
-                      className="hoverLinkRed"
-                    >
-                      Supprimer du projet
-                    </Button>
+                    {!isCreator(membre.id) && (
+                      <Button
+                        variant="link"
+                        onClick={() =>
+                          deleteProject(membre.id, getRole(membre))
+                        }
+                        className="hoverLinkRed"
+                      >
+                        Supprimer du projet
+                      </Button>
+                    )}
                   </Td>
                 </Tr>
               ))}
             </Tbody>
           </Table>
         </Row>
-        <ModalUpdateDroit
+        <ModalUpdateRight
           show={modalShowEdit}
           onHide={handleClose}
           user={currentUser}
@@ -201,5 +211,6 @@ MembresList.propTypes = {
   user: PropTypes.array,
   administrator: PropTypes.array,
   writer: PropTypes.array,
-  project: PropTypes.string
+  project: PropTypes.string,
+  creator: PropTypes.number
 };

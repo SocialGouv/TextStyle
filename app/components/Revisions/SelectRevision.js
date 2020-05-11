@@ -14,15 +14,18 @@ export default class SelectRevision extends React.Component {
   }
 
   changeSelect() {
-    var handleToUpdate = this.props.handleToUpdate;
+    const handleToUpdate = this.props.handleToUpdate;
     this.setState({
       value: event.target.value
     });
-    handleToUpdate(event.target.value);
+    const myArticle = this.props.articleRevision.find(
+      x => x.id === parseInt(event.target.value)
+    );
+    handleToUpdate(myArticle.text, myArticle.id);
   }
 
   render() {
-    var selectHidden = this.props.articleRevision.length > 0;
+    const selectHidden = this.props.articleRevision.length > 0;
     return (
       <Col xs={6} md={7} className="mt-4 px-0">
         {selectHidden && (

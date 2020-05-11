@@ -1,35 +1,26 @@
-version: '3.3'
+version: '3.6'
 services:
-  elastic:
-    restart: always
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.6.0
-    volumes:
-      - es_data:/usr/share/elasticsearch/data
-    ports:
-      - 9210:9200
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
   postgres:
-    image: postgres
+    image: postgres:12
     restart: always
     volumes:
       - db_data:/var/lib/postgresql/data
     ports:
       - 5434:5432
+    environment:
+      POSTGRES_PASSWORD: p'e.(BT3j7QC,z-<
   graphql-engine:
-    image: hasura/graphql-engine:v1.0.0-rc.1
+    image: hasura/graphql-engine:v1.2.1
     ports:
     - "8082:8080"
     depends_on:
     - "postgres"
+    restart: always
     environment:
-      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:@postgres:5432/postgres
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:p'e.(BT3j7QC,z-<@postgres:5432/postgres
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
       HASURA_GRAPHQL_JWT_SECRET: '{ "type": "RS256", "key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA+Etmc0Mkx2QjVyCuHwbK\n29ti/9F02n/pCLKuRvUPwCGBUE5jyB9RXMvh+m6kRwaNvEcWWjJ7MtEou3Nfgn90\n88IRXuOfW6+Mu6Q0pcATrOKHJtVLHFFEidEENc5I/o+HL/3o85NcvATYvnn1Ew5z\nj6kq18AM8q+wEd74VkrVtVeCXB8gl9D/z1zVrbyJPblakq17vUbx7wn6HNYRsuju\n1ZSCO59UWzoMWnTYvDbmaaylH6PnAa64KWEuXDCQMOWshHnfmsfhXM8Q6flTy9/a\n4evs5ox5O1XCuiOwM8Fi7JjyDYZ6F7ypaBN6AlN6Y7LvdbNxPk2qpLb0pQE3/+Bz\newIDAQAB\n-----END PUBLIC KEY-----\n" }'
       HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
 volumes:
   db_data:
-  es_data:

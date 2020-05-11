@@ -7,6 +7,8 @@ import Button from "react-bootstrap/Button";
 import Header from "../Projects/Header";
 import cookie from "js-cookie";
 import PropTypes from "prop-types";
+import ReactPaginate from "react-paginate";
+import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 
 function setCookie(cookieName, project, value) {
   cookie.set(`${cookieName}-${project}`, value, {
@@ -30,7 +32,7 @@ const selectOptionsLegi = [
   { value: "lois", label: "LOI" },
   { value: "decrets", label: "DECRET" }
 ];
-const SEARCH_API_URL = "/api/search";
+const SEARCH_API_URL = "http://127.0.0.1:3000/api/search";
 
 const initialState = {
   loading: true,
@@ -86,20 +88,18 @@ const ResearchIndex = props => {
   const [selectedOptionFilter, setSelectedOptionFilter] = useState(
     searchFilterDetail ? JSON.parse(searchFilterDetail) : []
   );
-  const [selectedPage, setSelectedPage] = useState({
-    value: currentPage ? currentPage : 1,
-    label: currentPage ? currentPage : 1
-  });
-  const [allPossiblePage, setAllPossiblePage] = useState([
-    {
-      value: currentPage ? currentPage : 1,
-      label: currentPage ? currentPage : 1
-    }
-  ]);
+  const [selectedPage, setSelectedPage] = useState(
+    currentPage ? currentPage : 0
+  );
+  const [allPossiblePage, setAllPossiblePage] = useState(
+    currentPage ? currentPage : 0
+  );
   const [filterOptions, setFilterOptions] = useState(
     searchFilterDetail ? JSON.parse(searchFilterDetailOptions) : []
   );
-  const [moderatedArticles, setModeratedArticles] = React.useState([]);
+  const [moderatedArticles, setModeratedArticles] = React.useState(
+    props.moderatedArticles
+  );
 
   let firstDisabledFilter = true;
 
@@ -118,7 +118,7 @@ const ResearchIndex = props => {
     searchValue: searchString,
     selectedOption: selectedOptionFilter,
     selectedText: selectedText,
-    page: selectedPage
+    page: selectedPage + 1
   };
   var body = JSON.stringify(data);
   useEffect(() => {
@@ -136,16 +136,10 @@ const ResearchIndex = props => {
       })
         .then(response => response.json())
         .then(jsonResponse => {
-          setAllPossiblePage([]);
           const numberResult = jsonResponse.totalResultNumber;
           setTotalResult(numberResult);
           const numberPage = Math.ceil(numberResult / 10);
-          for (var i = 1; i <= numberPage; i++) {
-            setAllPossiblePage(oldArray => [
-              ...oldArray,
-              { value: i, label: i }
-            ]);
-          }
+          setAllPossiblePage(numberPage);
           dispatch({
             type: "SEARCH_SUCCESS",
             payload: jsonResponse
@@ -160,11 +154,8 @@ const ResearchIndex = props => {
 
   const handleSelectTextChange = selectedOption => {
     setSelectedText(selectedOption);
-    setSelectedPage({
-      value: 1,
-      label: 1
-    });
-    setCookie("elasticFilterPage", project, 1);
+    setSelectedPage(0);
+    setCookie("elasticFilterPage", project, 0);
     setCookie("elasticFilterContent", project, JSON.stringify(selectedOption));
     setCookie("elasticFilterDetail", project, JSON.stringify([]));
 
@@ -197,18 +188,30 @@ const ResearchIndex = props => {
 
   const handleSelectChange = selectedOption => {
     setCookie("elasticFilterDetail", project, JSON.stringify(selectedOption));
-    setCookie("elasticFilterPage", project, 1);
+    setCookie("elasticFilterPage", project, 0);
 
-    setSelectedPage({
-      value: 1,
-      label: 1
-    });
+    setSelectedPage(0);
     setSelectedOptionFilter(selectedOption);
   };
 
   const handleSelectPageChange = selectedOption => {
-    setCookie("elasticFilterPage", project, selectedOption.value);
-    setSelectedPage(selectedOption);
+    console.log(selectedOption.selected + 1);
+    setCookie("elasticFilterPage", project, selectedOption.selected);
+    setSelectedPage(selectedOption.selected);
+  };
+
+  const showAllArticle = (code, nor) => {
+    if (code) {
+      const selectedOption = selectOptionsCode.filter(function(option) {
+        return option.label == code;
+      });
+      setSelectedPage(0);
+      setCookie("elasticFilterPage", project, 0);
+      setCookie("elasticFilterDetail", project, JSON.stringify(selectedOption));
+      setSelectedOptionFilter(selectedOption);
+    } else if (nor) {
+      return false;
+    }
   };
 
   const search = searchValue => {
@@ -216,7 +219,8 @@ const ResearchIndex = props => {
       searchValue: searchValue,
       selectedOption: selectedOptionFilter,
       selectedText: selectedText,
-      page: selectedPage
+      page: selectedPage + 1,
+      nor: null
     };
     var body2 = JSON.stringify(data2);
     dispatch({
@@ -233,13 +237,10 @@ const ResearchIndex = props => {
     })
       .then(response => response.json())
       .then(jsonResponse => {
-        setAllPossiblePage([]);
         const numberResult = jsonResponse.totalResultNumber;
         setTotalResult(numberResult);
         const numberPage = Math.ceil(numberResult / 10);
-        for (var i = 1; i <= numberPage; i++) {
-          setAllPossiblePage(oldArray => [...oldArray, { value: i, label: i }]);
-        }
+        setAllPossiblePage(numberPage);
         dispatch({
           type: "SEARCH_SUCCESS",
           payload: jsonResponse
@@ -277,25 +278,37 @@ const ResearchIndex = props => {
         noOptionsMessage={() => "Il n'y a plus de filtre"}
       />
       <div className="movies">
-        <Select
-          name="pageSelect"
-          options={allPossiblePage}
-          className="basic-multi-select"
-          classNamePrefix="select"
-          value={selectedPage}
-          onChange={handleSelectPageChange}
-          placeholder="Page numéro"
-          noOptionsMessage={() => "Il n'y a plus de filtre"}
-        />
-        <p>
-          Il y a {totalResult} résultat{totalResult > 1 ? "s" : ""}
-        </p>
+        {!loading ||
+          (!texts.result && (
+            <p>
+              Il y a {totalResult} résultat{totalResult > 1 ? "s" : ""}
+            </p>
+          ))}
+        {!loading ||
+          (!texts.result && (
+            <div id="react-paginate">
+              <ReactPaginate
+                pageCount={parseInt(allPossiblePage)}
+                pageRangeDisplayed={3}
+                marginPagesDisplayed={2}
+                forcePage={parseInt(selectedPage)}
+                onPageChange={handleSelectPageChange}
+                previousLabel={<FaAngleLeft></FaAngleLeft>}
+                nextLabel={<FaAngleRight></FaAngleRight>}
+                breakLabel={"..."}
+                breakClassName={"break-me"}
+                containerClassName={"pagination"}
+                subContainerClassName={"pages pagination"}
+                activeClassName={"active"}
+              ></ReactPaginate>
+            </div>
+          ))}
         {loading && !errorMessage ? (
           <span>loading... </span>
-        ) : errorMessage ? (
-          <div className="errorMessage">{errorMessage}</div>
+        ) : errorMessage || !texts.result ? (
+          <div className="errorMessage">Erreur de l&apos;api</div>
         ) : (
-          texts.results.map((text, index) => {
+          texts?.results.map((text, index) => {
             let numberArticleReset = 0;
             return (
               <Row className="position-relative" key={index}>
@@ -345,7 +358,14 @@ const ResearchIndex = props => {
                 {numberArticleReset === 3 && (
                   <Col xs={12} md={12}>
                     <div className="text-center my-3">
-                      <Button className="float-none" type="submit" size="lg">
+                      <Button
+                        onClick={() =>
+                          showAllArticle(text.titles[0].title, null)
+                        }
+                        className="float-none buttonShowAll"
+                        type="submit"
+                        size="lg"
+                      >
                         Voir tous les articles
                       </Button>
                     </div>
@@ -356,16 +376,25 @@ const ResearchIndex = props => {
           })
         )}
       </div>
-      <Select
-        name="pageSelect"
-        options={allPossiblePage}
-        className=""
-        classNamePrefix="select"
-        value={selectedPage}
-        onChange={handleSelectPageChange}
-        placeholder="Page numéro"
-        noOptionsMessage={() => "Il n'y a plus de filtre"}
-      />
+      {!loading ||
+        (!texts.result && (
+          <div id="react-paginate">
+            <ReactPaginate
+              pageCount={parseInt(allPossiblePage)}
+              pageRangeDisplayed={3}
+              marginPagesDisplayed={2}
+              forcePage={parseInt(selectedPage)}
+              onPageChange={handleSelectPageChange}
+              previousLabel={<FaAngleLeft></FaAngleLeft>}
+              nextLabel={<FaAngleRight></FaAngleRight>}
+              breakLabel={"..."}
+              breakClassName={"break-me"}
+              containerClassName={"pagination"}
+              subContainerClassName={"pages pagination"}
+              activeClassName={"active"}
+            ></ReactPaginate>
+          </div>
+        ))}
     </div>
   );
 };
@@ -373,5 +402,6 @@ const ResearchIndex = props => {
 export default ResearchIndex;
 
 ResearchIndex.propTypes = {
-  project: PropTypes.string
+  project: PropTypes.string,
+  moderatedArticles: PropTypes.array
 };

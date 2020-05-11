@@ -29,7 +29,7 @@ function chooseStatus(status) {
 }
 
 function updateModeratedArticles(props) {
-  var handleUpdateModeratedArticles = props.handleUpdateModeratedArticles;
+  const handleUpdateModeratedArticles = props.handleUpdateModeratedArticles;
   handleUpdateModeratedArticles(props.article_id);
 }
 
@@ -47,12 +47,12 @@ export default function AddArticle(props) {
           addArticle({
             variables: {
               titre: props.titre,
-              texte: props.texte,
+              text: props.text,
               number: props.number ? props.number : "annexe",
               status: props.status,
               article_id: props.article_id,
               project: props.project,
-              unique_article_projet: props.article_id + "-" + props.project
+              unique_article_project: props.article_id + "-" + props.project
             }
           });
         }}
@@ -69,7 +69,7 @@ export default function AddArticle(props) {
 
 AddArticle.propTypes = {
   titre: PropTypes.string,
-  texte: PropTypes.string,
+  text: PropTypes.string,
   number: PropTypes.string,
   status: PropTypes.number,
   article_id: PropTypes.string,

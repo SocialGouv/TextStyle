@@ -1,10 +1,10 @@
 // Update with your config settings.
-
-// const connection_url = `postgres://postgres:@localhost:5434/postgres`;
+// const password = "p'e.(BT3j7QC,z-<";
+// const connection_url = `postgres://postgres:${password}@localhost:5434/postgres`;
 
 const connection_url =
   typeof window !== "undefined"
-    ? `postgres://postgres:@localhost:5434/postgres`
+    ? `postgres://postgres:p'e.(BT3j7QC,z-<@localhost:5432/postgres`
     : process.env.POSTGRES_URL;
 
 module.exports = {

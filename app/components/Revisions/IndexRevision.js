@@ -1,7 +1,6 @@
 import React from "react";
 import { useQuery } from "@apollo/react-hooks";
 import { withRouter } from "next/router";
-//import { PER_PAGE as perPage } from "../../config/config";
 import ListItems from "./ListItemsRevision";
 import {
   GET_LIST_REVISION_ARTICLES_QUERY,
@@ -25,18 +24,18 @@ function IndexRevision(props) {
       first: 2,
       project: project
     },
-    fetchPolicy: "network-only"
+    fetchPolicy: "cache-and-network"
   });
 
   const {
     loading: loadingUserConfig,
     error: errorUserConfig,
-    data: userdata
+    data: userData
   } = useQuery(GET_USER_PROJECT_QUERY, {
     variables: {
       project: project
     },
-    fetchPolicy: "network-only"
+    fetchPolicy: "cache-and-network"
   });
 
   if (loadingUserConfig) return <p>Loading...</p>;
@@ -50,8 +49,9 @@ function IndexRevision(props) {
       <Header project={project} />
       <ListItems
         listRevision={data || []}
-        userList={userdata || []}
-        onLoadMore={() =>
+        userList={userData || []}
+        onLoadMore={() => {
+          console.log(data.article.length);
           fetchMore({
             variables: {
               skip: data.article.length
@@ -62,8 +62,8 @@ function IndexRevision(props) {
                 article: [...prev.article, ...fetchMoreResult.article]
               });
             }
-          })
-        }
+          });
+        }}
       />
     </div>
   );

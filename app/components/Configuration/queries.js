@@ -3,6 +3,7 @@ import gql from "graphql-tag";
 export const GET_LIST_USER_PROJECT_QUERY = gql`
   query GET_LIST_USER_PROJECT_QUERY($project: Int) {
     project(where: { id: { _eq: $project } }) {
+      create_by
       project_administrators {
         administrator_id
       }
@@ -37,6 +38,7 @@ export const GET_PROJECT_QUERY = gql`
     project(where: { id: { _eq: $project } }) {
       name
       description
+      create_by
     }
   }
 `;

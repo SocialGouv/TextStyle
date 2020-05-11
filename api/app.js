@@ -4,22 +4,15 @@
 
 const express = require("express");
 const chalk = require("chalk");
-// const dotenv = require('dotenv');
 const passport = require("passport");
 const cors = require("cors");
 const expressValidator = require("express-validator");
-
-/**
- * Load environment variables from .env file, where API keys and passwords are configured.
- */
-// dotenv.load({ path: '.env.example' });
 
 /**
  * Controllers (route handlers).
  */
 const userController = require("./controllers/user");
 const dilaController = require("./controllers/dila");
-
 const app = express();
 
 /**
@@ -30,7 +23,6 @@ app.set("port", process.env.PORT || 8080);
 app.set("json spaces", 2); // number of spaces for indentation
 app.use(cors());
 app.use(express.json());
-//app.use(bodyParser.json());
 app.use(expressValidator());
 app.use(passport.initialize());
 app.use(passport.session());
@@ -54,7 +46,6 @@ app
     if (user) {
       handleResponse(res, 200, user);
     } else if (err) {
-      console.log("erreur", err);
       return handleResponse(res, 400, { error: err });
     }
   });

@@ -10,7 +10,7 @@ import {
   DELETE_PROJECT_ADMINISTRATOR,
   DELETE_PROJECT_WRITER
 } from "./queries";
-export default function ModalUpdateDroit(props) {
+export default function ModalUpdateRight(props) {
   const { project, role, show } = props;
   const [updatedRole, setUpdatedRole] = useState("");
   const roleChanged = role !== updatedRole;
@@ -26,8 +26,8 @@ export default function ModalUpdateDroit(props) {
   const [addWriter] = useMutation(ADD_PROJECT_WRITER);
   const [deleteAdministrator] = useMutation(DELETE_PROJECT_ADMINISTRATOR);
   const [addAdministrator] = useMutation(ADD_PROJECT_ADMINISTRATOR);
-  const [deletewriter] = useMutation(DELETE_PROJECT_WRITER);
-  const updateDroit = id => {
+  const [deleteWriter] = useMutation(DELETE_PROJECT_WRITER);
+  const updateRight = id => {
     if (updatedRole === "Admin") {
       addAdministrator({
         variables: {
@@ -37,7 +37,7 @@ export default function ModalUpdateDroit(props) {
         },
         refetchQueries: ["GET_LIST_USER_PROJECT_QUERY"]
       });
-      deletewriter({
+      deleteWriter({
         variables: {
           writer: id,
           project: project
@@ -73,9 +73,8 @@ export default function ModalUpdateDroit(props) {
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter" className="titreHeader">
-          Gestion des droits
-          <span className="titreHeaderName">
-            - {props.user.firstName} {props.user.lastName}
+          <span>
+            Gestion des droits - {props.user.firstName} {props.user.lastName}
           </span>
         </Modal.Title>
       </Modal.Header>
@@ -92,11 +91,11 @@ export default function ModalUpdateDroit(props) {
                 <Col
                   className={
                     updatedRole === "Utilisateur"
-                      ? "contentModalDroit activeSelect"
-                      : "contentModalDroit"
+                      ? "contentModalRight activeSelect"
+                      : "contentModalRight"
                   }
                 >
-                  <div className="RectangleModalDroit" />
+                  <div className="RectangleModalRight" />
                   <Row className="justify-content-center">
                     <span className="selectBlocTitle">Rédacteur</span>
                   </Row>
@@ -119,11 +118,11 @@ export default function ModalUpdateDroit(props) {
                 <Col
                   className={
                     updatedRole === "Admin"
-                      ? "contentModalDroit activeSelect"
-                      : "contentModalDroit"
+                      ? "contentModalRight activeSelect"
+                      : "contentModalRight"
                   }
                 >
-                  <div className="RectangleModalDroit" />
+                  <div className="RectangleModalRight" />
                   <Row className="justify-content-center">
                     <span className="selectBlocTitle">Admin</span>
                   </Row>
@@ -144,9 +143,9 @@ export default function ModalUpdateDroit(props) {
           disabled={!roleChanged}
           className={roleChanged ? "" : "disabled"}
           onClick={function() {
-            updateDroit(props.user.id);
+            updateRight(props.user.id);
           }}
-          variant="light"
+          variant="secondary"
         >
           Changer le droit
         </Button>
@@ -154,7 +153,7 @@ export default function ModalUpdateDroit(props) {
     </Modal>
   );
 }
-ModalUpdateDroit.propTypes = {
+ModalUpdateRight.propTypes = {
   role: PropTypes.string,
   project: PropTypes.string,
   onHide: PropTypes.func,

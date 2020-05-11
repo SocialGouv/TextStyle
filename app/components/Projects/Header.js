@@ -7,13 +7,15 @@ import { IoMdClose } from "react-icons/io";
 import { GET_PROJECT_QUERY } from "./queries";
 import PropTypes from "prop-types";
 import { Col, Row } from "react-bootstrap";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import Button from "react-bootstrap/Button";
 
 export default function Header(props) {
   const { project, status } = props;
 
-  var validatedClass = status === "validated" ? "onThisStatus" : "";
-  var waitingClass = status === "waiting" ? "onThisStatus" : "";
-  var declinedClass = status === "declined" ? "onThisStatus" : "";
+  const validatedClass = status === "validated" ? "onThisStatus" : "";
+  const waitingClass = status === "waiting" ? "onThisStatus" : "";
+  const declinedClass = status === "declined" ? "onThisStatus" : "";
 
   const {
     loading: loadingProjects,
@@ -38,43 +40,44 @@ export default function Header(props) {
           </Col>
           <Col xs={12} md={5} className="mb-2 px-0">
             <div className="float-right">
-              <Link
-                key={"validated"}
-                href={"/project/[id]/[status]"}
-                as={`/project/${project}/validated`}
-              >
-                <button
-                  className={`createButton headerButton ${validatedClass}`}
+              <ButtonGroup>
+                <Link
+                  key={"validated"}
+                  href={"/project/[id]/[status]"}
+                  as={`/project/${project}/validated`}
                 >
-                  <MdCheck key="0" size={20} />
-                  Validé
-                </button>
-              </Link>
-              <Link
-                key={"waiting"}
-                href={"/project/[id]/[status]"}
-                as={`/project/${project}/waiting`}
-              >
-                <button
-                  className={`waitingButton headerButton ${waitingClass}`}
+                  <Button
+                    className={`createButton headerButton mr-4 ${validatedClass}`}
+                  >
+                    <MdCheck key="0" size={20} className="mr-3" />
+                    Validé
+                  </Button>
+                </Link>
+                <Link
+                  key={"waiting"}
+                  href={"/project/[id]/[status]"}
+                  as={`/project/${project}/waiting`}
                 >
-                  <FaRegClock key="0" size={20} />
-                  En attente
-                </button>
-              </Link>
-
-              <Link
-                key={"declined"}
-                href={"/project/[id]/[status]"}
-                as={`/project/${project}/declined`}
-              >
-                <button
-                  className={`deleteButton headerButton ${declinedClass}`}
+                  <Button
+                    className={`waitingButton headerButton mr-4 ${waitingClass}`}
+                  >
+                    <FaRegClock key="0" size={20} className="mr-3" />
+                    En attente
+                  </Button>
+                </Link>
+                <Link
+                  key={"declined"}
+                  href={"/project/[id]/[status]"}
+                  as={`/project/${project}/declined`}
                 >
-                  <IoMdClose key="0" size={20} />
-                  Supprimé
-                </button>
-              </Link>
+                  <Button
+                    className={`deleteButton headerButton ${declinedClass}`}
+                  >
+                    <IoMdClose key="0" size={20} className="mr-3" />
+                    Supprimé
+                  </Button>
+                </Link>
+              </ButtonGroup>
             </div>
           </Col>
         </Row>

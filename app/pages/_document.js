@@ -20,7 +20,7 @@ export default class MyDocument extends Document {
           <link
             href="https://fonts.googleapis.com/css?family=Roboto&display=swap"
             rel="stylesheet"
-          ></link>
+          />
           <link
             rel="shortcut icon"
             type="image/x-icon"

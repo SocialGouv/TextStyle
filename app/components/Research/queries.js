@@ -11,22 +11,22 @@ export const GET_LIST_ARTICLES_QUERY = gql`
 export const ADD_ARTICLE = gql`
   mutation CREATE_LIST_ITEM(
     $titre: String!
-    $texte: String
+    $text: String
     $number: String
     $article_id: String
     $status: Int
     $project: Int
-    $unique_article_projet: String
+    $unique_article_project: String
   ) {
     insert_article(
       objects: {
         titre: $titre
         status: $status
         article_id: $article_id
-        texte: $texte
+        texte: $text
         number: $number
         project: $project
-        unique_article_projet: $unique_article_projet
+        unique_article_projet: $unique_article_project
       }
     ) {
       returning {

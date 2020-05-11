@@ -59,7 +59,7 @@ export default function AddComment(props) {
         </Row>
       </div>
       <Row className="mx-0 my-3 justify-content-end">
-        <Button className="buttonLeft" type="submit" size="lg">
+        <Button type="submit" size="lg">
           Commenter
         </Button>
       </Row>

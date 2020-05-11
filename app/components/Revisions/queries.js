@@ -19,6 +19,21 @@ export const GET_LIST_REVISION_ARTICLES_QUERY = gql`
         text
         id
         name
+        textFormatted
+      }
+    }
+  }
+`;
+export const GET_ARTICLE_QUERY = gql`
+  query GET_ARTICLE_QUERY($article: Int) {
+    article(where: { id: { _eq: $article } }) {
+      id
+      texte
+      article_revisions {
+        id
+        textFormatted
+        text
+        name
       }
     }
   }
@@ -27,6 +42,7 @@ export const GET_LIST_REVISION_ARTICLES_QUERY = gql`
 export const ADD_ARTICLE_REVISION = gql`
   mutation ADD_ARTICLE_REVISION(
     $text: String
+    $textFormatted: String
     $article: Int
     $project: Int
     $name: String
@@ -37,6 +53,7 @@ export const ADD_ARTICLE_REVISION = gql`
         text: $text
         project: $project
         name: $name
+        textFormatted: $textFormatted
       }
     ) {
       returning {
@@ -45,6 +62,7 @@ export const ADD_ARTICLE_REVISION = gql`
         text
         project
         name
+        textFormatted
       }
     }
   }

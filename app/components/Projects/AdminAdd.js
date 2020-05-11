@@ -27,10 +27,10 @@ export default function AdminAdd(props) {
       </Row>
     </Col>
   ));
-  const admintoolbar = (
+  const adminToolbar = (
     <ButtonToolbar className="ml-3 mt-3">
       <Button
-        variant="secondary"
+        variant="link"
         className="btn-add-member"
         onClick={() => setModalAdmin(true)}
       >
@@ -49,11 +49,11 @@ export default function AdminAdd(props) {
 
   return (
     <span>
-      {!props.admins && admintoolbar}
+      {!props.admins && adminToolbar}
       {props.admins && (
         <Row className="px-0 align-items-center  ml-0">
           {listAdmin}
-          {admintoolbar}
+          {adminToolbar}
         </Row>
       )}
     </span>

@@ -49,8 +49,8 @@ export const ADD_PROJECT = gql`
     $name: String!
     $description: String!
     $create_by: Int
-    $membres: [project_writer_insert_input!]!
-    $adminstrateurs: [project_administrator_insert_input!]!
+    $members: [project_writer_insert_input!]!
+    $administrators: [project_administrator_insert_input!]!
   ) {
     insert_project(
       objects: [
@@ -58,8 +58,8 @@ export const ADD_PROJECT = gql`
           name: $name
           description: $description
           create_by: $create_by
-          project_administrators: { data: $adminstrateurs }
-          project_writers: { data: $membres }
+          project_administrators: { data: $administrators }
+          project_writers: { data: $members }
         }
       ]
     ) {

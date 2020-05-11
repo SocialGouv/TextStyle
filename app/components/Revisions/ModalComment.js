@@ -28,7 +28,7 @@ export default function ModalComment(props) {
       }
       // outside click
       setIsAnswering(false);
-      var lastComment = document.getElementById(currentCommentId);
+      const lastComment = document.getElementById(currentCommentId);
       if (lastComment) {
         lastComment.style.display = "block";
       }
@@ -45,18 +45,6 @@ export default function ModalComment(props) {
     };
   }, [currentCommentId, isAnswering]);
 
-  const getDate = value => {
-    var today = new Date(value);
-    var dd = String(today.getDate()).padStart(2, "0");
-    var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
-    var yyyy = today.getFullYear();
-
-    today = dd + "/" + mm + "/" + yyyy;
-    return today;
-  };
-  const getTime = value => {
-    return value.slice(11, 19);
-  };
   const { loading: loadingConfig, error: errorConfig, data: data } = useQuery(
     GET_LIST_COMMENT_ARTICLE_QUERY,
     {
@@ -76,15 +64,19 @@ export default function ModalComment(props) {
     setIsAnswering(false);
   };
   const replyComment = (e, id) => {
-    var lastComment = document.getElementById(currentCommentId);
+    const lastComment = document.getElementById(currentCommentId);
     if (lastComment) {
       lastComment.style.display = "block";
     }
-    var selected = document.getElementById(id);
+    const selected = document.getElementById(id);
     selected.style.display = "none";
     setCurrentCommentId(id);
     setCanModify(false);
     setIsAnswering(true);
+  };
+  const modifyComment = comment => {
+    setCanModify(true);
+    setCurrentComment(comment);
   };
   if (userInfo === undefined) return <p>Loading...</p>;
   return (
@@ -135,61 +127,14 @@ export default function ModalComment(props) {
                 <div className="bg-white shadow py-3">
                   <Row>
                     {userInfo.user.id === props.user.id && (
-                      <Col xs={12}>
-                        <Row className="d-flex justify-content-end mx-3">
-                          <p>Vous</p>
-                          <Image
-                            onClick={() => {
-                              setCanModify(true);
-                              setCurrentComment(data.article_comment[0]);
-                            }}
-                            className="img-update ml-3"
-                            width="20"
-                            height="20"
-                            src="/icon/Couronne.svg"
-                          />
-
-                          <Image
-                            className="ml-3 user-comment"
-                            width="20"
-                            height="20"
-                            src="/icon/Profil-femme-1.svg"
-                          />
-                        </Row>
-                        <Row className="d-flex justify-content-end mx-3">
-                          <div
-                            className={
-                              !data.article_comment[0].responses[0]
-                                ? "comment-sender shadow"
-                                : "comment-sender shadow hasChild"
-                            }
-                          >
-                            <p> {data.article_comment[0].comment}</p>
-                          </div>
-                        </Row>
-                        <Row className="comment-footer d-flex justify-content-end mx-3 mt-3">
-                          {data.article_comment[0] && props.user && (
-                            <Image
-                              id={data.article_comment[0].id}
-                              onClick={e => {
-                                replyComment(e, data.article_comment[0].id);
-                                setIsAnswering(true);
-                              }}
-                              className="ml-3"
-                              width="20"
-                              height="20"
-                              src="/icon/Back.svg"
-                            />
-                          )}
-
-                          <p className="mx-3">
-                            {getDate(data.article_comment[0].created_at)}
-                          </p>
-                          <p className="ml-3">
-                            {getTime(data.article_comment[0].created_at)}
-                          </p>
-                        </Row>
-                      </Col>
+                      <ItemComment
+                        comment={data.article_comment[0]}
+                        modifyComment={modifyComment}
+                        replyComment={replyComment}
+                        isResponse={false}
+                        isSecondResponse={false}
+                        isSender={true}
+                      />
                     )}
                     {userInfo.user.id !== props.user.id && (
                       <ItemComment
@@ -197,6 +142,7 @@ export default function ModalComment(props) {
                         replyComment={replyComment}
                         isResponse={false}
                         isSecondResponse={false}
+                        isSender={false}
                       />
                     )}
 
@@ -208,115 +154,42 @@ export default function ModalComment(props) {
                             replyComment={replyComment}
                             isResponse={true}
                             isSecondResponse={false}
+                            isSender={false}
                           />
                         )}
                         {response.user.id === userInfo.user.id && (
-                          <div className="ml-3">
-                            <Row className="d-flex justify-content-end mx-3">
-                              <p>Vous</p>
-                              <Image
-                                onClick={() => {
-                                  setCanModify(true);
-                                  setCurrentComment(response);
-                                }}
-                                className="img-update ml-3"
-                                width="20"
-                                height="20"
-                                src="/icon/Couronne.svg"
-                              />
-                              <Image
-                                className="ml-3 user-comment"
-                                width="20"
-                                height="20"
-                                src="/icon/Profil-femme-1.svg"
-                              />
-                            </Row>
-                            <Row className="d-flex justify-content-end mx-3">
-                              <div
-                                className={
-                                  !response.responses[0]
-                                    ? "comment-sender shadow"
-                                    : "comment-sender shadow hasChild"
-                                }
-                              >
-                                <p> {response.comment}</p>
-                              </div>
-                            </Row>
-                            <Row className="comment-footer d-flex justify-content-end mx-3 mt-3">
-                              {data.article_comment[0] && props.user && (
-                                <Image
-                                  id={response.id}
-                                  onClick={e => {
-                                    replyComment(e, response.id);
-                                    setIsAnswering(true);
-                                  }}
-                                  className="ml-3"
-                                  width="20"
-                                  height="20"
-                                  src="/icon/Back.svg"
-                                />
-                              )}
-
-                              <p className="mx-3">
-                                {getDate(response.created_at)}
-                              </p>
-                              <p className="ml-3">
-                                {getTime(response.created_at)}
-                              </p>
-                            </Row>
-                          </div>
+                          <ItemComment
+                            comment={response}
+                            modifyComment={modifyComment}
+                            replyComment={replyComment}
+                            isResponse={true}
+                            isSecondResponse={false}
+                            isSender={true}
+                          />
                         )}
                         {response.responses.map(res => (
-                          <div key={res.id}>
-                            <div>
-                              {res.user.id !== userInfo.user.id && (
-                                <ItemComment
-                                  comment={res}
-                                  replyComment={replyComment}
-                                  isResponse={false}
-                                  isSecondResponse={true}
-                                />
-                              )}
-                            </div>
-                            <div>
-                              {res.user.id === userInfo.user.id && (
-                                <div className="ml-5">
-                                  <Row className="d-flex justify-content-end mx-3">
-                                    <p>Vous</p>
-                                    <Image
-                                      onClick={() => {
-                                        setCanModify(true);
-                                        setCurrentComment(res);
-                                      }}
-                                      className="img-update ml-3"
-                                      width="20"
-                                      height="20"
-                                      src="/icon/Couronne.svg"
-                                    />
-                                    <Image
-                                      className="ml-3 user-comment"
-                                      width="20"
-                                      height="20"
-                                      src="/icon/Profil-femme-1.svg"
-                                    />
-                                  </Row>
-                                  <Row className="d-flex justify-content-end mx-3">
-                                    <div className=" comment-sender shadow">
-                                      <p> {res.comment}</p>
-                                    </div>
-                                  </Row>
-                                  <Row className="comment-footer d-flex justify-content-end mx-3 mt-3">
-                                    <p className="mx-3">
-                                      {getDate(res.created_at)}
-                                    </p>
-                                    <p className="ml-3">
-                                      {getTime(res.created_at)}
-                                    </p>
-                                  </Row>
-                                </div>
-                              )}
-                            </div>
-                          </div>
+                          <Col xs={12} key={res.id}>
+                            {res.user.id !== userInfo.user.id && (
+                              <ItemComment
+                                comment={res}
+                                replyComment={replyComment}
+                                isResponse={false}
+                                isSecondResponse={true}
+                                isSender={false}
+                              />
+                            )}
+
+                            {res.user.id === userInfo.user.id && (
+                              <ItemComment
+                                comment={res}
+                                modifyComment={modifyComment}
+                                replyComment={replyComment}
+                                isResponse={false}
+                                isSecondResponse={true}
+                                isSender={true}
+                              />
+                            )}
+                          </Col>
                         ))}
                       </Col>
                     ))}

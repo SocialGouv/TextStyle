@@ -78,7 +78,9 @@ function ListItems(props) {
                       </Card.Text>
                     </Row>
                     <Row>
-                      <Card.Title>{listItem.texte}</Card.Title>
+                      <Card.Title
+                        dangerouslySetInnerHTML={{ __html: listItem.texte }}
+                      />
                     </Row>
                   </Col>
                 </Card.Body>
