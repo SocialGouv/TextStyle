@@ -1242,6 +1242,11 @@
     eslint-plugin-jest "^23.2.0"
     eslint-plugin-prettier "~3.1.2"
 
+"@socialgouv/traducteur-legistique@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@socialgouv/traducteur-legistique/-/traducteur-legistique-1.0.4.tgz#ca820c920f1484310c27f5e2a56d2d7ab54bd3ac"
+  integrity sha512-Q85f7LGSHbEpogbjOOlrVVkCgpbYqUtLsa2rmXunNB7LQhV5Jxmkz+8oAJF4BBrnkaRuk5DX0zjlzN0pBG5zDA==
+
 "@types/aws-lambda@^8.10.19":
   version "8.10.48"
   resolved "https://registry.yarnpkg.com/@types/aws-lambda/-/aws-lambda-8.10.48.tgz#9171dd239b53673281b81fc6e718bc440696c5ca"

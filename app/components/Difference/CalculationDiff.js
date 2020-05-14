@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Row } from "react-bootstrap";
-import { difflibCalculation } from "traducteur-legistique";
+import { difflibCalculation } from "@socialgouv/traducteur-legistique";
 
 export default function CalculationDiff(props) {
   const { firstText, secondText, articleId } = props;
