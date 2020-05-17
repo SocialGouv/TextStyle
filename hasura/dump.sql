@@ -27,7 +27,7 @@ DROP ROLE postgres;
 --
 
 CREATE ROLE postgres;
-ALTER ROLE postgres WITH SUPERUSER INHERIT CREATEROLE CREATEDB LOGIN REPLICATION BYPASSRLS;
+ALTER ROLE postgres WITH SUPERUSER INHERIT CREATEROLE CREATEDB LOGIN REPLICATION BYPASSRLS PASSWORD 'md540b639a1158a2382a15510677ef145dd';
 
 
 
@@ -46,8 +46,8 @@ ALTER ROLE postgres WITH SUPERUSER INHERIT CREATEROLE CREATEDB LOGIN REPLICATION
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 12.0 (Debian 12.0-1.pgdg100+1)
--- Dumped by pg_dump version 12.0 (Debian 12.0-1.pgdg100+1)
+-- Dumped from database version 12.2 (Debian 12.2-2.pgdg100+1)
+-- Dumped by pg_dump version 12.2 (Debian 12.2-2.pgdg100+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -131,8 +131,8 @@ GRANT CONNECT ON DATABASE template1 TO PUBLIC;
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 12.0 (Debian 12.0-1.pgdg100+1)
--- Dumped by pg_dump version 12.0 (Debian 12.0-1.pgdg100+1)
+-- Dumped from database version 12.2 (Debian 12.2-2.pgdg100+1)
+-- Dumped by pg_dump version 12.2 (Debian 12.2-2.pgdg100+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -208,6 +208,21 @@ COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
 
 
 --
+-- Name: check_violation(text); Type: FUNCTION; Schema: hdb_catalog; Owner: postgres
+--
+
+CREATE FUNCTION hdb_catalog.check_violation(msg text) RETURNS boolean
+    LANGUAGE plpgsql
+    AS $$
+  BEGIN
+    RAISE check_violation USING message=msg;
+  END;
+$$;
+
+
+ALTER FUNCTION hdb_catalog.check_violation(msg text) OWNER TO postgres;
+
+--
 -- Name: hdb_schema_update_event_notifier(); Type: FUNCTION; Schema: hdb_catalog; Owner: postgres
 --
 
@@ -217,13 +232,16 @@ CREATE FUNCTION hdb_catalog.hdb_schema_update_event_notifier() RETURNS trigger
   DECLARE
     instance_id uuid;
     occurred_at timestamptz;
+    invalidations json;
     curr_rec record;
   BEGIN
     instance_id = NEW.instance_id;
     occurred_at = NEW.occurred_at;
+    invalidations = NEW.invalidations;
     PERFORM pg_notify('hasura_schema_update', json_build_object(
       'instance_id', instance_id,
-      'occurred_at', occurred_at
+      'occurred_at', occurred_at,
+      'invalidations', invalidations
       )::text);
     RETURN curr_rec;
   END;
@@ -297,39 +315,39 @@ ALTER FUNCTION hdb_catalog.insert_event_log(schema_name text, table_name text, t
 
 CREATE FUNCTION hdb_views.user__insert__public__article() RETURNS trigger
     LANGUAGE plpgsql
-    AS $_$
-  DECLARE r "public"."article"%ROWTYPE;
-  DECLARE conflict_clause jsonb;
-  DECLARE action text;
-  DECLARE constraint_name text;
-  DECLARE set_expression text;
-  BEGIN
-    conflict_clause = current_setting('hasura.conflict_clause')::jsonb;
-    IF ((((EXISTS  (SELECT  1  FROM "public"."project" AS "_be_0_public_project" WHERE (((("_be_0_public_project"."id") = (NEW."project")) AND ('true')) AND ((EXISTS  (SELECT  1  FROM "public"."project_writer" AS "_be_1_public_project_writer" WHERE (((("_be_1_public_project_writer"."project_id") = ("_be_0_public_project"."id")) AND ('true')) AND ((((("_be_1_public_project_writer"."writer_id") = (((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer)) OR ((("_be_1_public_project_writer"."writer_id") IS NULL) AND ((((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer) IS NULL))) AND ('true')) AND ('true')))     )) AND ('true')))     )) AND ('true')) OR (((EXISTS  (SELECT  1  FROM "public"."project" AS "_be_2_public_project" WHERE (((("_be_2_public_project"."id") = (NEW."project")) AND ('true')) AND ((EXISTS  (SELECT  1  FROM "public"."project_administrator" AS "_be_3_public_project_administrator" WHERE (((("_be_3_public_project_administrator"."project_id") = ("_be_2_public_project"."id")) AND ('true')) AND ((((("_be_3_public_project_administrator"."administrator_id") = (((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer)) OR ((("_be_3_public_project_administrator"."administrator_id") IS NULL) AND ((((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer) IS NULL))) AND ('true')) AND ('true')))     )) AND ('true')))     )) AND ('true')) OR ('false'))) AND ('true')) THEN
-      CASE
-        WHEN conflict_clause = 'null'::jsonb THEN INSERT INTO "public"."article" VALUES (NEW.*) RETURNING * INTO r;
-        ELSE
-          action = conflict_clause ->> 'action';
-          constraint_name = quote_ident(conflict_clause ->> 'constraint');
-          set_expression = conflict_clause ->> 'set_expression';
-          IF action is NOT NULL THEN
-            CASE
-              WHEN action = 'ignore'::text AND constraint_name IS NULL THEN
-                INSERT INTO "public"."article" VALUES (NEW.*) ON CONFLICT DO NOTHING RETURNING * INTO r;
-              WHEN action = 'ignore'::text AND constraint_name is NOT NULL THEN
-                EXECUTE 'INSERT INTO "public"."article" VALUES ($1.*) ON CONFLICT ON CONSTRAINT ' || constraint_name ||
-                           ' DO NOTHING RETURNING *' INTO r USING NEW;
-              ELSE
-                EXECUTE 'INSERT INTO "public"."article" VALUES ($1.*) ON CONFLICT ON CONSTRAINT ' || constraint_name ||
-                           ' DO UPDATE ' || set_expression || ' RETURNING *' INTO r USING NEW;
-            END CASE;
-            ELSE
-              RAISE internal_error using message = 'action is not found'; RETURN NULL;
-          END IF;
-      END CASE;
-      IF r IS NULL THEN RETURN null; ELSE RETURN r; END IF;
-     ELSE RAISE check_violation using message = 'insert check constraint failed'; RETURN NULL;
-     END IF;
+    AS $_$
+  DECLARE r "public"."article"%ROWTYPE;
+  DECLARE conflict_clause jsonb;
+  DECLARE action text;
+  DECLARE constraint_name text;
+  DECLARE set_expression text;
+  BEGIN
+    conflict_clause = current_setting('hasura.conflict_clause')::jsonb;
+    IF ((((EXISTS  (SELECT  1  FROM "public"."project" AS "_be_0_public_project" WHERE (((("_be_0_public_project"."id") = (NEW."project")) AND ('true')) AND ((EXISTS  (SELECT  1  FROM "public"."project_writer" AS "_be_1_public_project_writer" WHERE (((("_be_1_public_project_writer"."project_id") = ("_be_0_public_project"."id")) AND ('true')) AND ((((("_be_1_public_project_writer"."writer_id") = (((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer)) OR ((("_be_1_public_project_writer"."writer_id") IS NULL) AND ((((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer) IS NULL))) AND ('true')) AND ('true')))     )) AND ('true')))     )) AND ('true')) OR (((EXISTS  (SELECT  1  FROM "public"."project" AS "_be_2_public_project" WHERE (((("_be_2_public_project"."id") = (NEW."project")) AND ('true')) AND ((EXISTS  (SELECT  1  FROM "public"."project_administrator" AS "_be_3_public_project_administrator" WHERE (((("_be_3_public_project_administrator"."project_id") = ("_be_2_public_project"."id")) AND ('true')) AND ((((("_be_3_public_project_administrator"."administrator_id") = (((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer)) OR ((("_be_3_public_project_administrator"."administrator_id") IS NULL) AND ((((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer) IS NULL))) AND ('true')) AND ('true')))     )) AND ('true')))     )) AND ('true')) OR ('false'))) AND ('true')) THEN
+      CASE
+        WHEN conflict_clause = 'null'::jsonb THEN INSERT INTO "public"."article" VALUES (NEW.*) RETURNING * INTO r;
+        ELSE
+          action = conflict_clause ->> 'action';
+          constraint_name = quote_ident(conflict_clause ->> 'constraint');
+          set_expression = conflict_clause ->> 'set_expression';
+          IF action is NOT NULL THEN
+            CASE
+              WHEN action = 'ignore'::text AND constraint_name IS NULL THEN
+                INSERT INTO "public"."article" VALUES (NEW.*) ON CONFLICT DO NOTHING RETURNING * INTO r;
+              WHEN action = 'ignore'::text AND constraint_name is NOT NULL THEN
+                EXECUTE 'INSERT INTO "public"."article" VALUES ($1.*) ON CONFLICT ON CONSTRAINT ' || constraint_name ||
+                           ' DO NOTHING RETURNING *' INTO r USING NEW;
+              ELSE
+                EXECUTE 'INSERT INTO "public"."article" VALUES ($1.*) ON CONFLICT ON CONSTRAINT ' || constraint_name ||
+                           ' DO UPDATE ' || set_expression || ' RETURNING *' INTO r USING NEW;
+            END CASE;
+            ELSE
+              RAISE internal_error using message = 'action is not found'; RETURN NULL;
+          END IF;
+      END CASE;
+      IF r IS NULL THEN RETURN null; ELSE RETURN r; END IF;
+     ELSE RAISE check_violation using message = 'insert check constraint failed'; RETURN NULL;
+     END IF;
   END $_$;
 
 
@@ -341,39 +359,39 @@ ALTER FUNCTION hdb_views.user__insert__public__article() OWNER TO postgres;
 
 CREATE FUNCTION hdb_views.user__insert__public__article_comment() RETURNS trigger
     LANGUAGE plpgsql
-    AS $_$
-  DECLARE r "public"."article_comment"%ROWTYPE;
-  DECLARE conflict_clause jsonb;
-  DECLARE action text;
-  DECLARE constraint_name text;
-  DECLARE set_expression text;
-  BEGIN
-    conflict_clause = current_setting('hasura.conflict_clause')::jsonb;
-    IF ((((EXISTS  (SELECT  1  FROM "public"."article" AS "_be_0_public_article" WHERE (((("_be_0_public_article"."id") = (NEW."article_id")) AND ('true')) AND ((EXISTS  (SELECT  1  FROM "public"."project" AS "_be_1_public_project" WHERE (((("_be_1_public_project"."id") = ("_be_0_public_article"."project")) AND ('true')) AND ((EXISTS  (SELECT  1  FROM "public"."project_writer" AS "_be_2_public_project_writer" WHERE (((("_be_2_public_project_writer"."project_id") = ("_be_1_public_project"."id")) AND ('true')) AND ((EXISTS  (SELECT  1  FROM "public"."user" AS "_be_3_public_user" WHERE (((("_be_3_public_user"."id") = ("_be_2_public_project_writer"."writer_id")) AND ('true')) AND ((((("_be_3_public_user"."id") = (((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer)) OR ((("_be_3_public_user"."id") IS NULL) AND ((((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer) IS NULL))) AND ('true')) AND ('true')))     )) AND ('true')))     )) AND ('true')))     )) AND ('true')))     )) AND ('true')) OR (((EXISTS  (SELECT  1  FROM "public"."article" AS "_be_4_public_article" WHERE (((("_be_4_public_article"."id") = (NEW."article_id")) AND ('true')) AND ((EXISTS  (SELECT  1  FROM "public"."project" AS "_be_5_public_project" WHERE (((("_be_5_public_project"."id") = ("_be_4_public_article"."project")) AND ('true')) AND ((EXISTS  (SELECT  1  FROM "public"."project_administrator" AS "_be_6_public_project_administrator" WHERE (((("_be_6_public_project_administrator"."project_id") = ("_be_5_public_project"."id")) AND ('true')) AND ((EXISTS  (SELECT  1  FROM "public"."user" AS "_be_7_public_user" WHERE (((("_be_7_public_user"."id") = ("_be_6_public_project_administrator"."administrator_id")) AND ('true')) AND ((((("_be_7_public_user"."id") = (((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer)) OR ((("_be_7_public_user"."id") IS NULL) AND ((((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer) IS NULL))) AND ('true')) AND ('true')))     )) AND ('true')))     )) AND ('true')))     )) AND ('true')))     )) AND ('true')) OR ('false'))) AND ('true')) THEN
-      CASE
-        WHEN conflict_clause = 'null'::jsonb THEN INSERT INTO "public"."article_comment" VALUES (NEW.*) RETURNING * INTO r;
-        ELSE
-          action = conflict_clause ->> 'action';
-          constraint_name = quote_ident(conflict_clause ->> 'constraint');
-          set_expression = conflict_clause ->> 'set_expression';
-          IF action is NOT NULL THEN
-            CASE
-              WHEN action = 'ignore'::text AND constraint_name IS NULL THEN
-                INSERT INTO "public"."article_comment" VALUES (NEW.*) ON CONFLICT DO NOTHING RETURNING * INTO r;
-              WHEN action = 'ignore'::text AND constraint_name is NOT NULL THEN
-                EXECUTE 'INSERT INTO "public"."article_comment" VALUES ($1.*) ON CONFLICT ON CONSTRAINT ' || constraint_name ||
-                           ' DO NOTHING RETURNING *' INTO r USING NEW;
-              ELSE
-                EXECUTE 'INSERT INTO "public"."article_comment" VALUES ($1.*) ON CONFLICT ON CONSTRAINT ' || constraint_name ||
-                           ' DO UPDATE ' || set_expression || ' RETURNING *' INTO r USING NEW;
-            END CASE;
-            ELSE
-              RAISE internal_error using message = 'action is not found'; RETURN NULL;
-          END IF;
-      END CASE;
-      IF r IS NULL THEN RETURN null; ELSE RETURN r; END IF;
-     ELSE RAISE check_violation using message = 'insert check constraint failed'; RETURN NULL;
-     END IF;
+    AS $_$
+  DECLARE r "public"."article_comment"%ROWTYPE;
+  DECLARE conflict_clause jsonb;
+  DECLARE action text;
+  DECLARE constraint_name text;
+  DECLARE set_expression text;
+  BEGIN
+    conflict_clause = current_setting('hasura.conflict_clause')::jsonb;
+    IF ((((EXISTS  (SELECT  1  FROM "public"."article" AS "_be_0_public_article" WHERE (((("_be_0_public_article"."id") = (NEW."article_id")) AND ('true')) AND ((EXISTS  (SELECT  1  FROM "public"."project" AS "_be_1_public_project" WHERE (((("_be_1_public_project"."id") = ("_be_0_public_article"."project")) AND ('true')) AND ((EXISTS  (SELECT  1  FROM "public"."project_writer" AS "_be_2_public_project_writer" WHERE (((("_be_2_public_project_writer"."project_id") = ("_be_1_public_project"."id")) AND ('true')) AND ((EXISTS  (SELECT  1  FROM "public"."user" AS "_be_3_public_user" WHERE (((("_be_3_public_user"."id") = ("_be_2_public_project_writer"."writer_id")) AND ('true')) AND ((((("_be_3_public_user"."id") = (((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer)) OR ((("_be_3_public_user"."id") IS NULL) AND ((((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer) IS NULL))) AND ('true')) AND ('true')))     )) AND ('true')))     )) AND ('true')))     )) AND ('true')))     )) AND ('true')) OR (((EXISTS  (SELECT  1  FROM "public"."article" AS "_be_4_public_article" WHERE (((("_be_4_public_article"."id") = (NEW."article_id")) AND ('true')) AND ((EXISTS  (SELECT  1  FROM "public"."project" AS "_be_5_public_project" WHERE (((("_be_5_public_project"."id") = ("_be_4_public_article"."project")) AND ('true')) AND ((EXISTS  (SELECT  1  FROM "public"."project_administrator" AS "_be_6_public_project_administrator" WHERE (((("_be_6_public_project_administrator"."project_id") = ("_be_5_public_project"."id")) AND ('true')) AND ((EXISTS  (SELECT  1  FROM "public"."user" AS "_be_7_public_user" WHERE (((("_be_7_public_user"."id") = ("_be_6_public_project_administrator"."administrator_id")) AND ('true')) AND ((((("_be_7_public_user"."id") = (((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer)) OR ((("_be_7_public_user"."id") IS NULL) AND ((((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer) IS NULL))) AND ('true')) AND ('true')))     )) AND ('true')))     )) AND ('true')))     )) AND ('true')))     )) AND ('true')) OR ('false'))) AND ('true')) THEN
+      CASE
+        WHEN conflict_clause = 'null'::jsonb THEN INSERT INTO "public"."article_comment" VALUES (NEW.*) RETURNING * INTO r;
+        ELSE
+          action = conflict_clause ->> 'action';
+          constraint_name = quote_ident(conflict_clause ->> 'constraint');
+          set_expression = conflict_clause ->> 'set_expression';
+          IF action is NOT NULL THEN
+            CASE
+              WHEN action = 'ignore'::text AND constraint_name IS NULL THEN
+                INSERT INTO "public"."article_comment" VALUES (NEW.*) ON CONFLICT DO NOTHING RETURNING * INTO r;
+              WHEN action = 'ignore'::text AND constraint_name is NOT NULL THEN
+                EXECUTE 'INSERT INTO "public"."article_comment" VALUES ($1.*) ON CONFLICT ON CONSTRAINT ' || constraint_name ||
+                           ' DO NOTHING RETURNING *' INTO r USING NEW;
+              ELSE
+                EXECUTE 'INSERT INTO "public"."article_comment" VALUES ($1.*) ON CONFLICT ON CONSTRAINT ' || constraint_name ||
+                           ' DO UPDATE ' || set_expression || ' RETURNING *' INTO r USING NEW;
+            END CASE;
+            ELSE
+              RAISE internal_error using message = 'action is not found'; RETURN NULL;
+          END IF;
+      END CASE;
+      IF r IS NULL THEN RETURN null; ELSE RETURN r; END IF;
+     ELSE RAISE check_violation using message = 'insert check constraint failed'; RETURN NULL;
+     END IF;
   END $_$;
 
 
@@ -385,39 +403,39 @@ ALTER FUNCTION hdb_views.user__insert__public__article_comment() OWNER TO postgr
 
 CREATE FUNCTION hdb_views.user__insert__public__article_revision() RETURNS trigger
     LANGUAGE plpgsql
-    AS $_$
-  DECLARE r "public"."article_revision"%ROWTYPE;
-  DECLARE conflict_clause jsonb;
-  DECLARE action text;
-  DECLARE constraint_name text;
-  DECLARE set_expression text;
-  BEGIN
-    conflict_clause = current_setting('hasura.conflict_clause')::jsonb;
-    IF ((((EXISTS  (SELECT  1  FROM "public"."article" AS "_be_0_public_article" WHERE (((("_be_0_public_article"."id") = (NEW."article")) AND ('true')) AND ((EXISTS  (SELECT  1  FROM "public"."project" AS "_be_1_public_project" WHERE (((("_be_1_public_project"."id") = ("_be_0_public_article"."project")) AND ('true')) AND ((EXISTS  (SELECT  1  FROM "public"."project_writer" AS "_be_2_public_project_writer" WHERE (((("_be_2_public_project_writer"."project_id") = ("_be_1_public_project"."id")) AND ('true')) AND ((((("_be_2_public_project_writer"."writer_id") = (((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer)) OR ((("_be_2_public_project_writer"."writer_id") IS NULL) AND ((((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer) IS NULL))) AND ('true')) AND ('true')))     )) AND ('true')))     )) AND ('true')))     )) AND ('true')) OR (((EXISTS  (SELECT  1  FROM "public"."article" AS "_be_3_public_article" WHERE (((("_be_3_public_article"."id") = (NEW."article")) AND ('true')) AND ((EXISTS  (SELECT  1  FROM "public"."project" AS "_be_4_public_project" WHERE (((("_be_4_public_project"."id") = ("_be_3_public_article"."project")) AND ('true')) AND ((EXISTS  (SELECT  1  FROM "public"."project_administrator" AS "_be_5_public_project_administrator" WHERE (((("_be_5_public_project_administrator"."project_id") = ("_be_4_public_project"."id")) AND ('true')) AND ((((("_be_5_public_project_administrator"."administrator_id") = (((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer)) OR ((("_be_5_public_project_administrator"."administrator_id") IS NULL) AND ((((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer) IS NULL))) AND ('true')) AND ('true')))     )) AND ('true')))     )) AND ('true')))     )) AND ('true')) OR ('false'))) AND ('true')) THEN
-      CASE
-        WHEN conflict_clause = 'null'::jsonb THEN INSERT INTO "public"."article_revision" VALUES (NEW.*) RETURNING * INTO r;
-        ELSE
-          action = conflict_clause ->> 'action';
-          constraint_name = quote_ident(conflict_clause ->> 'constraint');
-          set_expression = conflict_clause ->> 'set_expression';
-          IF action is NOT NULL THEN
-            CASE
-              WHEN action = 'ignore'::text AND constraint_name IS NULL THEN
-                INSERT INTO "public"."article_revision" VALUES (NEW.*) ON CONFLICT DO NOTHING RETURNING * INTO r;
-              WHEN action = 'ignore'::text AND constraint_name is NOT NULL THEN
-                EXECUTE 'INSERT INTO "public"."article_revision" VALUES ($1.*) ON CONFLICT ON CONSTRAINT ' || constraint_name ||
-                           ' DO NOTHING RETURNING *' INTO r USING NEW;
-              ELSE
-                EXECUTE 'INSERT INTO "public"."article_revision" VALUES ($1.*) ON CONFLICT ON CONSTRAINT ' || constraint_name ||
-                           ' DO UPDATE ' || set_expression || ' RETURNING *' INTO r USING NEW;
-            END CASE;
-            ELSE
-              RAISE internal_error using message = 'action is not found'; RETURN NULL;
-          END IF;
-      END CASE;
-      IF r IS NULL THEN RETURN null; ELSE RETURN r; END IF;
-     ELSE RAISE check_violation using message = 'insert check constraint failed'; RETURN NULL;
-     END IF;
+    AS $_$
+  DECLARE r "public"."article_revision"%ROWTYPE;
+  DECLARE conflict_clause jsonb;
+  DECLARE action text;
+  DECLARE constraint_name text;
+  DECLARE set_expression text;
+  BEGIN
+    conflict_clause = current_setting('hasura.conflict_clause')::jsonb;
+    IF ((((EXISTS  (SELECT  1  FROM "public"."article" AS "_be_0_public_article" WHERE (((("_be_0_public_article"."id") = (NEW."article")) AND ('true')) AND ((EXISTS  (SELECT  1  FROM "public"."project" AS "_be_1_public_project" WHERE (((("_be_1_public_project"."id") = ("_be_0_public_article"."project")) AND ('true')) AND ((EXISTS  (SELECT  1  FROM "public"."project_writer" AS "_be_2_public_project_writer" WHERE (((("_be_2_public_project_writer"."project_id") = ("_be_1_public_project"."id")) AND ('true')) AND ((((("_be_2_public_project_writer"."writer_id") = (((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer)) OR ((("_be_2_public_project_writer"."writer_id") IS NULL) AND ((((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer) IS NULL))) AND ('true')) AND ('true')))     )) AND ('true')))     )) AND ('true')))     )) AND ('true')) OR (((EXISTS  (SELECT  1  FROM "public"."article" AS "_be_3_public_article" WHERE (((("_be_3_public_article"."id") = (NEW."article")) AND ('true')) AND ((EXISTS  (SELECT  1  FROM "public"."project" AS "_be_4_public_project" WHERE (((("_be_4_public_project"."id") = ("_be_3_public_article"."project")) AND ('true')) AND ((EXISTS  (SELECT  1  FROM "public"."project_administrator" AS "_be_5_public_project_administrator" WHERE (((("_be_5_public_project_administrator"."project_id") = ("_be_4_public_project"."id")) AND ('true')) AND ((((("_be_5_public_project_administrator"."administrator_id") = (((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer)) OR ((("_be_5_public_project_administrator"."administrator_id") IS NULL) AND ((((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer) IS NULL))) AND ('true')) AND ('true')))     )) AND ('true')))     )) AND ('true')))     )) AND ('true')) OR ('false'))) AND ('true')) THEN
+      CASE
+        WHEN conflict_clause = 'null'::jsonb THEN INSERT INTO "public"."article_revision" VALUES (NEW.*) RETURNING * INTO r;
+        ELSE
+          action = conflict_clause ->> 'action';
+          constraint_name = quote_ident(conflict_clause ->> 'constraint');
+          set_expression = conflict_clause ->> 'set_expression';
+          IF action is NOT NULL THEN
+            CASE
+              WHEN action = 'ignore'::text AND constraint_name IS NULL THEN
+                INSERT INTO "public"."article_revision" VALUES (NEW.*) ON CONFLICT DO NOTHING RETURNING * INTO r;
+              WHEN action = 'ignore'::text AND constraint_name is NOT NULL THEN
+                EXECUTE 'INSERT INTO "public"."article_revision" VALUES ($1.*) ON CONFLICT ON CONSTRAINT ' || constraint_name ||
+                           ' DO NOTHING RETURNING *' INTO r USING NEW;
+              ELSE
+                EXECUTE 'INSERT INTO "public"."article_revision" VALUES ($1.*) ON CONFLICT ON CONSTRAINT ' || constraint_name ||
+                           ' DO UPDATE ' || set_expression || ' RETURNING *' INTO r USING NEW;
+            END CASE;
+            ELSE
+              RAISE internal_error using message = 'action is not found'; RETURN NULL;
+          END IF;
+      END CASE;
+      IF r IS NULL THEN RETURN null; ELSE RETURN r; END IF;
+     ELSE RAISE check_violation using message = 'insert check constraint failed'; RETURN NULL;
+     END IF;
   END $_$;
 
 
@@ -429,39 +447,39 @@ ALTER FUNCTION hdb_views.user__insert__public__article_revision() OWNER TO postg
 
 CREATE FUNCTION hdb_views.user__insert__public__project() RETURNS trigger
     LANGUAGE plpgsql
-    AS $_$
-  DECLARE r "public"."project"%ROWTYPE;
-  DECLARE conflict_clause jsonb;
-  DECLARE action text;
-  DECLARE constraint_name text;
-  DECLARE set_expression text;
-  BEGIN
-    conflict_clause = current_setting('hasura.conflict_clause')::jsonb;
-    IF ('true') THEN
-      CASE
-        WHEN conflict_clause = 'null'::jsonb THEN INSERT INTO "public"."project" VALUES (NEW.*) RETURNING * INTO r;
-        ELSE
-          action = conflict_clause ->> 'action';
-          constraint_name = quote_ident(conflict_clause ->> 'constraint');
-          set_expression = conflict_clause ->> 'set_expression';
-          IF action is NOT NULL THEN
-            CASE
-              WHEN action = 'ignore'::text AND constraint_name IS NULL THEN
-                INSERT INTO "public"."project" VALUES (NEW.*) ON CONFLICT DO NOTHING RETURNING * INTO r;
-              WHEN action = 'ignore'::text AND constraint_name is NOT NULL THEN
-                EXECUTE 'INSERT INTO "public"."project" VALUES ($1.*) ON CONFLICT ON CONSTRAINT ' || constraint_name ||
-                           ' DO NOTHING RETURNING *' INTO r USING NEW;
-              ELSE
-                EXECUTE 'INSERT INTO "public"."project" VALUES ($1.*) ON CONFLICT ON CONSTRAINT ' || constraint_name ||
-                           ' DO UPDATE ' || set_expression || ' RETURNING *' INTO r USING NEW;
-            END CASE;
-            ELSE
-              RAISE internal_error using message = 'action is not found'; RETURN NULL;
-          END IF;
-      END CASE;
-      IF r IS NULL THEN RETURN null; ELSE RETURN r; END IF;
-     ELSE RAISE check_violation using message = 'insert check constraint failed'; RETURN NULL;
-     END IF;
+    AS $_$
+  DECLARE r "public"."project"%ROWTYPE;
+  DECLARE conflict_clause jsonb;
+  DECLARE action text;
+  DECLARE constraint_name text;
+  DECLARE set_expression text;
+  BEGIN
+    conflict_clause = current_setting('hasura.conflict_clause')::jsonb;
+    IF ('true') THEN
+      CASE
+        WHEN conflict_clause = 'null'::jsonb THEN INSERT INTO "public"."project" VALUES (NEW.*) RETURNING * INTO r;
+        ELSE
+          action = conflict_clause ->> 'action';
+          constraint_name = quote_ident(conflict_clause ->> 'constraint');
+          set_expression = conflict_clause ->> 'set_expression';
+          IF action is NOT NULL THEN
+            CASE
+              WHEN action = 'ignore'::text AND constraint_name IS NULL THEN
+                INSERT INTO "public"."project" VALUES (NEW.*) ON CONFLICT DO NOTHING RETURNING * INTO r;
+              WHEN action = 'ignore'::text AND constraint_name is NOT NULL THEN
+                EXECUTE 'INSERT INTO "public"."project" VALUES ($1.*) ON CONFLICT ON CONSTRAINT ' || constraint_name ||
+                           ' DO NOTHING RETURNING *' INTO r USING NEW;
+              ELSE
+                EXECUTE 'INSERT INTO "public"."project" VALUES ($1.*) ON CONFLICT ON CONSTRAINT ' || constraint_name ||
+                           ' DO UPDATE ' || set_expression || ' RETURNING *' INTO r USING NEW;
+            END CASE;
+            ELSE
+              RAISE internal_error using message = 'action is not found'; RETURN NULL;
+          END IF;
+      END CASE;
+      IF r IS NULL THEN RETURN null; ELSE RETURN r; END IF;
+     ELSE RAISE check_violation using message = 'insert check constraint failed'; RETURN NULL;
+     END IF;
   END $_$;
 
 
@@ -473,39 +491,39 @@ ALTER FUNCTION hdb_views.user__insert__public__project() OWNER TO postgres;
 
 CREATE FUNCTION hdb_views.user__insert__public__project_administrator() RETURNS trigger
     LANGUAGE plpgsql
-    AS $_$
-  DECLARE r "public"."project_administrator"%ROWTYPE;
-  DECLARE conflict_clause jsonb;
-  DECLARE action text;
-  DECLARE constraint_name text;
-  DECLARE set_expression text;
-  BEGIN
-    conflict_clause = current_setting('hasura.conflict_clause')::jsonb;
-    IF ((((EXISTS  (SELECT  1  FROM "public"."project" AS "_be_0_public_project" WHERE (((("_be_0_public_project"."id") = (NEW."project_id")) AND ('true')) AND ((EXISTS  (SELECT  1  FROM "public"."user" AS "_be_1_public_user" WHERE (((("_be_1_public_user"."id") = ("_be_0_public_project"."create_by")) AND ('true')) AND ((((("_be_1_public_user"."id") = (((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer)) OR ((("_be_1_public_user"."id") IS NULL) AND ((((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer) IS NULL))) AND ('true')) AND ('true')))     )) AND ('true')))     )) AND ('true')) OR (((EXISTS  (SELECT  1  FROM "public"."project" AS "_be_2_public_project" WHERE (((("_be_2_public_project"."id") = (NEW."project_id")) AND ('true')) AND ((EXISTS  (SELECT  1  FROM "public"."project_administrator" AS "_be_3_public_project_administrator" WHERE (((("_be_3_public_project_administrator"."project_id") = ("_be_2_public_project"."id")) AND ('true')) AND ((((("_be_3_public_project_administrator"."administrator_id") = (((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer)) OR ((("_be_3_public_project_administrator"."administrator_id") IS NULL) AND ((((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer) IS NULL))) AND ('true')) AND ('true')))     )) AND ('true')))     )) AND ('true')) OR ('false'))) AND ('true')) THEN
-      CASE
-        WHEN conflict_clause = 'null'::jsonb THEN INSERT INTO "public"."project_administrator" VALUES (NEW.*) RETURNING * INTO r;
-        ELSE
-          action = conflict_clause ->> 'action';
-          constraint_name = quote_ident(conflict_clause ->> 'constraint');
-          set_expression = conflict_clause ->> 'set_expression';
-          IF action is NOT NULL THEN
-            CASE
-              WHEN action = 'ignore'::text AND constraint_name IS NULL THEN
-                INSERT INTO "public"."project_administrator" VALUES (NEW.*) ON CONFLICT DO NOTHING RETURNING * INTO r;
-              WHEN action = 'ignore'::text AND constraint_name is NOT NULL THEN
-                EXECUTE 'INSERT INTO "public"."project_administrator" VALUES ($1.*) ON CONFLICT ON CONSTRAINT ' || constraint_name ||
-                           ' DO NOTHING RETURNING *' INTO r USING NEW;
-              ELSE
-                EXECUTE 'INSERT INTO "public"."project_administrator" VALUES ($1.*) ON CONFLICT ON CONSTRAINT ' || constraint_name ||
-                           ' DO UPDATE ' || set_expression || ' RETURNING *' INTO r USING NEW;
-            END CASE;
-            ELSE
-              RAISE internal_error using message = 'action is not found'; RETURN NULL;
-          END IF;
-      END CASE;
-      IF r IS NULL THEN RETURN null; ELSE RETURN r; END IF;
-     ELSE RAISE check_violation using message = 'insert check constraint failed'; RETURN NULL;
-     END IF;
+    AS $_$
+  DECLARE r "public"."project_administrator"%ROWTYPE;
+  DECLARE conflict_clause jsonb;
+  DECLARE action text;
+  DECLARE constraint_name text;
+  DECLARE set_expression text;
+  BEGIN
+    conflict_clause = current_setting('hasura.conflict_clause')::jsonb;
+    IF ((((EXISTS  (SELECT  1  FROM "public"."project" AS "_be_0_public_project" WHERE (((("_be_0_public_project"."id") = (NEW."project_id")) AND ('true')) AND ((EXISTS  (SELECT  1  FROM "public"."user" AS "_be_1_public_user" WHERE (((("_be_1_public_user"."id") = ("_be_0_public_project"."create_by")) AND ('true')) AND ((((("_be_1_public_user"."id") = (((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer)) OR ((("_be_1_public_user"."id") IS NULL) AND ((((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer) IS NULL))) AND ('true')) AND ('true')))     )) AND ('true')))     )) AND ('true')) OR (((EXISTS  (SELECT  1  FROM "public"."project" AS "_be_2_public_project" WHERE (((("_be_2_public_project"."id") = (NEW."project_id")) AND ('true')) AND ((EXISTS  (SELECT  1  FROM "public"."project_administrator" AS "_be_3_public_project_administrator" WHERE (((("_be_3_public_project_administrator"."project_id") = ("_be_2_public_project"."id")) AND ('true')) AND ((((("_be_3_public_project_administrator"."administrator_id") = (((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer)) OR ((("_be_3_public_project_administrator"."administrator_id") IS NULL) AND ((((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer) IS NULL))) AND ('true')) AND ('true')))     )) AND ('true')))     )) AND ('true')) OR ('false'))) AND ('true')) THEN
+      CASE
+        WHEN conflict_clause = 'null'::jsonb THEN INSERT INTO "public"."project_administrator" VALUES (NEW.*) RETURNING * INTO r;
+        ELSE
+          action = conflict_clause ->> 'action';
+          constraint_name = quote_ident(conflict_clause ->> 'constraint');
+          set_expression = conflict_clause ->> 'set_expression';
+          IF action is NOT NULL THEN
+            CASE
+              WHEN action = 'ignore'::text AND constraint_name IS NULL THEN
+                INSERT INTO "public"."project_administrator" VALUES (NEW.*) ON CONFLICT DO NOTHING RETURNING * INTO r;
+              WHEN action = 'ignore'::text AND constraint_name is NOT NULL THEN
+                EXECUTE 'INSERT INTO "public"."project_administrator" VALUES ($1.*) ON CONFLICT ON CONSTRAINT ' || constraint_name ||
+                           ' DO NOTHING RETURNING *' INTO r USING NEW;
+              ELSE
+                EXECUTE 'INSERT INTO "public"."project_administrator" VALUES ($1.*) ON CONFLICT ON CONSTRAINT ' || constraint_name ||
+                           ' DO UPDATE ' || set_expression || ' RETURNING *' INTO r USING NEW;
+            END CASE;
+            ELSE
+              RAISE internal_error using message = 'action is not found'; RETURN NULL;
+          END IF;
+      END CASE;
+      IF r IS NULL THEN RETURN null; ELSE RETURN r; END IF;
+     ELSE RAISE check_violation using message = 'insert check constraint failed'; RETURN NULL;
+     END IF;
   END $_$;
 
 
@@ -517,39 +535,39 @@ ALTER FUNCTION hdb_views.user__insert__public__project_administrator() OWNER TO 
 
 CREATE FUNCTION hdb_views.user__insert__public__project_writer() RETURNS trigger
     LANGUAGE plpgsql
-    AS $_$
-  DECLARE r "public"."project_writer"%ROWTYPE;
-  DECLARE conflict_clause jsonb;
-  DECLARE action text;
-  DECLARE constraint_name text;
-  DECLARE set_expression text;
-  BEGIN
-    conflict_clause = current_setting('hasura.conflict_clause')::jsonb;
-    IF ((((EXISTS  (SELECT  1  FROM "public"."project" AS "_be_0_public_project" WHERE (((("_be_0_public_project"."id") = (NEW."project_id")) AND ('true')) AND ((EXISTS  (SELECT  1  FROM "public"."user" AS "_be_1_public_user" WHERE (((("_be_1_public_user"."id") = ("_be_0_public_project"."create_by")) AND ('true')) AND ((((("_be_1_public_user"."id") = (((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer)) OR ((("_be_1_public_user"."id") IS NULL) AND ((((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer) IS NULL))) AND ('true')) AND ('true')))     )) AND ('true')))     )) AND ('true')) OR (((EXISTS  (SELECT  1  FROM "public"."project" AS "_be_2_public_project" WHERE (((("_be_2_public_project"."id") = (NEW."project_id")) AND ('true')) AND ((EXISTS  (SELECT  1  FROM "public"."project_administrator" AS "_be_3_public_project_administrator" WHERE (((("_be_3_public_project_administrator"."project_id") = ("_be_2_public_project"."id")) AND ('true')) AND ((((("_be_3_public_project_administrator"."administrator_id") = (((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer)) OR ((("_be_3_public_project_administrator"."administrator_id") IS NULL) AND ((((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer) IS NULL))) AND ('true')) AND ('true')))     )) AND ('true')))     )) AND ('true')) OR ('false'))) AND ('true')) THEN
-      CASE
-        WHEN conflict_clause = 'null'::jsonb THEN INSERT INTO "public"."project_writer" VALUES (NEW.*) RETURNING * INTO r;
-        ELSE
-          action = conflict_clause ->> 'action';
-          constraint_name = quote_ident(conflict_clause ->> 'constraint');
-          set_expression = conflict_clause ->> 'set_expression';
-          IF action is NOT NULL THEN
-            CASE
-              WHEN action = 'ignore'::text AND constraint_name IS NULL THEN
-                INSERT INTO "public"."project_writer" VALUES (NEW.*) ON CONFLICT DO NOTHING RETURNING * INTO r;
-              WHEN action = 'ignore'::text AND constraint_name is NOT NULL THEN
-                EXECUTE 'INSERT INTO "public"."project_writer" VALUES ($1.*) ON CONFLICT ON CONSTRAINT ' || constraint_name ||
-                           ' DO NOTHING RETURNING *' INTO r USING NEW;
-              ELSE
-                EXECUTE 'INSERT INTO "public"."project_writer" VALUES ($1.*) ON CONFLICT ON CONSTRAINT ' || constraint_name ||
-                           ' DO UPDATE ' || set_expression || ' RETURNING *' INTO r USING NEW;
-            END CASE;
-            ELSE
-              RAISE internal_error using message = 'action is not found'; RETURN NULL;
-          END IF;
-      END CASE;
-      IF r IS NULL THEN RETURN null; ELSE RETURN r; END IF;
-     ELSE RAISE check_violation using message = 'insert check constraint failed'; RETURN NULL;
-     END IF;
+    AS $_$
+  DECLARE r "public"."project_writer"%ROWTYPE;
+  DECLARE conflict_clause jsonb;
+  DECLARE action text;
+  DECLARE constraint_name text;
+  DECLARE set_expression text;
+  BEGIN
+    conflict_clause = current_setting('hasura.conflict_clause')::jsonb;
+    IF ((((EXISTS  (SELECT  1  FROM "public"."project" AS "_be_0_public_project" WHERE (((("_be_0_public_project"."id") = (NEW."project_id")) AND ('true')) AND ((EXISTS  (SELECT  1  FROM "public"."user" AS "_be_1_public_user" WHERE (((("_be_1_public_user"."id") = ("_be_0_public_project"."create_by")) AND ('true')) AND ((((("_be_1_public_user"."id") = (((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer)) OR ((("_be_1_public_user"."id") IS NULL) AND ((((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer) IS NULL))) AND ('true')) AND ('true')))     )) AND ('true')))     )) AND ('true')) OR (((EXISTS  (SELECT  1  FROM "public"."project" AS "_be_2_public_project" WHERE (((("_be_2_public_project"."id") = (NEW."project_id")) AND ('true')) AND ((EXISTS  (SELECT  1  FROM "public"."project_administrator" AS "_be_3_public_project_administrator" WHERE (((("_be_3_public_project_administrator"."project_id") = ("_be_2_public_project"."id")) AND ('true')) AND ((((("_be_3_public_project_administrator"."administrator_id") = (((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer)) OR ((("_be_3_public_project_administrator"."administrator_id") IS NULL) AND ((((current_setting('hasura.user')::json->>'x-hasura-user-id'))::integer) IS NULL))) AND ('true')) AND ('true')))     )) AND ('true')))     )) AND ('true')) OR ('false'))) AND ('true')) THEN
+      CASE
+        WHEN conflict_clause = 'null'::jsonb THEN INSERT INTO "public"."project_writer" VALUES (NEW.*) RETURNING * INTO r;
+        ELSE
+          action = conflict_clause ->> 'action';
+          constraint_name = quote_ident(conflict_clause ->> 'constraint');
+          set_expression = conflict_clause ->> 'set_expression';
+          IF action is NOT NULL THEN
+            CASE
+              WHEN action = 'ignore'::text AND constraint_name IS NULL THEN
+                INSERT INTO "public"."project_writer" VALUES (NEW.*) ON CONFLICT DO NOTHING RETURNING * INTO r;
+              WHEN action = 'ignore'::text AND constraint_name is NOT NULL THEN
+                EXECUTE 'INSERT INTO "public"."project_writer" VALUES ($1.*) ON CONFLICT ON CONSTRAINT ' || constraint_name ||
+                           ' DO NOTHING RETURNING *' INTO r USING NEW;
+              ELSE
+                EXECUTE 'INSERT INTO "public"."project_writer" VALUES ($1.*) ON CONFLICT ON CONSTRAINT ' || constraint_name ||
+                           ' DO UPDATE ' || set_expression || ' RETURNING *' INTO r USING NEW;
+            END CASE;
+            ELSE
+              RAISE internal_error using message = 'action is not found'; RETURN NULL;
+          END IF;
+      END CASE;
+      IF r IS NULL THEN RETURN null; ELSE RETURN r; END IF;
+     ELSE RAISE check_violation using message = 'insert check constraint failed'; RETURN NULL;
+     END IF;
   END $_$;
 
 
@@ -612,6 +630,55 @@ CREATE TABLE hdb_catalog.event_triggers (
 
 
 ALTER TABLE hdb_catalog.event_triggers OWNER TO postgres;
+
+--
+-- Name: hdb_action; Type: TABLE; Schema: hdb_catalog; Owner: postgres
+--
+
+CREATE TABLE hdb_catalog.hdb_action (
+    action_name text NOT NULL,
+    action_defn jsonb NOT NULL,
+    comment text,
+    is_system_defined boolean DEFAULT false
+);
+
+
+ALTER TABLE hdb_catalog.hdb_action OWNER TO postgres;
+
+--
+-- Name: hdb_action_log; Type: TABLE; Schema: hdb_catalog; Owner: postgres
+--
+
+CREATE TABLE hdb_catalog.hdb_action_log (
+    id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    action_name text,
+    input_payload jsonb NOT NULL,
+    request_headers jsonb NOT NULL,
+    session_variables jsonb NOT NULL,
+    response_payload jsonb,
+    errors jsonb,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    response_received_at timestamp with time zone,
+    status text NOT NULL,
+    CONSTRAINT hdb_action_log_status_check CHECK ((status = ANY (ARRAY['created'::text, 'processing'::text, 'completed'::text, 'error'::text])))
+);
+
+
+ALTER TABLE hdb_catalog.hdb_action_log OWNER TO postgres;
+
+--
+-- Name: hdb_action_permission; Type: TABLE; Schema: hdb_catalog; Owner: postgres
+--
+
+CREATE TABLE hdb_catalog.hdb_action_permission (
+    action_name text NOT NULL,
+    role_name text NOT NULL,
+    definition jsonb DEFAULT '{}'::jsonb NOT NULL,
+    comment text
+);
+
+
+ALTER TABLE hdb_catalog.hdb_action_permission OWNER TO postgres;
 
 --
 -- Name: hdb_allowlist; Type: TABLE; Schema: hdb_catalog; Owner: postgres
@@ -800,14 +867,25 @@ CREATE VIEW hdb_catalog.hdb_computed_field_function AS
 ALTER TABLE hdb_catalog.hdb_computed_field_function OWNER TO postgres;
 
 --
+-- Name: hdb_custom_types; Type: TABLE; Schema: hdb_catalog; Owner: postgres
+--
+
+CREATE TABLE hdb_catalog.hdb_custom_types (
+    custom_types jsonb NOT NULL
+);
+
+
+ALTER TABLE hdb_catalog.hdb_custom_types OWNER TO postgres;
+
+--
 -- Name: hdb_function; Type: TABLE; Schema: hdb_catalog; Owner: postgres
 --
 
 CREATE TABLE hdb_catalog.hdb_function (
     function_schema text NOT NULL,
     function_name text NOT NULL,
-    is_system_defined boolean DEFAULT false,
-    configuration jsonb DEFAULT '{}'::jsonb NOT NULL
+    configuration jsonb DEFAULT '{}'::jsonb NOT NULL,
+    is_system_defined boolean DEFAULT false
 );
 
 
@@ -891,8 +969,8 @@ ALTER TABLE hdb_catalog.hdb_function_info_agg OWNER TO postgres;
 --
 
 CREATE TABLE hdb_catalog.hdb_permission (
-    table_schema text NOT NULL,
-    table_name text NOT NULL,
+    table_schema name NOT NULL,
+    table_name name NOT NULL,
     role_name text NOT NULL,
     perm_type text NOT NULL,
     perm_def jsonb NOT NULL,
@@ -938,8 +1016,8 @@ ALTER TABLE hdb_catalog.hdb_query_collection OWNER TO postgres;
 --
 
 CREATE TABLE hdb_catalog.hdb_relationship (
-    table_schema text NOT NULL,
-    table_name text NOT NULL,
+    table_schema name NOT NULL,
+    table_name name NOT NULL,
     rel_name text NOT NULL,
     rel_type text,
     rel_def jsonb NOT NULL,
@@ -952,12 +1030,28 @@ CREATE TABLE hdb_catalog.hdb_relationship (
 ALTER TABLE hdb_catalog.hdb_relationship OWNER TO postgres;
 
 --
+-- Name: hdb_role; Type: VIEW; Schema: hdb_catalog; Owner: postgres
+--
+
+CREATE VIEW hdb_catalog.hdb_role AS
+ SELECT DISTINCT q.role_name
+   FROM ( SELECT hdb_permission.role_name
+           FROM hdb_catalog.hdb_permission
+        UNION ALL
+         SELECT hdb_action_permission.role_name
+           FROM hdb_catalog.hdb_action_permission) q;
+
+
+ALTER TABLE hdb_catalog.hdb_role OWNER TO postgres;
+
+--
 -- Name: hdb_schema_update_event; Type: TABLE; Schema: hdb_catalog; Owner: postgres
 --
 
 CREATE TABLE hdb_catalog.hdb_schema_update_event (
     instance_id uuid NOT NULL,
-    occurred_at timestamp with time zone DEFAULT now() NOT NULL
+    occurred_at timestamp with time zone DEFAULT now() NOT NULL,
+    invalidations json NOT NULL
 );
 
 
@@ -968,11 +1062,11 @@ ALTER TABLE hdb_catalog.hdb_schema_update_event OWNER TO postgres;
 --
 
 CREATE TABLE hdb_catalog.hdb_table (
-    table_schema text NOT NULL,
-    table_name text NOT NULL,
+    table_schema name NOT NULL,
+    table_name name NOT NULL,
+    configuration jsonb,
     is_system_defined boolean DEFAULT false,
-    is_enum boolean DEFAULT false NOT NULL,
-    configuration jsonb DEFAULT '{}'::jsonb NOT NULL
+    is_enum boolean DEFAULT false NOT NULL
 );
 
 
@@ -983,41 +1077,36 @@ ALTER TABLE hdb_catalog.hdb_table OWNER TO postgres;
 --
 
 CREATE VIEW hdb_catalog.hdb_table_info_agg AS
- SELECT tables.table_name,
-    tables.table_schema,
-    descriptions.description,
-    COALESCE(columns.columns, '[]'::json) AS columns,
-    COALESCE(pk.columns, '[]'::json) AS primary_key_columns,
-    COALESCE(constraints.constraints, '[]'::json) AS constraints,
-    COALESCE(views.view_info, 'null'::json) AS view_info
-   FROM (((((information_schema.tables tables
-     LEFT JOIN ( SELECT c.table_name,
-            c.table_schema,
-            json_agg(json_build_object('name', c.name, 'type', c.type, 'is_nullable', (c.is_nullable)::boolean, 'references', c.primary_key_references, 'description', c.description)) AS columns
-           FROM hdb_catalog.hdb_column c
-          GROUP BY c.table_schema, c.table_name) columns ON ((((tables.table_schema)::name = (columns.table_schema)::name) AND ((tables.table_name)::name = (columns.table_name)::name))))
-     LEFT JOIN ( SELECT hdb_primary_key.table_schema,
-            hdb_primary_key.table_name,
-            hdb_primary_key.constraint_name,
-            hdb_primary_key.columns
-           FROM hdb_catalog.hdb_primary_key) pk ON ((((tables.table_schema)::name = (pk.table_schema)::name) AND ((tables.table_name)::name = (pk.table_name)::name))))
-     LEFT JOIN ( SELECT c.table_schema,
-            c.table_name,
-            json_agg(c.constraint_name) AS constraints
-           FROM information_schema.table_constraints c
-          WHERE (((c.constraint_type)::text = 'UNIQUE'::text) OR ((c.constraint_type)::text = 'PRIMARY KEY'::text))
-          GROUP BY c.table_schema, c.table_name) constraints ON ((((tables.table_schema)::name = (constraints.table_schema)::name) AND ((tables.table_name)::name = (constraints.table_name)::name))))
-     LEFT JOIN ( SELECT v.table_schema,
-            v.table_name,
-            json_build_object('is_updatable', ((v.is_updatable)::boolean OR (v.is_trigger_updatable)::boolean), 'is_deletable', ((v.is_updatable)::boolean OR (v.is_trigger_deletable)::boolean), 'is_insertable', ((v.is_insertable_into)::boolean OR (v.is_trigger_insertable_into)::boolean)) AS view_info
-           FROM information_schema.views v) views ON ((((tables.table_schema)::name = (views.table_schema)::name) AND ((tables.table_name)::name = (views.table_name)::name))))
-     LEFT JOIN ( SELECT pc.relname AS table_name,
-            pn.nspname AS table_schema,
-            pd.description
-           FROM ((pg_class pc
-             LEFT JOIN pg_namespace pn ON ((pn.oid = pc.relnamespace)))
-             LEFT JOIN pg_description pd ON ((pd.objoid = pc.oid)))
-          WHERE (pd.objsubid = 0)) descriptions ON ((((tables.table_schema)::name = descriptions.table_schema) AND ((tables.table_name)::name = descriptions.table_name))));
+ SELECT schema.nspname AS table_schema,
+    "table".relname AS table_name,
+    jsonb_build_object('oid', ("table".oid)::integer, 'columns', COALESCE(columns.info, '[]'::jsonb), 'primary_key', primary_key.info, 'unique_constraints', COALESCE(unique_constraints.info, '[]'::jsonb), 'foreign_keys', COALESCE(foreign_key_constraints.info, '[]'::jsonb), 'view_info',
+        CASE "table".relkind
+            WHEN 'v'::"char" THEN jsonb_build_object('is_updatable', ((pg_relation_is_updatable(("table".oid)::regclass, true) & 4) = 4), 'is_insertable', ((pg_relation_is_updatable(("table".oid)::regclass, true) & 8) = 8), 'is_deletable', ((pg_relation_is_updatable(("table".oid)::regclass, true) & 16) = 16))
+            ELSE NULL::jsonb
+        END, 'description', description.description) AS info
+   FROM ((((((pg_class "table"
+     JOIN pg_namespace schema ON ((schema.oid = "table".relnamespace)))
+     LEFT JOIN pg_description description ON (((description.classoid = ('pg_class'::regclass)::oid) AND (description.objoid = "table".oid) AND (description.objsubid = 0))))
+     LEFT JOIN LATERAL ( SELECT jsonb_agg(jsonb_build_object('name', "column".attname, 'position', "column".attnum, 'type', COALESCE(base_type.typname, type.typname), 'is_nullable', (NOT "column".attnotnull), 'description', col_description("table".oid, ("column".attnum)::integer))) AS info
+           FROM ((pg_attribute "column"
+             LEFT JOIN pg_type type ON ((type.oid = "column".atttypid)))
+             LEFT JOIN pg_type base_type ON (((type.typtype = 'd'::"char") AND (base_type.oid = type.typbasetype))))
+          WHERE (("column".attrelid = "table".oid) AND ("column".attnum > 0) AND (NOT "column".attisdropped))) columns ON (true))
+     LEFT JOIN LATERAL ( SELECT jsonb_build_object('constraint', jsonb_build_object('name', class.relname, 'oid', (class.oid)::integer), 'columns', COALESCE(columns_1.info, '[]'::jsonb)) AS info
+           FROM ((pg_index index
+             JOIN pg_class class ON ((class.oid = index.indexrelid)))
+             LEFT JOIN LATERAL ( SELECT jsonb_agg("column".attname) AS info
+                   FROM pg_attribute "column"
+                  WHERE (("column".attrelid = "table".oid) AND ("column".attnum = ANY ((index.indkey)::smallint[])))) columns_1 ON (true))
+          WHERE ((index.indrelid = "table".oid) AND index.indisprimary)) primary_key ON (true))
+     LEFT JOIN LATERAL ( SELECT jsonb_agg(jsonb_build_object('name', class.relname, 'oid', (class.oid)::integer)) AS info
+           FROM (pg_index index
+             JOIN pg_class class ON ((class.oid = index.indexrelid)))
+          WHERE ((index.indrelid = "table".oid) AND index.indisunique AND (NOT index.indisprimary))) unique_constraints ON (true))
+     LEFT JOIN LATERAL ( SELECT jsonb_agg(jsonb_build_object('constraint', jsonb_build_object('name', foreign_key.constraint_name, 'oid', foreign_key.constraint_oid), 'columns', foreign_key.columns, 'foreign_table', jsonb_build_object('schema', foreign_key.ref_table_table_schema, 'name', foreign_key.ref_table), 'foreign_columns', foreign_key.ref_columns)) AS info
+           FROM hdb_catalog.hdb_foreign_key_constraint foreign_key
+          WHERE ((foreign_key.table_schema = schema.nspname) AND (foreign_key.table_name = "table".relname))) foreign_key_constraints ON (true))
+  WHERE ("table".relkind = ANY (ARRAY['r'::"char", 't'::"char", 'v'::"char", 'm'::"char", 'f'::"char", 'p'::"char"]));
 
 
 ALTER TABLE hdb_catalog.hdb_table_info_agg OWNER TO postgres;
@@ -1589,6 +1678,30 @@ COPY hdb_catalog.event_triggers (name, type, schema_name, table_name, configurat
 
 
 --
+-- Data for Name: hdb_action; Type: TABLE DATA; Schema: hdb_catalog; Owner: postgres
+--
+
+COPY hdb_catalog.hdb_action (action_name, action_defn, comment, is_system_defined) FROM stdin;
+\.
+
+
+--
+-- Data for Name: hdb_action_log; Type: TABLE DATA; Schema: hdb_catalog; Owner: postgres
+--
+
+COPY hdb_catalog.hdb_action_log (id, action_name, input_payload, request_headers, session_variables, response_payload, errors, created_at, response_received_at, status) FROM stdin;
+\.
+
+
+--
+-- Data for Name: hdb_action_permission; Type: TABLE DATA; Schema: hdb_catalog; Owner: postgres
+--
+
+COPY hdb_catalog.hdb_action_permission (action_name, role_name, definition, comment) FROM stdin;
+\.
+
+
+--
 -- Data for Name: hdb_allowlist; Type: TABLE DATA; Schema: hdb_catalog; Owner: postgres
 --
 
@@ -1605,10 +1718,19 @@ COPY hdb_catalog.hdb_computed_field (table_schema, table_name, computed_field_na
 
 
 --
+-- Data for Name: hdb_custom_types; Type: TABLE DATA; Schema: hdb_catalog; Owner: postgres
+--
+
+COPY hdb_catalog.hdb_custom_types (custom_types) FROM stdin;
+{"enums": null, "objects": null, "scalars": null, "input_objects": null}
+\.
+
+
+--
 -- Data for Name: hdb_function; Type: TABLE DATA; Schema: hdb_catalog; Owner: postgres
 --
 
-COPY hdb_catalog.hdb_function (function_schema, function_name, is_system_defined, configuration) FROM stdin;
+COPY hdb_catalog.hdb_function (function_schema, function_name, configuration, is_system_defined) FROM stdin;
 \.
 
 
@@ -1617,27 +1739,27 @@ COPY hdb_catalog.hdb_function (function_schema, function_name, is_system_defined
 --
 
 COPY hdb_catalog.hdb_permission (table_schema, table_name, role_name, perm_type, perm_def, comment, is_system_defined) FROM stdin;
-public	project	user	delete	{"filter": {"project_administrators": {"administrator_id": {"_eq": "X-Hasura-User-Id"}}}}	\N	f
-public	project_administrator	user	delete	{"filter": {"_or": [{"project": {"owner": {"id": {"_eq": "X-Hasura-User-Id"}}}}, {"project": {"project_administrators": {"administrator_id": {"_eq": "X-Hasura-User-Id"}}}}]}}	\N	f
-public	project_writer	user	delete	{"filter": {"project": {"project_administrators": {"administrator_id": {"_eq": "X-Hasura-User-Id"}}}}}	\N	f
-public	project	user	insert	{"set": {}, "check": {}, "columns": ["create_by", "description", "name"]}	\N	f
-public	project	user	update	{"set": {}, "filter": {"project_administrators": {"administrator_id": {"_eq": "X-Hasura-User-Id"}}}, "columns": ["create_by", "description", "name"]}	\N	f
-public	article	user	insert	{"set": {}, "check": {"_or": [{"projectByProject": {"project_writers": {"writer_id": {"_eq": "X-Hasura-User-Id"}}}}, {"projectByProject": {"project_administrators": {"administrator_id": {"_eq": "X-Hasura-User-Id"}}}}]}, "columns": ["article_id", "number", "project", "status", "texte", "titre", "unique_article_projet"]}	\N	f
-public	article	user	update	{"set": {}, "filter": {"_or": [{"projectByProject": {"project_writers": {"writer_id": {"_eq": "X-Hasura-User-Id"}}}}, {"projectByProject": {"project_administrators": {"administrator_id": {"_eq": "X-Hasura-User-Id"}}}}]}, "columns": ["status"]}	\N	f
-public	article	user	select	{"filter": {"_or": [{"projectByProject": {"project_writers": {"writer_id": {"_eq": "X-Hasura-User-Id"}}}}, {"projectByProject": {"project_administrators": {"administrator_id": {"_eq": "X-Hasura-User-Id"}}}}]}, "columns": ["id", "project", "status", "article_id", "number", "texte", "titre", "unique_article_projet"], "computed_fields": [], "allow_aggregations": true}	\N	f
 public	project	user	select	{"filter": {"_or": [{"project_administrators": {"administrator_id": {"_eq": "X-Hasura-User-Id"}}}, {"project_writers": {"writer_id": {"_eq": "X-Hasura-User-Id"}}}]}, "columns": ["create_at", "create_by", "id", "description", "name"], "computed_fields": [], "allow_aggregations": true}	\N	f
-public	project_administrator	user	select	{"filter": {"_or": [{"project": {"project_writers": {"writer_id": {"_eq": "X-Hasura-User-Id"}}}}, {"project": {"project_administrators": {"administrator_id": {"_eq": "X-Hasura-User-Id"}}}}]}, "columns": ["id", "project_id", "administrator_id"], "computed_fields": [], "allow_aggregations": true}	\N	f
-public	project_writer	user	select	{"filter": {"_or": [{"project": {"project_administrators": {"administrator_id": {"_eq": "X-Hasura-User-Id"}}}}, {"project": {"project_writers": {"writer_id": {"_eq": "X-Hasura-User-Id"}}}}]}, "columns": ["id", "project_id", "writer_id"], "computed_fields": [], "allow_aggregations": true}	\N	f
-public	project_administrator	user	insert	{"set": {}, "check": {"_or": [{"project": {"owner": {"id": {"_eq": "X-Hasura-User-Id"}}}}, {"project": {"project_administrators": {"administrator_id": {"_eq": "X-Hasura-User-Id"}}}}]}, "columns": ["administrator_id", "project_id", "unique_administrator"]}	\N	f
-public	user	user	select	{"filter": {}, "columns": ["email", "firstName", "id", "lastName", "management", "ministry", "username"], "computed_fields": [], "allow_aggregations": false}	\N	f
-public	project_writer	user	insert	{"set": {}, "check": {"_or": [{"project": {"owner": {"id": {"_eq": "X-Hasura-User-Id"}}}}, {"project": {"project_administrators": {"administrator_id": {"_eq": "X-Hasura-User-Id"}}}}]}, "columns": ["project_id", "unique_writer", "writer_id"]}	\N	f
-public	user	user	update	{"set": {}, "filter": {"id": {"_eq": "X-Hasura-User-Id"}}, "columns": ["firstName", "lastName", "management", "ministry"]}	\N	f
-public	article_comment	user	update	{"set": {}, "filter": {"_or": [{"user_id": {"_eq": "X-Hasura-User-Id"}}, {"article": {"projectByProject": {"project_administrators": {"administrator_id": {"_eq": "X-Hasura-User-Id"}}}}}]}, "columns": ["comment"]}	\N	f
-public	article_comment	user	delete	{"filter": {"_or": [{"user_id": {"_eq": "X-Hasura-User-Id"}}, {"article": {"projectByProject": {"project_administrators": {"administrator_id": {"_eq": "X-Hasura-User-Id"}}}}}]}}	\N	f
+public	article	user	insert	{"set": {}, "check": {"_or": [{"projectByProject": {"project_writers": {"writer_id": {"_eq": "X-Hasura-User-Id"}}}}, {"projectByProject": {"project_administrators": {"administrator_id": {"_eq": "X-Hasura-User-Id"}}}}]}, "columns": ["article_id", "number", "project", "status", "texte", "titre", "unique_article_projet"]}	\N	f
+public	article	user	select	{"filter": {"_or": [{"projectByProject": {"project_writers": {"writer_id": {"_eq": "X-Hasura-User-Id"}}}}, {"projectByProject": {"project_administrators": {"administrator_id": {"_eq": "X-Hasura-User-Id"}}}}]}, "columns": ["id", "project", "status", "article_id", "number", "texte", "titre", "unique_article_projet"], "computed_fields": [], "allow_aggregations": true}	\N	f
+public	article	user	update	{"set": {}, "filter": {"_or": [{"projectByProject": {"project_writers": {"writer_id": {"_eq": "X-Hasura-User-Id"}}}}, {"projectByProject": {"project_administrators": {"administrator_id": {"_eq": "X-Hasura-User-Id"}}}}]}, "columns": ["status"]}	\N	f
 public	article_comment	user	insert	{"set": {}, "check": {"_or": [{"article": {"projectByProject": {"project_writers": {"user": {"id": {"_eq": "X-Hasura-User-Id"}}}}}}, {"article": {"projectByProject": {"project_administrators": {"administrator": {"id": {"_eq": "X-Hasura-User-Id"}}}}}}]}, "columns": ["article_id", "comment", "reply_id", "user_id"]}	\N	f
 public	article_comment	user	select	{"filter": {"_or": [{"article": {"projectByProject": {"project_writers": {"user": {"id": {"_eq": "X-Hasura-User-Id"}}}}}}, {"article": {"projectByProject": {"project_administrators": {"administrator": {"id": {"_eq": "X-Hasura-User-Id"}}}}}}]}, "columns": ["article_id", "comment", "created_at", "id", "reply_id", "user_id"], "computed_fields": [], "allow_aggregations": false}	\N	f
+public	article_comment	user	update	{"set": {}, "filter": {"_or": [{"user_id": {"_eq": "X-Hasura-User-Id"}}, {"article": {"projectByProject": {"project_administrators": {"administrator_id": {"_eq": "X-Hasura-User-Id"}}}}}]}, "columns": ["comment"]}	\N	f
+public	article_comment	user	delete	{"filter": {"_or": [{"user_id": {"_eq": "X-Hasura-User-Id"}}, {"article": {"projectByProject": {"project_administrators": {"administrator_id": {"_eq": "X-Hasura-User-Id"}}}}}]}}	\N	f
 public	article_revision	user	insert	{"set": {}, "check": {"_or": [{"articleByArticle": {"projectByProject": {"project_writers": {"writer_id": {"_eq": "X-Hasura-User-Id"}}}}}, {"articleByArticle": {"projectByProject": {"project_administrators": {"administrator_id": {"_eq": "X-Hasura-User-Id"}}}}}]}, "columns": ["article", "name", "project", "text", "textFormatted"]}	\N	f
 public	article_revision	user	select	{"filter": {"_or": [{"articleByArticle": {"projectByProject": {"project_writers": {"writer_id": {"_eq": "X-Hasura-User-Id"}}}}}, {"articleByArticle": {"projectByProject": {"project_administrators": {"administrator_id": {"_eq": "X-Hasura-User-Id"}}}}}]}, "columns": ["article", "id", "name", "project", "text", "textFormatted"], "computed_fields": [], "allow_aggregations": true}	\N	f
+public	project	user	insert	{"set": {}, "check": {}, "columns": ["create_by", "description", "name"]}	\N	f
+public	project	user	update	{"set": {}, "filter": {"project_administrators": {"administrator_id": {"_eq": "X-Hasura-User-Id"}}}, "columns": ["create_by", "description", "name"]}	\N	f
+public	project	user	delete	{"filter": {"project_administrators": {"administrator_id": {"_eq": "X-Hasura-User-Id"}}}}	\N	f
+public	project_administrator	user	insert	{"set": {}, "check": {"_or": [{"project": {"owner": {"id": {"_eq": "X-Hasura-User-Id"}}}}, {"project": {"project_administrators": {"administrator_id": {"_eq": "X-Hasura-User-Id"}}}}]}, "columns": ["administrator_id", "project_id", "unique_administrator"]}	\N	f
+public	project_administrator	user	select	{"filter": {"_or": [{"project": {"project_writers": {"writer_id": {"_eq": "X-Hasura-User-Id"}}}}, {"project": {"project_administrators": {"administrator_id": {"_eq": "X-Hasura-User-Id"}}}}]}, "columns": ["id", "project_id", "administrator_id"], "computed_fields": [], "allow_aggregations": true}	\N	f
+public	project_administrator	user	delete	{"filter": {"_or": [{"project": {"owner": {"id": {"_eq": "X-Hasura-User-Id"}}}}, {"project": {"project_administrators": {"administrator_id": {"_eq": "X-Hasura-User-Id"}}}}]}}	\N	f
+public	project_writer	user	insert	{"set": {}, "check": {"_or": [{"project": {"owner": {"id": {"_eq": "X-Hasura-User-Id"}}}}, {"project": {"project_administrators": {"administrator_id": {"_eq": "X-Hasura-User-Id"}}}}]}, "columns": ["project_id", "unique_writer", "writer_id"]}	\N	f
+public	project_writer	user	select	{"filter": {"_or": [{"project": {"project_administrators": {"administrator_id": {"_eq": "X-Hasura-User-Id"}}}}, {"project": {"project_writers": {"writer_id": {"_eq": "X-Hasura-User-Id"}}}}]}, "columns": ["id", "project_id", "writer_id"], "computed_fields": [], "allow_aggregations": true}	\N	f
+public	project_writer	user	delete	{"filter": {"project": {"project_administrators": {"administrator_id": {"_eq": "X-Hasura-User-Id"}}}}}	\N	f
+public	user	user	select	{"filter": {}, "columns": ["email", "firstName", "id", "lastName", "management", "ministry", "username"], "computed_fields": [], "allow_aggregations": false}	\N	f
+public	user	user	update	{"set": {}, "filter": {"id": {"_eq": "X-Hasura-User-Id"}}, "columns": ["firstName", "lastName", "management", "ministry"]}	\N	f
 \.
 
 
@@ -1654,34 +1776,38 @@ COPY hdb_catalog.hdb_query_collection (collection_name, collection_defn, comment
 --
 
 COPY hdb_catalog.hdb_relationship (table_schema, table_name, rel_name, rel_type, rel_def, comment, is_system_defined) FROM stdin;
-public	article	projectByProject	object	{"foreign_key_constraint_on": "project"}	\N	f
-public	article	article_revisions	array	{"foreign_key_constraint_on": {"table": "article_revision", "column": "article"}}	\N	f
-public	article_revision	articleByArticle	object	{"foreign_key_constraint_on": "article"}	\N	f
-public	project	articles	array	{"foreign_key_constraint_on": {"table": "article", "column": "project"}}	\N	f
 hdb_catalog	hdb_table	detail	object	{"manual_configuration": {"remote_table": {"name": "tables", "schema": "information_schema"}, "column_mapping": {"table_name": "table_name", "table_schema": "table_schema"}}}	\N	t
 hdb_catalog	hdb_table	primary_key	object	{"manual_configuration": {"remote_table": {"name": "hdb_primary_key", "schema": "hdb_catalog"}, "column_mapping": {"table_name": "table_name", "table_schema": "table_schema"}}}	\N	t
 hdb_catalog	hdb_table	columns	array	{"manual_configuration": {"remote_table": {"name": "columns", "schema": "information_schema"}, "column_mapping": {"table_name": "table_name", "table_schema": "table_schema"}}}	\N	t
 hdb_catalog	hdb_table	foreign_key_constraints	array	{"manual_configuration": {"remote_table": {"name": "hdb_foreign_key_constraint", "schema": "hdb_catalog"}, "column_mapping": {"table_name": "table_name", "table_schema": "table_schema"}}}	\N	t
 hdb_catalog	hdb_table	relationships	array	{"manual_configuration": {"remote_table": {"name": "hdb_relationship", "schema": "hdb_catalog"}, "column_mapping": {"table_name": "table_name", "table_schema": "table_schema"}}}	\N	t
 hdb_catalog	hdb_table	permissions	array	{"manual_configuration": {"remote_table": {"name": "hdb_permission_agg", "schema": "hdb_catalog"}, "column_mapping": {"table_name": "table_name", "table_schema": "table_schema"}}}	\N	t
+hdb_catalog	hdb_table	computed_fields	array	{"manual_configuration": {"remote_table": {"name": "hdb_computed_field", "schema": "hdb_catalog"}, "column_mapping": {"table_name": "table_name", "table_schema": "table_schema"}}}	\N	t
 hdb_catalog	hdb_table	check_constraints	array	{"manual_configuration": {"remote_table": {"name": "hdb_check_constraint", "schema": "hdb_catalog"}, "column_mapping": {"table_name": "table_name", "table_schema": "table_schema"}}}	\N	t
 hdb_catalog	hdb_table	unique_constraints	array	{"manual_configuration": {"remote_table": {"name": "hdb_unique_constraint", "schema": "hdb_catalog"}, "column_mapping": {"table_name": "table_name", "table_schema": "table_schema"}}}	\N	t
-hdb_catalog	event_log	trigger	object	{"manual_configuration": {"remote_table": {"name": "event_triggers", "schema": "hdb_catalog"}, "column_mapping": {"trigger_name": "name"}}}	\N	t
 hdb_catalog	event_triggers	events	array	{"manual_configuration": {"remote_table": {"name": "event_log", "schema": "hdb_catalog"}, "column_mapping": {"name": "trigger_name"}}}	\N	t
-hdb_catalog	event_invocation_logs	event	object	{"foreign_key_constraint_on": "event_id"}	\N	t
+hdb_catalog	event_log	trigger	object	{"manual_configuration": {"remote_table": {"name": "event_triggers", "schema": "hdb_catalog"}, "column_mapping": {"trigger_name": "name"}}}	\N	t
 hdb_catalog	event_log	logs	array	{"foreign_key_constraint_on": {"table": {"name": "event_invocation_logs", "schema": "hdb_catalog"}, "column": "event_id"}}	\N	t
+hdb_catalog	event_invocation_logs	event	object	{"foreign_key_constraint_on": "event_id"}	\N	t
 hdb_catalog	hdb_function_agg	return_table_info	object	{"manual_configuration": {"remote_table": {"name": "hdb_table", "schema": "hdb_catalog"}, "column_mapping": {"return_type_name": "table_name", "return_type_schema": "table_schema"}}}	\N	t
-public	project_administrator	project	object	{"foreign_key_constraint_on": "project_id"}	\N	f
-public	project_administrator	administrator	object	{"foreign_key_constraint_on": "administrator_id"}	\N	f
-public	project	project_administrators	array	{"foreign_key_constraint_on": {"table": "project_administrator", "column": "project_id"}}	\N	f
-public	user	project_administrators	array	{"foreign_key_constraint_on": {"table": "project_administrator", "column": "administrator_id"}}	\N	f
-public	project	project_writers	array	{"foreign_key_constraint_on": {"table": "project_writer", "column": "project_id"}}	\N	f
+hdb_catalog	hdb_action	permissions	array	{"manual_configuration": {"remote_table": {"name": "hdb_action_permission", "schema": "hdb_catalog"}, "column_mapping": {"action_name": "action_name"}}}	\N	t
+hdb_catalog	hdb_role	action_permissions	array	{"manual_configuration": {"remote_table": {"name": "hdb_action_permission", "schema": "hdb_catalog"}, "column_mapping": {"role_name": "role_name"}}}	\N	t
+hdb_catalog	hdb_role	permissions	array	{"manual_configuration": {"remote_table": {"name": "hdb_permission_agg", "schema": "hdb_catalog"}, "column_mapping": {"role_name": "role_name"}}}	\N	t
+public	article	projectByProject	object	{"foreign_key_constraint_on": "project"}	\N	f
+public	article	article_revisions	array	{"foreign_key_constraint_on": {"table": {"name": "article_revision", "schema": "public"}, "column": "article"}}	\N	f
+public	article_comment	article	object	{"foreign_key_constraint_on": "article_id"}	\N	f
+public	article_comment	user	object	{"foreign_key_constraint_on": "user_id"}	\N	f
+public	article_comment	responses	array	{"manual_configuration": {"remote_table": {"name": "article_comment", "schema": "public"}, "column_mapping": {"id": "reply_id"}}}	\N	f
+public	article_revision	articleByArticle	object	{"foreign_key_constraint_on": "article"}	\N	f
 public	project	owner	object	{"foreign_key_constraint_on": "create_by"}	\N	f
+public	project	articles	array	{"foreign_key_constraint_on": {"table": {"name": "article", "schema": "public"}, "column": "project"}}	\N	f
+public	project	project_administrators	array	{"foreign_key_constraint_on": {"table": {"name": "project_administrator", "schema": "public"}, "column": "project_id"}}	\N	f
+public	project	project_writers	array	{"foreign_key_constraint_on": {"table": {"name": "project_writer", "schema": "public"}, "column": "project_id"}}	\N	f
+public	project_administrator	administrator	object	{"foreign_key_constraint_on": "administrator_id"}	\N	f
+public	project_administrator	project	object	{"foreign_key_constraint_on": "project_id"}	\N	f
 public	project_writer	project	object	{"foreign_key_constraint_on": "project_id"}	\N	f
 public	project_writer	user	object	{"foreign_key_constraint_on": "writer_id"}	\N	f
-public	article_comment	user	object	{"foreign_key_constraint_on": "user_id"}	\N	f
-public	article_comment	article	object	{"foreign_key_constraint_on": "article_id"}	\N	f
-public	article_comment	responses	array	{"manual_configuration": {"remote_table": "article_comment", "column_mapping": {"id": "reply_id"}}}	\N	f
+public	user	project_administrators	array	{"foreign_key_constraint_on": {"table": {"name": "project_administrator", "schema": "public"}, "column": "administrator_id"}}	\N	f
 \.
 
 
@@ -1689,8 +1815,8 @@ public	article_comment	responses	array	{"manual_configuration": {"remote_table":
 -- Data for Name: hdb_schema_update_event; Type: TABLE DATA; Schema: hdb_catalog; Owner: postgres
 --
 
-COPY hdb_catalog.hdb_schema_update_event (instance_id, occurred_at) FROM stdin;
-6a52af85-bbf9-4fa9-9c3c-eb44e855c143	2020-04-30 07:19:40.819721+00
+COPY hdb_catalog.hdb_schema_update_event (instance_id, occurred_at, invalidations) FROM stdin;
+a8c5dc4e-dcb1-406b-a3d7-10c24ec9f78d	2020-05-02 12:37:30.271776+00	{"metadata":true,"remote_schemas":[]}
 \.
 
 
@@ -1698,34 +1824,40 @@ COPY hdb_catalog.hdb_schema_update_event (instance_id, occurred_at) FROM stdin;
 -- Data for Name: hdb_table; Type: TABLE DATA; Schema: hdb_catalog; Owner: postgres
 --
 
-COPY hdb_catalog.hdb_table (table_schema, table_name, is_system_defined, is_enum, configuration) FROM stdin;
-public	article	f	f	{}
-public	article_revision	f	f	{}
-public	project	f	f	{}
-hdb_catalog	hdb_table	t	f	{"custom_root_fields": {"delete": null, "insert": null, "select": null, "update": null, "select_by_pk": null, "select_aggregate": null}, "custom_column_names": {}}
-information_schema	tables	t	f	{"custom_root_fields": {"delete": null, "insert": null, "select": null, "update": null, "select_by_pk": null, "select_aggregate": null}, "custom_column_names": {}}
-information_schema	schemata	t	f	{"custom_root_fields": {"delete": null, "insert": null, "select": null, "update": null, "select_by_pk": null, "select_aggregate": null}, "custom_column_names": {}}
-information_schema	views	t	f	{"custom_root_fields": {"delete": null, "insert": null, "select": null, "update": null, "select_by_pk": null, "select_aggregate": null}, "custom_column_names": {}}
-hdb_catalog	hdb_primary_key	t	f	{"custom_root_fields": {"delete": null, "insert": null, "select": null, "update": null, "select_by_pk": null, "select_aggregate": null}, "custom_column_names": {}}
-information_schema	columns	t	f	{"custom_root_fields": {"delete": null, "insert": null, "select": null, "update": null, "select_by_pk": null, "select_aggregate": null}, "custom_column_names": {}}
-hdb_catalog	hdb_foreign_key_constraint	t	f	{"custom_root_fields": {"delete": null, "insert": null, "select": null, "update": null, "select_by_pk": null, "select_aggregate": null}, "custom_column_names": {}}
-hdb_catalog	hdb_relationship	t	f	{"custom_root_fields": {"delete": null, "insert": null, "select": null, "update": null, "select_by_pk": null, "select_aggregate": null}, "custom_column_names": {}}
-hdb_catalog	hdb_permission_agg	t	f	{"custom_root_fields": {"delete": null, "insert": null, "select": null, "update": null, "select_by_pk": null, "select_aggregate": null}, "custom_column_names": {}}
-hdb_catalog	hdb_check_constraint	t	f	{"custom_root_fields": {"delete": null, "insert": null, "select": null, "update": null, "select_by_pk": null, "select_aggregate": null}, "custom_column_names": {}}
-hdb_catalog	hdb_unique_constraint	t	f	{"custom_root_fields": {"delete": null, "insert": null, "select": null, "update": null, "select_by_pk": null, "select_aggregate": null}, "custom_column_names": {}}
-hdb_catalog	event_triggers	t	f	{"custom_root_fields": {"delete": null, "insert": null, "select": null, "update": null, "select_by_pk": null, "select_aggregate": null}, "custom_column_names": {}}
-hdb_catalog	event_log	t	f	{"custom_root_fields": {"delete": null, "insert": null, "select": null, "update": null, "select_by_pk": null, "select_aggregate": null}, "custom_column_names": {}}
-hdb_catalog	event_invocation_logs	t	f	{"custom_root_fields": {"delete": null, "insert": null, "select": null, "update": null, "select_by_pk": null, "select_aggregate": null}, "custom_column_names": {}}
-hdb_catalog	hdb_function_agg	t	f	{"custom_root_fields": {"delete": null, "insert": null, "select": null, "update": null, "select_by_pk": null, "select_aggregate": null}, "custom_column_names": {}}
-hdb_catalog	hdb_function	t	f	{"custom_root_fields": {"delete": null, "insert": null, "select": null, "update": null, "select_by_pk": null, "select_aggregate": null}, "custom_column_names": {}}
-hdb_catalog	remote_schemas	t	f	{"custom_root_fields": {"delete": null, "insert": null, "select": null, "update": null, "select_by_pk": null, "select_aggregate": null}, "custom_column_names": {}}
-hdb_catalog	hdb_version	t	f	{"custom_root_fields": {"delete": null, "insert": null, "select": null, "update": null, "select_by_pk": null, "select_aggregate": null}, "custom_column_names": {}}
-hdb_catalog	hdb_query_collection	t	f	{"custom_root_fields": {"delete": null, "insert": null, "select": null, "update": null, "select_by_pk": null, "select_aggregate": null}, "custom_column_names": {}}
-hdb_catalog	hdb_allowlist	t	f	{"custom_root_fields": {"delete": null, "insert": null, "select": null, "update": null, "select_by_pk": null, "select_aggregate": null}, "custom_column_names": {}}
-public	user	f	f	{"custom_root_fields": {"delete": null, "insert": null, "select": null, "update": null, "select_by_pk": null, "select_aggregate": null}, "custom_column_names": {}}
-public	project_administrator	f	f	{"custom_root_fields": {"delete": null, "insert": null, "select": null, "update": null, "select_by_pk": null, "select_aggregate": null}, "custom_column_names": {}}
-public	project_writer	f	f	{"custom_root_fields": {"delete": null, "insert": null, "select": null, "update": null, "select_by_pk": null, "select_aggregate": null}, "custom_column_names": {}}
-public	article_comment	f	f	{"custom_root_fields": {"delete": null, "insert": null, "select": null, "update": null, "select_by_pk": null, "select_aggregate": null}, "custom_column_names": {}}
+COPY hdb_catalog.hdb_table (table_schema, table_name, configuration, is_system_defined, is_enum) FROM stdin;
+information_schema	tables	{"custom_root_fields": {}, "custom_column_names": {}}	t	f
+information_schema	schemata	{"custom_root_fields": {}, "custom_column_names": {}}	t	f
+information_schema	views	{"custom_root_fields": {}, "custom_column_names": {}}	t	f
+information_schema	columns	{"custom_root_fields": {}, "custom_column_names": {}}	t	f
+hdb_catalog	hdb_table	{"custom_root_fields": {}, "custom_column_names": {}}	t	f
+hdb_catalog	hdb_primary_key	{"custom_root_fields": {}, "custom_column_names": {}}	t	f
+hdb_catalog	hdb_foreign_key_constraint	{"custom_root_fields": {}, "custom_column_names": {}}	t	f
+hdb_catalog	hdb_relationship	{"custom_root_fields": {}, "custom_column_names": {}}	t	f
+hdb_catalog	hdb_permission_agg	{"custom_root_fields": {}, "custom_column_names": {}}	t	f
+hdb_catalog	hdb_computed_field	{"custom_root_fields": {}, "custom_column_names": {}}	t	f
+hdb_catalog	hdb_check_constraint	{"custom_root_fields": {}, "custom_column_names": {}}	t	f
+hdb_catalog	hdb_unique_constraint	{"custom_root_fields": {}, "custom_column_names": {}}	t	f
+hdb_catalog	event_triggers	{"custom_root_fields": {}, "custom_column_names": {}}	t	f
+hdb_catalog	event_log	{"custom_root_fields": {}, "custom_column_names": {}}	t	f
+hdb_catalog	event_invocation_logs	{"custom_root_fields": {}, "custom_column_names": {}}	t	f
+hdb_catalog	hdb_function	{"custom_root_fields": {}, "custom_column_names": {}}	t	f
+hdb_catalog	hdb_function_agg	{"custom_root_fields": {}, "custom_column_names": {}}	t	f
+hdb_catalog	remote_schemas	{"custom_root_fields": {}, "custom_column_names": {}}	t	f
+hdb_catalog	hdb_version	{"custom_root_fields": {}, "custom_column_names": {}}	t	f
+hdb_catalog	hdb_query_collection	{"custom_root_fields": {}, "custom_column_names": {}}	t	f
+hdb_catalog	hdb_allowlist	{"custom_root_fields": {}, "custom_column_names": {}}	t	f
+hdb_catalog	hdb_custom_types	{"custom_root_fields": {}, "custom_column_names": {}}	t	f
+hdb_catalog	hdb_action_permission	{"custom_root_fields": {}, "custom_column_names": {}}	t	f
+hdb_catalog	hdb_action	{"custom_root_fields": {}, "custom_column_names": {}}	t	f
+hdb_catalog	hdb_action_log	{"custom_root_fields": {}, "custom_column_names": {}}	t	f
+hdb_catalog	hdb_role	{"custom_root_fields": {}, "custom_column_names": {}}	t	f
+public	article	{"custom_root_fields": {}, "custom_column_names": {}}	f	f
+public	article_comment	{"custom_root_fields": {}, "custom_column_names": {}}	f	f
+public	article_revision	{"custom_root_fields": {}, "custom_column_names": {}}	f	f
+public	project	{"custom_root_fields": {}, "custom_column_names": {}}	f	f
+public	project_administrator	{"custom_root_fields": {}, "custom_column_names": {}}	f	f
+public	project_writer	{"custom_root_fields": {}, "custom_column_names": {}}	f	f
+public	user	{"custom_root_fields": {}, "custom_column_names": {}}	f	f
 \.
 
 
@@ -1734,7 +1866,7 @@ public	article_comment	f	f	{"custom_root_fields": {"delete": null, "insert": nul
 --
 
 COPY hdb_catalog.hdb_version (hasura_uuid, version, upgraded_on, cli_state, console_state) FROM stdin;
-63fc9416-deee-4978-ac63-45c9cf020cf1	28	2019-12-16 09:35:30.995117+00	{}	{"telemetryNotificationShown": true}
+43d29e6b-9ac9-434d-8e8f-7d9fea0a2e1f	34	2020-05-02 12:35:21.087946+00	{}	{"telemetryNotificationShown": true}
 \.
 
 
@@ -1845,6 +1977,7 @@ COPY public.article_revision (id, article, text, project, name, "textFormatted")
 15	51	<p><ins class="ice-cts-2 ice-ins" data-changedata="" data-cid="3" data-last-change-time="1587454761142" data-time="1587454744560" data-userid="1" data-username="Feldstein Hugo">Bonjour je ne suis pas un nouveaux paragraphe puisque j'ai été seulement ajouter a la place de l'ancien</ins></p>\n	4	Feldstein Hugo - mardi 21 avril 2020 à 09:39:54	<p>Bonjour je ne suis pas un nouveaux paragraphe puisque j'ai été seulement ajouter a la place de l'ancien</p>\n
 16	51	<p><ins class="ice-cts-2 ice-ins" data-changedata="" data-cid="3" data-last-change-time="1587454817455" data-time="1587454744560" data-userid="1" data-username="Feldstein Hugo">Bonjour je ne suis pas un nouveaux paragraphe puisque j'ai été seulement ajouter a la place de l'ancien.</ins></p>\n	4	Feldstein Hugo - mardi 21 avril 2020 à 09:40:17	<p>Bonjour je ne suis pas un nouveaux paragraphe puisque j'ai été seulement ajouter a la place de l'ancien.</p>\n
 17	51	<p><ins class="ice-ins ice-cts-2" data-changedata="" data-cid="3" data-last-change-time="1587455725102" data-time="1587455710509" data-userid="1" data-username="Feldstein Hugo"> Je pense qu'en réalite ceci doit être le bout de phrase complètement modifier tu comprends ?</ins></p>\n	4	Feldstein Hugo - mardi 21 avril 2020 à 09:55:25	<p> Je pense qu'en réalite ceci doit être le bout de phrase complètement modifier tu comprends ?</p>\n
+20	61	<p>L&#39;agent de <del class="ice-del ice-cts-2" data-changedata="" data-cid="59" data-last-change-time="1589121065786" data-time="1589121065786" data-userid="1" data-username="Feldstein Hugo">contr&ocirc;le</del> veille &agrave; informer, <del class="ice-del ice-cts-2" data-changedata="" data-cid="60" data-last-change-time="1589121070131" data-time="1589121070131" data-userid="1" data-username="Feldstein Hugo">selon les modalit&eacute;s</del><ins class="ice-ins ice-cts-2" data-changedata="" data-cid="61" data-last-change-time="1589121079516" data-time="1589121076856" data-userid="1" data-username="Feldstein Hugo"> ceci est donc</ins>&nbsp;pr&eacute;vues par la l&eacute;gislation en vigueur, les usagers concern&eacute;s des suites donn&eacute;es &agrave; son contr&ocirc;le.<ins class="ice-ins ice-cts-2" data-changedata="" data-cid="2" data-last-change-time="1589121061081" data-time="1589121053524" data-userid="1" data-username="Feldstein Hugo"> Et j&#39;ajoute le fait qu&#39;il faudrait penser a manger aussi</ins></p>\n	2	Feldstein Hugo - dimanche 10 mai 2020 à 16:31:20	<p>L'agent de  veille à informer,  ceci est donc&nbsp;prévues par la législation en vigueur, les usagers concernés des suites données à son contrôle. Et j'ajoute le fait qu'il faudrait penser a manger aussi</p>\n
 \.
 
 
@@ -1878,7 +2011,6 @@ COPY public.project_writer (id, project_id, writer_id, unique_writer) FROM stdin
 6	2	2	2_2
 7	4	2	Mon Projet_2
 8	4	3	3_4
-9	2	3	3_2
 \.
 
 
@@ -1918,7 +2050,7 @@ SELECT pg_catalog.setval('public.article_id_seq', 61, true);
 -- Name: article_revision_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.article_revision_id_seq', 19, true);
+SELECT pg_catalog.setval('public.article_revision_id_seq', 20, true);
 
 
 --
@@ -1971,6 +2103,30 @@ ALTER TABLE ONLY hdb_catalog.event_log
 
 ALTER TABLE ONLY hdb_catalog.event_triggers
     ADD CONSTRAINT event_triggers_pkey PRIMARY KEY (name);
+
+
+--
+-- Name: hdb_action_log hdb_action_log_pkey; Type: CONSTRAINT; Schema: hdb_catalog; Owner: postgres
+--
+
+ALTER TABLE ONLY hdb_catalog.hdb_action_log
+    ADD CONSTRAINT hdb_action_log_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: hdb_action_permission hdb_action_permission_pkey; Type: CONSTRAINT; Schema: hdb_catalog; Owner: postgres
+--
+
+ALTER TABLE ONLY hdb_catalog.hdb_action_permission
+    ADD CONSTRAINT hdb_action_permission_pkey PRIMARY KEY (action_name, role_name);
+
+
+--
+-- Name: hdb_action hdb_action_pkey; Type: CONSTRAINT; Schema: hdb_catalog; Owner: postgres
+--
+
+ALTER TABLE ONLY hdb_catalog.hdb_action
+    ADD CONSTRAINT hdb_action_pkey PRIMARY KEY (action_name);
 
 
 --
@@ -2157,6 +2313,13 @@ CREATE INDEX event_invocation_logs_event_id_idx ON hdb_catalog.event_invocation_
 
 
 --
+-- Name: event_log_created_at_idx; Type: INDEX; Schema: hdb_catalog; Owner: postgres
+--
+
+CREATE INDEX event_log_created_at_idx ON hdb_catalog.event_log USING btree (created_at);
+
+
+--
 -- Name: event_log_delivered_idx; Type: INDEX; Schema: hdb_catalog; Owner: postgres
 --
 
@@ -2254,6 +2417,14 @@ ALTER TABLE ONLY hdb_catalog.event_invocation_logs
 
 ALTER TABLE ONLY hdb_catalog.event_triggers
     ADD CONSTRAINT event_triggers_schema_name_table_name_fkey FOREIGN KEY (schema_name, table_name) REFERENCES hdb_catalog.hdb_table(table_schema, table_name) ON UPDATE CASCADE;
+
+
+--
+-- Name: hdb_action_permission hdb_action_permission_action_name_fkey; Type: FK CONSTRAINT; Schema: hdb_catalog; Owner: postgres
+--
+
+ALTER TABLE ONLY hdb_catalog.hdb_action_permission
+    ADD CONSTRAINT hdb_action_permission_action_name_fkey FOREIGN KEY (action_name) REFERENCES hdb_catalog.hdb_action(action_name) ON UPDATE CASCADE;
 
 
 --
