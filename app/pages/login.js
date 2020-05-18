@@ -21,7 +21,7 @@ const Login = props => {
     history.length === 2 && history[0].startsWith("/verif")
   );
   const msgSuccess =
-    "Un mail vient d'être envoyer pour vous connecter sur la plateforme";
+    "Un mail pour vous connecter sur la plateforme vient de vous être envoyé";
   const alert = (
     <Alert
       className="mb-3"
