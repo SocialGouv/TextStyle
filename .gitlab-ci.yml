@@ -4,7 +4,7 @@ stages:
 
 .quality_stage: &quality_stage
   stage: "Code Quality"
-  image: node:12-alpine
+  image: node:14-alpine
   before_script:
     - yarn --frozen-lockfile
 #
