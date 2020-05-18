@@ -10,65 +10,28 @@ cd app
 yarn dev
 ```
 
-# Installation commands:
-1.  Dumps postgres
--   In postgres container:
-    -   `cat dump.sql |  docker exec -i [container] psql -U postgres`
+### Dev setup
 
-- `curl -d'{"type":"replace_metadata", "args":'$(cat metadata.json)'}' http://localhost:8082/v1/query`
-- `curl -d'{"type": "reload_metadata", "args": {}}' http://localhost:8082/v1/query`
+- `cat hasura/dump.sql | docker-compose exec -T postgres psql -U postgres`
+- Import hasura/metadata.json from hasura web ui settings
+- Unzip `app/public/ckeditor`
+- Start frontend `cd app && yarn && yarn dev`
+- Start API `cd api && yarn && yarn start`
 
-2.  Install elasticdump -g
-- `npm i elasticdump  -g`
-
-3.  For elastic search:
-- Next, launch this command in the respective folder of index 1 and 2
-
-
-```
-elasticdump \
-  --input=index_analyser.json \
-  --output=http://localhost:9210/index \
-  --type=analyzer
-
-elasticdump \
-  --input=index_mapping.json \
-  --output=http://localhost:9210/index \
-  --type=mapping
-
-elasticdump \
-  --input=index.json \
-  --output=http://localhost:9210/index \
-  --type=data
-```
-
-```
-elasticdump \
-  --input=iteration_analyser.json \
-  --output=http://localhost:9210/iteration \
-  --type=analyzer
-
-elasticdump \
-  --input=iteration_mapping.json \
-  --output=http://localhost:9210/iteration \
-  --type=mapping
-
-elasticdump \
-  --input=iteration.json \
-  --output=http://localhost:9210/iteration \
-  --type=data
-  ```
-
-  # Prod
+# Prod
 
 Copy and customize `docker-compose.override.prod.yml` to `docker-compose.override.yml`.
+
 # Copy database
+
 ```
 docker exec -t [container_postgre_name] pg_dumpall -c -U postgres > dump_`date +%d-%m-%Y"_"%H_%M_%S`.sql
 ```
+
 # Reset database
 
-Run the postgre container after deleting all project then : 
+Run the postgre container after deleting all project then :
+
 ```
 psql -U postgres
 
