@@ -35,7 +35,7 @@ export default function CalculationDiff(props) {
       return sentence + articleId + " << " + item.old + " >> est supprimé";
     } else if (item.newPar) {
       return (
-        "Un nouveau aliné est ajouté à l'article " +
+        "Un nouveau alinéa est ajouté à l'article " +
         articleId +
         " : << " +
         item.newPar +
