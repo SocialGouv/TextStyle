@@ -18,6 +18,14 @@ yarn dev
 - Start frontend `cd app && yarn && yarn dev`
 - Start API `cd api && yarn && yarn start`
 
+### Dev environment variables
+```
+- TIPI_USER             // Username Mailer
+- TIPI_PASSWORD         // Password Mailer
+- OAUTH_CLIENT_ID       // Dila API OAUT
+- OAUTH_CLIENT_SECRET   // Dila API OAUT
+```
+
 # Prod
 
 Copy and customize `docker-compose.override.prod.yml` to `docker-compose.override.yml`.
