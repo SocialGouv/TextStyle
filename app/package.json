@@ -28,7 +28,7 @@
     "js-cookie": "^2.2.1",
     "next": "^9.4.0",
     "next-cookies": "^2.0.3",
-    "next-with-apollo": "^4.3.0",
+    "next-with-apollo": "^5.1.0",
     "nodemailer": "^6.4.6",
     "nprogress": "^0.2.0",
     "passport-passwordless": "0.0.1",
