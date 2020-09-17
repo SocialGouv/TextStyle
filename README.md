@@ -1,3 +1,17 @@
+<p align=center>
+:skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull:</p> 
+<br>
+<h3 align=center>
+<a>Stand by since 01/06/2020</a></h3>
+<br>
+<br><p align=center>
+:skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull::skull:
+</p> 
+
+
+<br>
+<br>
+
 # TextStyle
 
 TextStyle simplifie la rédaction des textes normatifs
